@@ -1,0 +1,89 @@
+﻿@using Core
+@using Web.Framework.Menu
+@{ 
+    var siteHaritası = new XmlSiteHaritası();
+    siteHaritası.Yükle("~/siteharitası.config");
+}
+
+@helper RenderMenuItem(SiteHaritasıNode item)
+{
+string url = null;
+if (!string.IsNullOrEmpty(item.ControllerAdı) && !string.IsNullOrEmpty(item.ActionAdı))
+{
+    url = Url.Action(item.ActionAdı, item.ControllerAdı, item.RouteValues, null, null);
+}
+else if (!string.IsNullOrEmpty(item.Url))
+{
+    url = item.Url.StartsWith("~/", StringComparison.Ordinal) ? Url.Content(item.Url) : item.Url;
+}
+var aktif = item.SistemAdıİçeriyor(Html.AktifMenuÖğesiSistemAdıAl());
+
+if (!String.IsNullOrEmpty(url))
+{
+        <li @(aktif ? Html.Raw("class=\"active current-active-item\"") : null)>
+            <a href="@url" class="menu-item-link" @(item.YeniSekmedeAç ? Html.Raw(" target=\"_blank\"") : null)>
+                @if (!String.IsNullOrEmpty(item.IconClass))
+                {
+                    <text>
+                        <i class="fa @Url.Content(item.IconClass)"></i>
+                    </text>
+                }
+                <span class="menu-item-title">@item.Başlık</span>
+            </a>
+        </li>
+}
+else
+{
+        <li class="treeview @(aktif ? Html.Raw("active current-active-item") : null)">
+            <a href="#">
+                @if (!String.IsNullOrEmpty(item.IconClass))
+                {
+                    <text>
+                        <i class="fa @Url.Content(item.IconClass)"></i>
+                    </text>
+                }
+                <span>@item.Başlık</span>
+                <i class="fa fa-angle-left pull-right"></i>
+            </a>
+
+            @{ var childNodes = item.ChildNodes.Where(x => x.Visible).ToList(); }
+            @if (childNodes.Any())
+            {
+                <ul class="treeview-menu">
+                    @foreach (var childItem in childNodes)
+                    {
+                        @RenderMenuItem(childItem)
+                    }
+                </ul>
+            }
+        </li>
+                    }
+                }
+
+<ul class="sidebar-menu">
+    @{
+        //standart itemler
+        var rootNode = siteHaritası.RootNode;
+
+        //eklentiler
+        var adminMenuEklentileri = EngineContext.Current.Resolve<Core.Eklentiler.IEklentiBulucu>()
+            .EklentileriAl<IAdminMenuEklentisi>()
+            .ToList();
+        foreach (var adminMenuEklentisi in adminMenuEklentileri)
+        {
+            adminMenuEklentisi.SiteHaritasıYönet(rootNode);
+        }
+        //"Eklentiler" child node içeriyorsa görünür olabilirler
+        var eklentiNode = rootNode.ChildNodes.FirstOrDefault(x => x.SistemAdı == "Üçüncü Parti eklentiler");
+        if (eklentiNode != null && eklentiNode.Visible)
+        {
+            var permissionService = EngineContext.Current.Resolve<Services.Güvenlik.IİzinServisi>();
+            var hasManagePluginsPermission = permissionService.YetkiVer(Services.Güvenlik.StandartİzinSağlayıcı.EklentileriYönet);
+            eklentiNode.Visible = hasManagePluginsPermission && eklentiNode.ChildNodes.Any(x => x.Visible);
+        }
+    }
+    @foreach (var item in rootNode.ChildNodes.Where(x => x.Visible))
+    {
+        @RenderMenuItem(item)
+    }
+</ul>

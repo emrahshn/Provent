@@ -1,0 +1,89 @@
+﻿@model OnlineKullanıcılarModel
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfasıBüyüklükleri = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "Online Kullanıcılar";
+    Html.AktifMenuÖğesiSistemAdıBelirle("OnlineKullanıcılar");
+}
+@Html.AntiForgeryToken()
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Online Kullanıcılar
+    </h1>
+    <div class="pull-right">
+
+    </div>
+</div>
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="online-grid"></div>
+                    <script>
+                        $(document).ready(function () {
+                            $("#online-grid").kendoGrid({
+                                dataSource: {
+                                    type: "json",
+                                    transport: {
+                                        read: {
+                                            url: "@Html.Raw(Url.Action("Liste", "OnlineKullanıcı"))",
+                                            type: "POST",
+                                            dataType: "json",
+                                            data: addAntiForgeryToken
+                                        }
+                                    },
+                                    schema: {
+                                        data: "Data",
+                                        total: "Toplam",
+                                        errors: "Errors"
+                                    },
+                                    error: function(e) {
+                                        display_kendoui_grid_error(e);
+                                        // Cancel the changes
+                                        this.cancelChanges();
+                                    },
+                                    pageSize: @(varsayılanGridSayfaBüyüklüğü),
+                                    serverPaging: true,
+                                    serverFiltering: true,
+                                    serverSorting: true
+                                },
+                                pageable: {
+                                    refresh: true,
+                                    pageSizes: [@(gridSayfasıBüyüklükleri)],
+                                    @Html.Partial("_GridMesajları")
+                                },
+                                editable: {
+                                    confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                                    mode: "inline"
+                                },
+                                scrollable: false,
+                                columns: [{
+                                    field: "Id",
+                                    title: "Kullanıcı",
+                                    //template: '<a href="@Url.Content("~/Kullanıcılar/Düzenle/")#=Id#">Kullanıcı</a>'
+                                }, {
+                                    field: "SonIPAdresi",
+                                    title: "Son IP Adresi"
+                                }, {
+                                    field: "Konum",
+                                    title: "Konum"
+                                }, {
+                                    field: "SonİşlemTarihi",
+                                    title: "Son İşlem Tarihi",
+                                    width: 200,
+                                    type: "date",
+                                    format: "{0:G}"
+                                }, {
+                                    field: "SonZiyaretEdilenSayfa",
+                                    title: "Son Ziyaret Edilen Sayfa"
+                                }]
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

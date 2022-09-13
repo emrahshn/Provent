@@ -1,0 +1,356 @@
+﻿@model OdemeFormuModel
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+@{
+    var parabirimi = new List<SelectListItem>();
+    parabirimi.Add(new SelectListItem() { Text = "TL", Value = "1" });
+    parabirimi.Add(new SelectListItem() { Text = "$", Value = "2" });
+    parabirimi.Add(new SelectListItem() { Text = "€", Value = "3" });
+
+    var odemesekli = new List<SelectListItem>();
+    odemesekli.Add(new SelectListItem() { Text = "Nakit", Value = "1" });
+    odemesekli.Add(new SelectListItem() { Text = "Kredi Kartı", Value = "2" });
+    odemesekli.Add(new SelectListItem() { Text = "Mail Order", Value = "3" });
+    odemesekli.Add(new SelectListItem() { Text = "Havale", Value = "4" });
+    odemesekli.Add(new SelectListItem() { Text = "Çek", Value = "5" });
+
+    var odemeturu = new List<SelectListItem>();
+    odemeturu.Add(new SelectListItem() { Text = "Maaş Avansı", Value = "1" });
+    odemeturu.Add(new SelectListItem() { Text = "İş Avansı", Value = "2" });
+    odemeturu.Add(new SelectListItem() { Text = "Cari Hesap Kapama", Value = "3" });
+    odemeturu.Add(new SelectListItem() { Text = "Cari Hesap Avansı", Value = "4" });
+
+    var bolum = new List<SelectListItem>();
+    bolum.Add(new SelectListItem() { Text = "Yönetim", Value = "1" });
+    bolum.Add(new SelectListItem() { Text = "KON", Value = "2" });
+    bolum.Add(new SelectListItem() { Text = "DMC", Value = "3" });
+    bolum.Add(new SelectListItem() { Text = "OUT", Value = "4" });
+    bolum.Add(new SelectListItem() { Text = "NUMIL", Value = "5" });
+    bolum.Add(new SelectListItem() { Text = "OPERASYON_1", Value = "6" });
+    bolum.Add(new SelectListItem() { Text = "OPERASYON_2", Value = "7" });
+    bolum.Add(new SelectListItem() { Text = "OPERASYON_3", Value = "8" });
+    bolum.Add(new SelectListItem() { Text = "OPERASYON_4", Value = "9" });
+
+    var kalemCntr = 0;
+    var tutarCntr = 0;
+}
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Bolum)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DropDownListFor_(m => m.Bolum, bolum)
+                            @Html.ValidationMessageFor(m => m.Bolum)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.BolumNo)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.EditorFor_(m => m.BolumNo)
+                            @Html.ValidationMessageFor(m => m.BolumNo)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.BelgeTuru)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DropDownListFor_(m => m.BelgeTuru, new SelectList(Model.BelgeTurleri, "Id", "Adı"))
+                            @Html.ValidationMessageFor(m => m.BelgeTuru)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Firma)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Firma)
+                            @Html.ValidationMessageFor(m => m.Firma)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Banka)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(m => m.Banka, new SelectList(Model.Bankalar, "Id", "Adı"))
+                            @Html.ValidationMessageFor(m => m.Banka)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.SubeKodu)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.SubeKodu)
+                            @Html.ValidationMessageFor(m => m.SubeKodu)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.HesapNo)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.HesapNo)
+                            @Html.ValidationMessageFor(m => m.HesapNo)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.IBAN)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.IBAN)
+                            @Html.ValidationMessageFor(m => m.IBAN)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.OdemeSekli)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor_(m => m.OdemeSekli, odemesekli)
+                            @Html.ValidationMessageFor(m => m.OdemeSekli)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.OdemeTuru)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor_(m => m.OdemeTuru, odemeturu)
+                            @Html.ValidationMessageFor(m => m.OdemeTuru)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.OdemeTarihi)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.OdemeTarihi)
+                            @Html.ValidationMessageFor(m => m.OdemeTarihi)
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KongreAdı)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.KongreAdı)
+                            @Html.ValidationMessageFor(m => m.KongreAdı)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KongreTarihi)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.KongreTarihi)
+                            @Html.ValidationMessageFor(m => m.KongreTarihi)
+                        </div>
+                    </div>
+                    @if (Model.Tutarlar.Count > 0)
+                    {
+                        for (int i = 0; i < Model.Tutarlar.Count; i++)
+                        {
+                            var cloneid = "clone_" + @tutarCntr;
+                            var btnid = "btn_" + @tutarCntr;
+                            <div class='input-form' id=@cloneid>
+                                <div class="form-group">
+                                    <div class="col-md-2">
+                                        @Html.LabelFor_(m => m.Tutar)
+                                    </div>
+                                    <div class="col-md-4">
+                                        @Html.EditorFor__(m => m.Tutar, defaultValue: Model.Tutarlar[i])
+                                        @Html.ValidationMessageFor(m => m.Tutar)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.LabelFor_(m => m.ParaBirimi)
+                                    </div>
+                                    <div class="col-md-3">
+                                        @Html.DropDownListFor_(m => m.TutarParabirimi[i], parabirimi.Select(x => new SelectListItem { Text = x.Text, Value = x.Value, Selected = x.Value == Model.TutarParabirimi[i] }))
+                                        @Html.ValidationMessageFor(m => m.ParaBirimi)
+                                    </div>
+                                    <input class="but_del btn bg-red" type='button' value='Sil'>
+                                </div>
+                            </div>
+                            tutarCntr++;
+                        }
+                    }
+                    else
+                    {
+                        var cloneid = "clone_" + @tutarCntr;
+                        var btnid = "btn_" + @tutarCntr;
+                        <div class='input-form' id=@cloneid>
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    @Html.LabelFor_(m => m.Tutar)
+                                </div>
+                                <div class="col-md-4">
+                                    @Html.EditorFor_(m => m.Tutar)
+                                    @Html.ValidationMessageFor(m => m.Tutar)
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.LabelFor_(m => m.ParaBirimi)
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.DropDownListFor_(m => m.TutarParabirimi[0], parabirimi)
+                                    @Html.ValidationMessageFor(m => m.ParaBirimi)
+                                </div>
+                                <input class="but_del btn bg-red" type='button' value='Sil'>
+                            </div>
+                        </div>
+                        tutarCntr++;
+                    }
+                    <div class="form-group">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-10">
+                            <input class="btn bg-blue" type='button' id='but_add' value='Yeni Tutar'>
+                        </div>
+                    </div>
+                    @if (Model.KalemTutarları.Count > 0)
+                    {
+                        for (int i = 0; i < Model.KalemTutarları.Count; i++)
+                        {
+                            var cloneid = "clone_" + @kalemCntr;
+                            var btnid = "btn_" + @kalemCntr;
+                            <div class='input-form2' id=@cloneid>
+                                <div class="form-group">
+                                    <div class="col-md-2">
+                                        @Html.LabelFor_(m => m.AgacIdleri)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.DropDownListFor_(m => m.KalemTutarAdları[i], new SelectList(Model.Agac, "Id", "Adı").Select(x=>new SelectListItem { Text = x.Text, Value = x.Value, Selected = x.Value == Model.KalemTutarAdları[i] }))
+                                    </div>
+                                    <div class="col-md-1" style="margin-left: -40px;">
+                                        @Html.LabelFor_(m => m.PO)
+                                    </div>
+                                    <div class="col-md-2">
+                                        @Html.EditorFor__(m => m.PO, defaultValue: Model.KalemTutarPOları[i])
+                                    </div>
+                                    <div class="col-md-2" style="margin-left: -40px;">
+                                        @Html.LabelFor_(m => m.KalemTutar)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.EditorFor__(m => m.KalemTutar, defaultValue: Model.KalemTutarları[i])
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.LabelFor_(m => m.KalemTutarParabirimi)
+                                    </div>
+                                    <div class="col-md-1">
+                                        @Html.DropDownListFor_(m => m.KalemTutarParabirimi[i], parabirimi.Select(x => new SelectListItem { Text = x.Text, Value = x.Value, Selected = x.Value == Model.KalemTutarParabirimi[i] }))
+                                    </div>
+                                    <input class="but_del2 btn bg-red" type='button' value='Sil'>
+                                </div>
+                            </div>
+                            kalemCntr++;
+                        }
+                    }
+                    else
+                    {
+                        var cloneid = "clone_" + @kalemCntr;
+                        var btnid = "btn_" + @kalemCntr;
+                        <div class='input-form2' id=@cloneid>
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    @Html.LabelFor_(m => m.AgacIdleri)
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.DropDownListFor_(m => m.KalemTutarAdları[0], new SelectList(Model.Agac, "Id", "Adı"))
+                                </div>
+                                <div class="col-md-1" style="margin-left: -40px;">
+                                    @Html.LabelFor_(m => m.PO)
+                                </div>
+                                <div class="col-md-2">
+                                    @Html.EditorFor_(m => m.PO)
+                                </div>
+                                <div class="col-md-2" style="margin-left: -40px;">
+                                    @Html.LabelFor_(m => m.KalemTutar)
+                                </div>
+                                <div class="col-md-1">
+                                    @Html.EditorFor_(m => m.KalemTutar)
+                                </div>
+                                <div class="col-md-1">
+                                    @Html.LabelFor_(m => m.KalemTutarParabirimi)
+                                </div>
+                                <div class="col-md-1">
+                                    @Html.DropDownListFor_(m => m.KalemTutarParabirimi[0], parabirimi)
+                                </div>
+                                <input class="but_del2 btn bg-red" type='button' value='Sil'>
+                            </div>
+                        </div>
+                        kalemCntr++;
+                    }
+                    <div class="form-group">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-10">
+                            <input class="btn bg-blue" type='button' id='but_add2' value='Yeni Kayıt Kalemi'>
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        var kalemCntr = @kalemCntr;
+                        var tutarCntr = 1;
+                        var limitKalem = 50;
+                        var limitTutar = 3;
+                        $('#but_add').click(function () {
+                            if (tutarCntr == limitTutar) {
+                                alert("Maksimum tutar eklediniz " + tutarCntr);
+                            }
+                            else {
+                                var lastname_id = $('.input-form input[type=text]:nth-child(1)').last().attr('id');
+                                var split_id = lastname_id.split('_');
+                                var index = Number(split_id[1]) + 1;
+                                var newel = $('.input-form:last').clone(true).attr('id', 'clone_' + kalemCntr);
+                                $(newel).insertAfter(".input-form:last");
+                                tutarCntr++;
+                            }
+                        });
+                        $('.but_del').click(function () {
+                            var elms = document.querySelectorAll("[class='input-form']");
+                            if (elms.length != 1) {
+                                $(this).parents(".input-form").remove();
+                            }
+                        });
+                        $('#but_add2').click(function () {
+                            if (kalemCntr == limitKalem) {
+                                alert("Maksimum kayıt kalemini eklediniz " + kalemCntr);
+                            }
+                            else {
+                                var lastname_id = $('.input-form2 input[type=text]:nth-child(1)').last().attr('id');
+                                var split_id = lastname_id.split('_');
+                                var index = Number(split_id[1]) + 1;
+                                var newel = $('.input-form2:last').clone(true).attr('id', 'clone_' + kalemCntr);
+
+                                // Set id of new element
+                                /*
+                                $(newel).find('input[type=text]:nth-child(1)').attr("id", "name_" + index);
+                                $(newel).find('input[type=text]:nth-child(2)').attr("id", "email_" + index);
+                                // Set value
+                                $(newel).find('input[type=text]:nth-child(1)').val("name_" + index);
+                                $(newel).find('input[type=text]:nth-child(2)').val("email_" + index);
+                                */
+                                $(newel).insertAfter(".input-form2:last");
+                                kalemCntr++;
+                            }
+                        });
+                        $('.but_del2').click(function () {
+                            var elms = document.querySelectorAll("[class='input-form2']");
+                            if (elms.length != 1) {
+                                $(this).parents(".input-form2").remove();
+                            }
+                        });
+                    </script>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Aciklama)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.TextAreaFor_(m => m.Aciklama)
+                            @Html.ValidationMessageFor(m => m.Aciklama)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

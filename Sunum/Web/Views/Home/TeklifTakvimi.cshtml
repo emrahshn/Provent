@@ -1,0 +1,99 @@
+﻿@model TeklifTakvimiModel
+@using Core
+@using Services.Genel
+
+@{
+    const string panelId = "common-statistics-box";
+    const string hidePanelAttributeName = "HideCommonStatisticsPanel";
+    var hidePanel = EngineContext.Current.Resolve<IWorkContext>().MevcutKullanıcı.ÖznitelikAl<bool>(hidePanelAttributeName);
+}
+<div class="box box-info @if(hidePanel){<text>collapsed-box</text>}" id="@panelId">
+    <div class="box-header with-border clearfix">
+        <div class="box-title">
+            <i class="fa ion-stats-bars"></i>
+            Teklif Takvimi
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                @if (hidePanel)
+                {
+                    <text><i class="fa fa-plus"></i></text>
+                }
+                else
+                {
+                    <text><i class="fa fa-minus"></i></text>
+                }
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div id="scheduler"></div>
+
+        <script src="~/Scripts/kendo/2018.1.117/cultures/kendo.messages.tr-TR.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#@panelId').on('click', 'button[data-widget="collapse"]', function () {
+                    var collapsed = !$('#@panelId').hasClass('collapsed-box');
+
+                });
+            });
+            $(function () {
+                            $("#scheduler").kendoScheduler({
+                                date: new Date(Date.now()),
+                                startTime: new Date("2018/6/13 07:00 AM"),
+                                height: 600,
+                                editable: false,
+                                views: [
+                                    { type: "month", selected: true },
+                                ],
+                                timezone: "Etc/UTC",
+                                dataSource: {
+                                    transport: {
+                                        read: {
+                                            url: "@Html.Raw(Url.Action("TeklifTakvimiAl", "Home",new { kongreId = 2 }))",
+                                            dataType: "json",
+                                            type: "POST",
+                                        },
+                                        parameterMap: function (options, operation) {
+                                            if (operation !== "read" && options.models) {
+                                                return { models: kendo.stringify(options.models) };
+                                            }
+                                        }
+                                    },
+                                    schema: {
+                                        model: {
+                                            id: "Id",
+                                            fields: {
+                                                Id: { type: "number" },
+                                                taskId: { from: "TaskID", type: "number" },
+                                                title: { from: "Title", defaultValue: "Başlık yok", validation: { required: true } },
+                                                start: { type: "date", from: "Start" },
+                                                end: { type: "date", from: "End" },
+                                                startTimezone: { from: "StartTimezone" },
+                                                endTimezone: { from: "EndTimezone" },
+                                                description: { from: "Description" },
+                                                recurrenceId: { from: "RecurrenceID" },
+                                                recurrenceRule: { from: "RecurrenceRule" },
+                                                recurrenceException: { from: "RecurrenceException" },
+                                                ownerId: { from: "OwnerID", defaultValue: 1 },
+                                                isAllDay: { type: "boolean", from: "IsAllDay" }
+                                            }
+                                        }
+                                    },
+                                },
+                            });
+                        });
+
+        </script>
+        <script id="event-template" type="text/x-kendo-template">
+            <div class="movie-template">
+                <img src="#= image #">
+                <p>
+                    #: kendo.toString(start, "hh:mm") # - #: kendo.toString(end, "hh:mm") #
+                </p>
+                <h3>#: title #</h3>
+                <a href="#= imdb #">Movie in IMDB</a>
+            </div>
+        </script>
+    </div>
+</div>

@@ -1,0 +1,166 @@
+﻿@model KisilerModel
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "Kisiler";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Kisiler");
+}
+@Html.AntiForgeryToken()
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Kisiler
+    </h1>
+    <div class="pull-right">
+        <a href="YetkiliEkle" class="btn bg-blue">
+            <i class="fa fa-plus-square"></i>
+            Yeni
+        </a>
+    </div>
+</div>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default panel-search">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.FirmaAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor_(model => model.FirmaAra, new SelectList(Model.FirmaKategorileri, "Id", "Adı"))
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.BransAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor_(model => model.BransAra, new SelectList(Model.HekimBranslari, "Id", "Adı"))
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.AdAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.AdAra)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.SoyadAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.SoyadAra)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.TCKNAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.TCKNAra)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.EmailAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.EmailAra)
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12 col-md-offset-4">
+                                <button type="button" id="kisiFormuAra" class="btn btn-primary btn-search">
+                                    <i class="fa fa-search"></i>
+                                    Ara
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="kisiler">
+                        @if (Model.Kisiler.Count > 0)
+                        {
+                            @Html.Partial("_RehberKutusu", Model)
+                        }
+                    </div>
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            var refresh = $("#kisiler").html();
+                            $('#kisiFormuAra').click(function () {
+                                $.ajax({
+                                    cache: false,
+                                    type: "GET",
+                                    url: "@Html.Raw(Url.Action("_RehberKutusu", "Rehber"))",
+                                    traditional: true,
+                                    data: additionalData(),
+                                    success: function (data) {
+                                        $("#kisiler").html(data);
+
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+
+                                    }
+                                });
+                            });
+                            $("".concat("#@Html.FieldIdFor(model => model.AdAra),",
+                                "#@Html.FieldIdFor(model => model.SoyadAra),",
+                                "#@Html.FieldIdFor(model => model.FirmaAra),",
+                                "#@Html.FieldIdFor(model => model.EmailAra),",
+                                "#@Html.FieldIdFor(model => model.BransAra),",
+                                "#@Html.FieldIdFor(model => model.TCKNAra)")).keydown(function (event) {
+                                    if (event.keyCode === 13) {
+                                        $("#odemeFormuAra").click();
+                                        return false;
+                                    }
+                                });
+                            //return false;
+                            var firmaAra = $("#@Html.FieldIdFor(model => model.FirmaAra)");
+                            $.ajax({
+                                cache: false,
+                                type: "GET",
+                                url: "@Html.Raw(Url.Action("FirmaKategorileri", "Rehber"))",
+                                success: function (data) {
+                                    firmaAra.html('');
+                                    firmaAra.append($('<option></option>').val(0).html("Tümü"));
+                                    $.each(data, function (id, option) {
+                                        firmaAra.append($('<option></option>').val(option.id).html(option.name));
+                                    });
+                                }
+                            });
+                             var bransAra = $("#@Html.FieldIdFor(model => model.BransAra)");
+                            $.ajax({
+                                cache: false,
+                                type: "GET",
+                                url: "@Html.Raw(Url.Action("HekimBranslari", "Rehber"))",
+                                success: function (data) {
+                                    bransAra.html('');
+                                    bransAra.append($('<option></option>').val(0).html("Tümü"));
+                                    $.each(data, function (id, option) {
+                                        bransAra.append($('<option></option>').val(option.id).html(option.name));
+                                    });
+                                }
+                            });
+                        });
+
+                        function additionalData() {
+                            var data = {
+                                AdAra: $('#@Html.FieldIdFor(model => model.AdAra)').val(),
+                                SoyadAra: $('#@Html.FieldIdFor(model => model.SoyadAra)').val(),
+                                EmailAra: $('#@Html.FieldIdFor(model => model.EmailAra)').val(),
+                                BransAra: $('#@Html.FieldIdFor(model => model.BransAra)').val(),
+                                FirmaAra: $('#@Html.FieldIdFor(model => model.FirmaAra)').val(),
+                                TCKNAra: $('#@Html.FieldIdFor(model => model.TCKNAra)').val()
+                            };
+                            addAntiForgeryToken(data);
+                            return data;
+                        }
+
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    

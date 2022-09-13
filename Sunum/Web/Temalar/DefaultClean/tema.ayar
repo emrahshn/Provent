@@ -1,0 +1,5 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Tema Başlık="Varsayılan"
+     ResimURLÖnizleme="~/Temalar/DefaultClean/preview.jpg"
+     TextÖnizleme="'Varsayılan' site teması.">
+</Tema>

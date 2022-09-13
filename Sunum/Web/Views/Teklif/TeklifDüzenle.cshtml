@@ -1,0 +1,14 @@
+﻿@model TeklifModel
+@{
+    ViewBag.Title = "Düzenle";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Teklif");
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    
+    @Html.Partial("_EkleVeyaDüzenleTeklif", Model)
+}
+@Html.DeleteConfirmation("TeklifSil", "teklif-sil")
+

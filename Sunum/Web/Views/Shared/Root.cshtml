@@ -1,0 +1,259 @@
+﻿
+@using Core;
+@using Core.Domain;
+@using Core.Domain.Genel;
+@using Core.Domain.Seo
+@using Core.Altyapı;
+@using Core.Domain.Kullanıcılar
+@using Web.Framework.UI;
+@using Services.Genel
+@using Services.Kullanıcılar
+@using Services.Güvenlik;
+
+@{
+    var siteAyarları = EngineContext.Current.Resolve<SiteBilgiAyarları>();
+    var kendoVersion = "2018.1.117";
+
+    Html.ScriptParçasıIlaveEt("~/Scripts/public.common.js");
+
+    Html.CssParçasıIlaveEt("~/Content/styles.css");
+    Html.CssParçasıIlaveEt("~/Content/adminLTE/AdminLTE-2.3.0.min.css");
+    Html.CssParçasıIlaveEt("~/Content/bootstrap/css/bootstrap.min.css");
+
+    Html.CssParçasıIlaveEt(string.Format("~/Content/kendo/{0}/kendo.rtl.min.css", kendoVersion));
+    Html.CssParçasıIlaveEt(string.Format("~/Content/kendo/{0}/kendo.default.min.css", kendoVersion));
+    Html.CssParçasıIlaveEt(string.Format("~/Content/kendo/{0}/kendo.common.min.css", kendoVersion));
+
+    Html.CssParçasıIlaveEt("~/Content/jquery-ui-themes/smoothness/jquery-ui-1.10.3.custom.min.css");
+    Html.CssParçasıIlaveEt("~/Content/fontAwesome/css/font-awesome-4.6.3.min.css");
+    Html.CssParçasıIlaveEt("~/Content/typeahead/typeahead.css");
+    Html.CssParçasıIlaveEt("~/Content/bootstrap-touchspin/jquery.bootstrap-touchspin.min.css");
+    Html.CssParçasıIlaveEt("~/Content/adminLTE/skins/_all-skins.min.css");
+    Html.CssParçasıIlaveEt("~/Content/not.css");
+    Html.CssParçasıIlaveEt("~/Content/mesaj.css");
+    Html.CssParçasıIlaveEt("~/Content/kongre.css");
+    //Html.CssParçasıIlaveEt("~/Content/fx-card.css");
+
+    //scriptler
+    Html.ScriptParçasıIlaveEt(string.Format("~/Scripts/kendo/{0}/cultures/kendo.culture.tr-TR.min.js", kendoVersion));
+    Html.ScriptParçasıIlaveEt(string.Format("~/Scripts/kendo/{0}/kendo.all.min.js", kendoVersion));
+    //Html.ScriptParçasıIlaveEt(string.Format("~/Scripts/kendo/{0}/kendo.timezones.min.js", kendoVersion));
+    Html.ScriptParçasıIlaveEt("~/Scripts/notlar.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/admin.search.js");
+    Html.ScriptParçasıIlaveEt("~/scripts/admin.navigation.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/admin.common.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/typeahead/typeahead.bundle.min.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/jquery-migrate-1.2.1.min.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/jquery-ui-1.10.3.custom.min.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/jquery.validate.unobtrusive.min.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/jquery.validate.min.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/adminLTE/app.min.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/bootstrap/bootstrap.min.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/bootstrap-touchspin/jquery.bootstrap-touchspin.min.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/jquery-2.2.4.min.js");
+    Html.ScriptParçasıIlaveEt("~/Scripts/decimalConverter.js");
+     //Html.ScriptParçasıIlaveEt("~/Scripts/Actions.js");
+
+     //X-UA-Uyumlu tag
+     var genelAyarlar = EngineContext.Current.Resolve<GenelAyarlar>();
+    if (genelAyarlar.XuaUyumluRender)
+    {
+        Html.ÖzelHeadParçasıIlaveEt(string.Format("<meta http-equiv=\"X-UA-Compatible\" content=\"{0}\"/>", genelAyarlar.XuaUyumluDeğer));
+    }
+    //özel taglar
+    var seoAyarları = EngineContext.Current.Resolve<SeoAyarları>();
+    if (!string.IsNullOrEmpty(seoAyarları.ÖzelHeadTagları))
+    {
+        Html.ÖzelHeadParçasıIlaveEt(seoAyarları.ÖzelHeadTagları);
+    }
+    //sidebar
+    const string hideSidebarAttributeName = "HideSidebar";
+    var hideSidebar = EngineContext.Current.Resolve<IWorkContext>().MevcutKullanıcı.ÖznitelikAl<bool>(hideSidebarAttributeName);
+    //avatar
+    var mevcutKullanıcı = EngineContext.Current.Resolve<IWorkContext>().MevcutKullanıcı;
+}
+<!DOCTYPE html>
+<html @Html.SayfaCssSınıfı()>
+<head>
+    <title>@Html.Başlık()</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <meta name="description" content="@(Html.MetaDescription())" />
+    <meta name="keywords" content="@(Html.MetaKeywords())" />
+    <meta name="generator" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    @Html.ÖzelHead()
+    @Html.Partial("Head")
+    @Html.CssFiles(this.Url, KaynakKonumu.Head)
+    @Html.Scripts(this.Url, KaynakKonumu.Head)
+    @Html.CanonicalUrls()
+</head>
+<body class="hold-transition skin-blue sidebar-mini @if (hideSidebar)
+                                                    {<text>sidebar-collapse</text>}">
+    <script>
+        kendo.culture("tr-TR");
+        $(function () {
+            kendo.init($(document.body));
+        })
+    </script>
+    <div class="throbber">
+        <div class="curtain">
+        </div>
+        <div class="curtain-content">
+            <div>
+                <h1 class="throbber-header">Lütfen bekleyiniz...</h1>
+                <p>
+                    <img src="@Url.Content("~/content/images/throbber-synchronizing.gif")" alt="" />
+                </p>
+            </div>
+        </div>
+    </div>
+    <div id="ajaxBusy">
+        <span>&nbsp;</span>
+    </div>
+    <div class="wrapper">
+        @if (IsSectionDefined("header"))
+        {
+            @RenderSection("header")
+        }
+        else
+        {
+            <div class="main-header">
+                <a href="@Url.Content("~/")" class="logo">
+                    <span class="logo-mini"></span>
+                    <span class="logo-lg"></span>
+                </a>
+                <div class="navbar navbar-static-top" role="navigation">
+                    <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+                        <span class="sr-only">&nbsp;</span>
+                    </a>
+                    <div class="navbar-custom-menu">
+                        <ul class="nav navbar-nav">
+                            @if (mevcutKullanıcı.IsRegistered())
+                            {
+                                <li class="account-info">
+                                    @mevcutKullanıcı.TamAdAl()
+                                </li>
+                                <li id="mesajlar">
+                                    <a href="/ter" class="fa fa-bell-o">
+                                        <span class="cart-label">Bildirimler</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Çıkış", "Kullanıcı", new { area = "" }, null)">
+                                        Çıkış
+                                    </a>
+                                </li>
+                            }
+                            <li class="dropdown">
+                                <a href="#" data-toggle="dropdown"><i class="fa fa-gears"></i></a>
+                                <ul class="maintenance-menu dropdown-menu bg-light-blue" role="menu">
+                                    <li>
+                                        @using (Html.BeginForm("ÖnbelleğiTemizle", "Genel", new { area = "Admin" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.Hidden("returnurl", HttpContext.Current.Request.RawUrl)
+                                            <button type="submit" class="bg-light-blue">
+                                                <span>Önbelleği temizle</span>
+                                            </button>
+                                        }
+                                    </li>
+                                    <li>
+                                        @using (Html.BeginForm("UygulamayıYenidenBaşlat", "Genel", new { area = "Admin" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.Hidden("returnurl", HttpContext.Current.Request.RawUrl)
+                                            <button id="restart-application" type="submit" class="bg-light-blue">
+                                                <span>Yeniden başlat</span>
+                                            </button>
+                                            <script type="text/javascript">
+                                                $(document).ready(function () {
+                                                    $("#restart-application").click(function (e) {
+
+                                                        showThrobber('@Html.Raw(HttpUtility.JavaScriptStringEncode("Uygulama yeniden başlatılıyor"))');
+                                                    });
+                                                    $('.main-header').on('mouseenter', '#mesajlar', function () {
+                                                        $('#mesaj').addClass('active');
+                                                    });
+                                                    $('.main-header').on('mouseleave', '#mesajlar', function () {
+                                                        $('#mesaj').removeClass('active');
+                                                    });
+                                                    $('.main-header').on('mouseenter', '#mesaj', function () {
+                                                        $('#mesaj').addClass('active');
+                                                    });
+                                                    $('.main-header').on('mouseleave', '#mesaj', function () {
+                                                        $('#mesaj').removeClass('active');
+                                                    });
+                                                });
+                                            </script>
+                                        }
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (IsSectionDefined("headermenu"))
+        {
+            @RenderSection("headermenu")
+        }
+        else
+        {
+            <div class="main-sidebar">
+                <div class="sidebar">
+                    <div class="xn-profile">
+                        <div class="profile">
+                            <div class="profile-image">
+                                <img src="~/Images/noimage.png" alt="John Doe" />
+                            </div>
+                            <div class="profile-data">
+                                <div class="profile-data-name">@mevcutKullanıcı.TamAdAl()</div>
+                                <div class="profile-data-title"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sidebar-form">
+                        <div id="search-box">
+                            <input type="text" class="form-control admin-search-box typeahead" placeholder="Arama">
+                        </div>
+                    </div>
+                    <script>
+                        $(document).ready(function () {
+                            Admin.Search.init();
+                        });
+                    </script>
+                    @Html.Partial("Menu")
+                </div>
+            </div>
+        }
+        <div class="content-wrapper">
+            @RenderBody()
+        </div>
+    </div>
+    <script>
+        var AdminLTEOptions = {
+            boxWidgetOptions: {
+                boxWidgetIcons: {
+                    collapse: 'fa-minus',
+                    open: 'fa-plus'
+                }
+            }
+        };
+    </script>
+    @Html.CssFiles(this.Url, KaynakKonumu.Foot)
+    @Html.Scripts(this.Url, KaynakKonumu.Foot)
+    <a id="backTop" class="btn btn-back-top bg-teal"></a>
+    <script>
+        $(document).ready(function () {
+            $('#backTop').backTop();
+
+            $('a.sidebar-toggle').on('click', function () {
+                var collapsed = $('body').hasClass('sidebar-collapse');
+                saveUserPreferences('@(Url.Action("SavePreference", "Preferences"))', '@hideSidebarAttributeName', collapsed);
+            });
+        });
+    </script>
+</body>
+</html>
+

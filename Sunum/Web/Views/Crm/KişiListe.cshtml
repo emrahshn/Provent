@@ -1,0 +1,116 @@
+﻿@model CrmKisiModel
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "Kişiler";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Kişiler");
+}
+@Html.AntiForgeryToken()
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Kişiler
+    </h1>
+    <div class="pull-right">
+        <a href="KişiEkle" class="btn bg-blue">
+            <i class="fa fa-plus-square"></i>
+            Yeni
+        </a>
+    </div>
+</div>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="kisi-grid"></div>
+                    <div id="grid"></div>
+                    <script>
+                        $(document).ready(function () {
+                            $("#kisi-grid").kendoGrid({
+                                dataSource: {
+                                    type: "json",
+                                    transport: {
+                                        read: {
+                                            url: "@Html.Raw(Url.Action("KişiListe", "Crm"))",
+                                            type: "POST",
+                                            dataType: "json",
+                                            data: additionalData
+                                        }
+                                    },
+                                    schema: {
+                                        data: "Data",
+                                        total: "Toplam"
+                                    },
+                                    error: function (e) {
+                                        display_kendoui_grid_error(e);
+                                        this.cancelChanges();
+                                    },
+                                    pageSize: @(varsayılanGridSayfaBüyüklüğü),
+                                    serverFiltering: true,
+                                    serverSorting: true
+                                },
+                                pageable: {
+                                    refresh: true,
+                                    pageSizes: [@(gridSayfaBüyüklüğü)],
+                                    @Html.Partial("_GridMesajları")
+                                },
+                                editable: {
+                                    confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                                    mode: "inline"
+                                },
+                                scrollable: true,
+                                columns: [
+                                    {
+                                        field: "Adı",
+                                        title: "Adı"
+                                    },
+                                    {
+                                        field: "Soyadı",
+                                        title: "Soyadı"
+                                    },
+                                    {
+                                        field: "Email",
+                                        title: "Email",
+                                        template: "<span title='${Email}'>${Email}</Email>"
+                                    },
+                                    {
+                                        field: "Id",
+                                        title: "Görüntüle",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: '<a class="btn btn-default" href="KişiKartı/#=Id#"><i class="fa fa-search"></i>Görüntüle</a>'
+                                    },
+                                    {
+                                        field: "Id",
+                                        title: "Düzenle",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: '<a class="btn btn-default" href="KişiDüzenle/#=Id#"><i class="fa fa-pencil"></i>Düzenle</a>'
+                                    }
+                                ]
+                            });
+                        });
+                    </script>
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('#firma-ara').click(function () {
+                                var grid = $('#kisi-grid').data('kendoGrid');
+                                grid.dataSource.read();
+                                return false;
+                            });
+                        });
+
+                        function additionalData() {
+                            var data = {
+                                SearchStoreId: $('#SiteIdAra').val()
+                            };
+                            addAntiForgeryToken(data);
+                            return data;
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

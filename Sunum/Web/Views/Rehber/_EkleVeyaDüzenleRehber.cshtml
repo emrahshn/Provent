@@ -1,0 +1,76 @@
+﻿@model YetkililerModel
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+<script type="text/javascript">
+    $(function () {
+        $("#SehirId").change(function () {
+                 var selectedItem = $(this).val();
+                 var ddlIlce = $("#IlceId");
+                 var ilceProgress = $("#ilce-loading-progress");
+                 ilceProgress.show();
+             $.ajax({
+                 cache: false,
+                 type: "GET",
+                 url: "@Html.Raw(Url.Action("IlceAlSehirId", "Tanımlamalar"))",
+                    data: { "sehirId": selectedItem },
+                    success: function (data) {
+                        ddlIlce.html('');
+                        $.each(data, function (id, option) {
+                            ddlIlce.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                        ilceProgress.hide();
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('İlçeler alınırken hata oluştu.');
+                        ilceProgress.hide();
+                    }
+                });
+            });
+        });
+</script>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Adı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Adı)
+                            @Html.ValidationMessageFor(m => m.Adı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Soyadı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Soyadı)
+                            @Html.ValidationMessageFor(m => m.Soyadı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.CepTel1)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(model => model.CepTel1)
+                            @Html.ValidationMessageFor(m => m.CepTel1)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Email1)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(model => model.Email1)
+                            @Html.ValidationMessageFor(m => m.Email1)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

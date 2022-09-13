@@ -1,0 +1,80 @@
+﻿@model KongreSponsorlukBilgileriModel
+@Html.ValidationSummary(true)
+@{ 
+    var musteriId = Model.MusteriId;
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(function () {
+            $("#MusteriId").change(function () {
+                var selectedItem = $(this).val();
+                var ddlYetkili = $("#YetkiliId");
+                var yetkiliProgress = $("#yetkili-loading-progress");
+                yetkiliProgress.show();
+                $.ajax({
+                    cache: false,
+                    type: "GET",
+                    url: "@Html.Raw(Url.Action("YetkiliAlMusteriId", "Kongre"))",
+                    data: { "musteriId": selectedItem },
+                    success: function (data) {
+                        ddlYetkili.html('');
+                        $.each(data, function (id, option) {
+                            ddlYetkili.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                        yetkiliProgress.hide();
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Yetkililer alınırken hata oluştu.');
+                        yetkiliProgress.hide();
+                    }
+                });
+            });
+        });
+    });
+</script>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.MusteriId)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(m => m.MusteriId, new SelectList(Model.SponsorlukMusterileri, "Value", "Text", selectedValue: Model.MusteriId))
+                            @Html.ValidationMessageFor(m => m.KongreId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.YetkiliId)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(m => m.YetkiliId, new SelectList(Model.MusteriYetkilileri, "Value", "Text", selectedValue: Model.YetkiliId))
+                            @Html.ValidationMessageFor(m => m.KongreId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.GörüsmeTarihi)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor__(m => m.GörüsmeTarihi)
+                            @Html.ValidationMessageFor(m => m.GörüsmeTarihi)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Rapor)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor__(m => m.Rapor)
+                            @Html.ValidationMessageFor(m => m.Rapor)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

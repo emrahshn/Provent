@@ -1,0 +1,22 @@
+﻿@model KongreFirmaBilgileriModel
+@Html.ValidationSummary(true)
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            Firmalar
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor(m => m.MusteriIdleri, new { SelectList = Model.FirmaMusterileri })
+                            @Html.ValidationMessageFor(m => m.KongreId)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

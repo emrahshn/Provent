@@ -1,0 +1,238 @@
+﻿@model FirmaModel
+@{
+    ViewBag.Title = "Kongreler";
+    Html.AktifMenuÖğesiSistemAdıBelirle("KongreEkle");
+    var gridAdi = "grid" + Model.Id;
+    ICollection<KullanıcıRolü> alınanRoller = EngineContext.Current.Resolve<Core.IWorkContext>().MevcutKullanıcı.KullanıcıRolleri;
+    IList<KullanıcıRolü> roller = alınanRoller.ToList();
+    bool yonetici = false;
+    foreach (var rol in roller)
+    {
+        if (roller[0].Adı.Contains("Yönetici"))
+        {
+            yonetici = true;
+            break;
+        }
+    }
+}
+<style>
+    /*
+    .k-grid-content, .k-grid-content-locked, .k-pager-wrap {
+        height: 400px;
+    }*/
+    .k-grid-content {
+        max-height: 275px;
+    }
+</style>
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+<div>
+    <script>
+        $(document).ready(function () {
+            var grid = $("#@gridAdi").kendoGrid({
+                toolbar: [{ name: "create", text: "Yeni" }],
+                dataSource: {
+                    autoSync: true,
+                    transport: {
+                        read: {
+                            url: "@Html.Raw(Url.Action("SponsorlukSatisListe", "Kongre", new { kongreId = Request["kongreId"], sponsorId = Model.Id }))",
+                            type: "POST",
+                            dataType: "json",
+                        },
+                        update: {
+                            url: "@Html.Raw(Url.Action("SponsorlukSatisGuncelleGrid", "Kongre"))",
+                            type: "POST",
+                            dataType: "json",
+                            complete: function (e) {
+                                $("#@gridAdi").data("kendoGrid").dataSource.read();
+                            }
+                        },
+                        create: {
+                            url: "@Html.Raw(Url.Action("SponsorlukSatisEkleGrid", "Kongre", new { kongreId = Request["kongreId"], sponsorId = Model.Id }))",
+                            type: "POST",
+                            dataType: "json",
+                            complete: function (a) {
+                                $("#@gridAdi").data("kendoGrid").dataSource.read();
+                            }
+                        },
+                        destroy: {
+                            url: "@Html.Raw(Url.Action("SponsorlukSatisSilGrid", "Kongre"))",
+                            type: "POST",
+                            dataType: "json",
+                            complete: function (a) {
+                                $("#@gridAdi").data("kendoGrid").dataSource.read();
+                            },
+                        },
+                        parameterMap: function (data, operation) {
+                            if (operation != "read" && operation != "create" && operation != "update" && operation != "create2") {
+                                var result = {};
+
+                                for (var i = 0; i < data.models.length; i++) {
+                                    var entity = data.models[i];
+
+                                    for (var member in entity) {
+                                        result["ogeler[" + i + "]." + member] = entity[member];
+                                    }
+                                }
+                                addAntiForgeryToken(result);
+                                return result;
+                            }
+                            else {
+                                addAntiForgeryToken(data);
+                                return data;
+                            }
+                        }
+                    },
+                    schema: {
+                        data: "Data",
+                        total: "Toplam",
+                        model: {
+                            id: "Id",
+                            fields: {
+                                Id: { editable: false, type: "number" },
+                                Adı: { editable: true },
+                                BirimFiyat: { editable: false, type: "decimal" },
+                                Adet: { editable: true, type: "number" },
+                                Gün: { editable: true, type: "number" },
+                                Tutar: { editable: false, type: "number" },
+                                Döviz: { editable: false, type: "number" },
+                                Locked: { editable: @if (yonetici) { <text>true</text>} else {<text>false</text>}, type: "boolean" },
+                                Tipi: { editable: true },
+                            }
+                        }
+                    },
+                    error: function (e) {
+                        display_kendoui_grid_error(e);
+                        this.cancelChanges();
+                    },
+                    page: $("#selected-page").val(),
+                    batch: true,
+                    pageSize: 15,
+                    serverPaging: true,
+                    serverFiltering: true,
+                    serverSorting: true,
+
+                },
+                editable: {
+                    confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                    mode: "incell"
+                },
+                edit: function (e) {
+                        @if (!yonetici)
+                        {<text>
+                    if (e.model.Locked) {
+                        this.closeCell();
+                    }
+                    </text>
+                        }
+                },
+                scrollable: true,
+
+                columns: [
+                    {
+                        field: "Tipi",
+                        title: "Kategori",
+                        width: 120,
+                        editor: categoryDropDownEditor2,
+                        template: '#if(Tipi==1){#Kayıt#}else if(Tipi==2){#Konaklama#}else if(Tipi==3){#Kurs#}else{#Transfer#}#'
+                    },
+                    {
+                        field: "Adı",
+                        title: "Adı",
+                        width: 120,
+                        editor: categoryDropDownEditor,
+                    }, {
+                        field: "Gün",
+                        title: "Gün",
+                        width: 80
+                    }, {
+                        field: "Adet",
+                        title: "Satış Adet",
+                        width: 80
+                    }, {
+                        field: "BirimFiyat",
+                        title: "Satış Birim Fiyat",
+                        width: 100,
+                        template: '#if(Döviz==1){##:BirimFiyat# TL#}else if(Döviz==2){##:BirimFiyat# $#}else{##:BirimFiyat# €#}#'
+                    }, {
+                        field: "Tutar",
+                        title: "Satış Toplam",
+                        width: 100,
+                        template: '#if(Döviz==1){##:Tutar# TL#}else if(Döviz==2){##:Tutar# $#}else{##:Tutar# €#}#'
+                    }, {
+                        command: [{ name: "destroy", text: "Sil" }],
+                        text: "Sil",
+                        width: 60,
+                        attributes: {
+                            style: "text-align: center;"
+                        },
+                    }, {
+                        field: "Locked",
+                        title: "Kilitle",
+                        width: 40,
+                        headerAttributes: { style: "text-align:center" },
+                        attributes: { style: "text-align:center" },
+                        template: '# if(Locked) {# <i class="fa fa-lock true-icon fa-5x"></i> #} else {# <i class="fa fa-unlock false-icon fa-5x"></i> #} #',
+                    }
+                ],
+                dataBound: function (e) {
+                    var dataItems = e.sender.dataSource.view();
+                    for (var j = 0; j < dataItems.length; j++) {
+                        var onay;
+                        if (this.dataSource.group().length > 0) {
+                            onay = dataItems[j].items[0].get("Onay");
+                        }
+                        else {
+                            onay = dataItems[j].get("Onay");
+                        }
+
+                        var row = e.sender.tbody.find("[data-uid='" + dataItems[j].uid + "']");
+                        if (onay) {
+                            row.addClass("bg-lightyellow");
+                            row.removeClass("k-alt");
+                        }
+                    }
+                }
+            }).data('kendoGrid');
+        });
+        var data2 = [
+            { text: "Kayıt", value: "1" },
+            { text: "Konaklama", value: "2" },
+            { text: "Kurs", value: "3" },
+            { text: "Transfer", value: "4" }
+        ];
+            function categoryDropDownEditor(container, options) {
+                $('<input required name="' + options.field + '"/>')
+                    .appendTo(container)
+                    .kendoDropDownList({
+                        autoBind: false,
+                        dataTextField: "name",
+                        dataValueField: "name",
+                        dataSource: {
+                            type: "GET",
+                            transport: {
+                                read: {
+                                    url: "@Html.Raw(Url.Action("SponsorlukKalemleriAl", "Kongre",new { kongreId = Request["kongreId"] }))",
+                                    type: "GET",
+                                    dataType: "json",
+                                    data: { "sponsorlukTipi": options.model.Tipi}
+                                }
+                            }
+                        }
+                    });
+        };
+        function categoryDropDownEditor2(container, options) {
+            $('<input required name="' + options.field + '"/>')
+                .appendTo(container)
+                .kendoDropDownList({
+                    autoBind: false,
+                    dataTextField: "text",
+                    dataValueField: "value",
+                    dataSource: data2
+                });
+        };
+    </script>
+    <div id="@gridAdi"></div>
+</div>
+}

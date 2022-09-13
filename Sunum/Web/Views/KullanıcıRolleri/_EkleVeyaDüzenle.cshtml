@@ -1,0 +1,61 @@
+﻿@model KullanıcıRolModel
+
+@Html.ValidationSummary(true)
+@Html.HiddenFor(model => model.Id)
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.Adı)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model => model.Adı, required: true)
+                            @Html.ValidationMessageFor(model => model.Adı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.SistemAdı)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model => model.SistemAdı)
+                            @Html.ValidationMessageFor(model => model.SistemAdı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.ParolaÖmrünüEtkinleştir)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model => model.ParolaÖmrünüEtkinleştir)
+                            @Html.ValidationMessageFor(model => model.ParolaÖmrünüEtkinleştir)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.Aktif)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model => model.Aktif)
+                            @Html.ValidationMessageFor(model => model.Aktif)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.SistemRolü)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.Display(Model.SistemRolü.ToString())
+                            @Html.HiddenFor(model => model.SistemRolü)
+                            @Html.ValidationMessageFor(model => model.SistemRolü)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

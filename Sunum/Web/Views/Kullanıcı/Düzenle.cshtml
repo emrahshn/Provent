@@ -1,0 +1,175 @@
+﻿@model KullanıcıModel
+
+@{
+    ViewBag.Title = "Kullanıcı bilgilerini düzenle";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Kullanıcı Listesi");
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Kullanıcı bilgilerini düzenle - @Model.Adı @Model.Soyadı
+            <small><i class="fa fa-arrow-circle-left"></i>@Html.ActionLink("Listeye geri dön", "Liste")</small>
+        </h1>
+        <div class="pull-right">
+            <button type="submit" name="kaydet" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet
+            </button>
+            <button type="submit" name="kaydet-devam" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet ve Devam Et
+            </button>
+            <button type="button" class="btn bg-green" data-toggle="modal" data-target="#emailgönder">
+                <i class="fa fa-at"></i>
+                E-Mail Gönder
+            </button>
+            <button type="button" class="btn bg-green" data-toggle="modal" data-target="#mesajgönder">
+                <i class="fa fa-envelope-o"></i>
+                Mesaj Gönder
+            </button>
+            @if (Model.HoşgeldinizMesajıGönderimiEtkin)
+            {
+                <button type="submit" id="hoşgeldiniz_mesajı_gönder" name="hoşgeldiniz_mesajı_gönder" class="btn bg-green">
+                    <i class="fa fa-smile-o"></i>
+                    Hoşgeldiniz Mesajı Gönder
+                </button>
+                @Html.ActionConfirmation("hoşgeldiniz_mesajı_gönder")
+            }
+            @if (Model.AktivasyonMesajıGönderimiEtkin)
+            {
+                <button type="submit" id="aktivasyon_mesajı_gönder" name="aktivasyon_mesajı_gönder" class="btn bg-green">
+                    <i class="fa fa-check-circle"></i>
+                    Aktivasyon Mesajını Tekrar Gönder
+                </button>
+                @Html.ActionConfirmation("aktivasyon_mesajı_gönder")
+            }
+            <span id="kullanıcı-sil" class="btn bg-red">
+                <i class="fa fa-trash-o"></i>
+                Sil
+            </span>
+        </div>
+    </div>
+    @Html.Partial("_EkleVeyaDüzenle", Model)
+}
+@Html.DeleteConfirmation("kullanıcı-sil")
+
+@*e-mail gönder*@
+<div id="emailgönder" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="emailgönder-başlık">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="emailgönder-başlık">E-Mail Gönder</h4>
+            </div>
+            @using (Html.BeginForm("EmailGönder", "Kullanıcı", new { id = Model.Id }))
+            {
+                <div class="form-horizontal">
+                    <div class="modal-body">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <div class="col-md-5">
+                                @Html.LabelFor_(model => model.EmailGönder.Konu)
+                            </div>
+                            <div class="col-md-7">
+                                @Html.EditorFor_(model => model.EmailGönder.Konu)
+                                @Html.ValidationMessageFor(model => model.EmailGönder.Konu)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-5">
+                                @Html.LabelFor_(model => model.EmailGönder.Gövde)
+                            </div>
+                            <div class="col-md-7">
+                                @Html.TextAreaFor_(model => model.EmailGönder.Gövde)
+                                @Html.ValidationMessageFor(model => model.EmailGönder.Gövde)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-5">
+                                @Html.LabelFor_(model => model.EmailGönder.HemenGönder)
+                            </div>
+                            <div class="col-md-7">
+                                @Html.EditorFor_(model => model.EmailGönder.HemenGönder)
+                                @Html.ValidationMessageFor(model => model.EmailGönder.HemenGönder)
+                            </div>
+                        </div>
+                        <div class="form-group" id="pnl-send-date">
+                            <div class="col-md-5">
+                                @Html.LabelFor_(model => model.EmailGönder.ŞuTarihtenÖnceGönderme)
+                            </div>
+                            <div class="col-md-7">
+                                @Html.EditorFor_(model => model.EmailGönder.ŞuTarihtenÖnceGönderme)
+                                @Html.ValidationMessageFor(model => model.EmailGönder.ŞuTarihtenÖnceGönderme)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            E-Mail Gönder
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#emailgönder').on('show.bs.modal', function (e) {
+        $("#@Html.FieldIdFor(model => model.EmailGönder.HemenGönder)").click(sendImmediately);
+        sendImmediately();
+    });
+
+    function sendImmediately() {
+        if ($('#@Html.FieldIdFor(model => model.EmailGönder.HemenGönder)').is(':checked'))
+            $('#pnl-send-date').hide();
+        else
+            $('#pnl-send-date').show();
+    }
+</script>
+
+@*mesaj gönder*@
+<div id="mesajgönder" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mesajgönder-başlık">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="mesajgönder-başlık">Mesaj Gönder</h4>
+            </div>
+            @using (Html.BeginForm("PmGönder", "Kullanıcı", new { id = Model.Id }))
+            {
+                <div class="form-horizontal">
+                    <div class="modal-body">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.LabelFor_(model => model.ÖzelMesajGönder.Konu)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor_(model => model.ÖzelMesajGönder.Konu)
+                                @Html.ValidationMessageFor(model => model.ÖzelMesajGönder.Konu)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.LabelFor_(model => model.ÖzelMesajGönder.Mesaj)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.TextAreaFor_(model => model.ÖzelMesajGönder.Mesaj)
+                                @Html.ValidationMessageFor(model => model.ÖzelMesajGönder.Mesaj)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            Mesaj Gönder
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

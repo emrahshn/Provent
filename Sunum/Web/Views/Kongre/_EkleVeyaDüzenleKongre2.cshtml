@@ -1,0 +1,622 @@
+﻿@model KongreModel
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+
+<script src="~/Scripts/kendo/2018.1.117/cultures/kendo.messages.tr-TR.min.js"></script>
+        <input type="hidden" id="selected-tab" name="selected-tab" value="@(Html.GetSelectedTabName())">
+        <div class="content">
+            <div class="form-horizontal">
+                <div id="kongre-duzenle" class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                        @Html.RenderBootstrapTabHeader("tab-bilgi", "Genel Bilgiler", true)
+                        @if (Model.Id > 0)
+                        {
+                            @Html.RenderBootstrapTabHeader("tab-banka", "Banka Bilgileri")
+                            @Html.RenderBootstrapTabHeader("tab-iptal-sartlari", "Iptal Şartları")
+                            @Html.RenderBootstrapTabHeader("tab-otel", "Otel/Kontenjan Tanımlama")
+                            @Html.RenderBootstrapTabHeader("tab-kayıt", "Kayıt Tanımlama")
+                            @Html.RenderBootstrapTabHeader("tab-kurs", "Kurs Tanımlama")
+                            @Html.RenderBootstrapTabHeader("tab-spon", "Genel Sponsorluk Tanımlama")
+                            @Html.RenderBootstrapTabHeader("tab-transfer", "Transfer Tanımlama")
+                            @Html.RenderBootstrapTabHeader("tab-firma", "Firma Tanımlama")
+                            @Html.RenderBootstrapTabHeader("tab-takvim", "Takvim")
+
+                        }
+                    </ul>
+                    <div class="tab-content">
+                        @Html.RenderBootstrapTabContent("tab-bilgi", @TabBilgi(), true)
+                        @if (Model.Id > 0)
+                        {
+                            @Html.RenderBootstrapTabContent("tab-banka", @TabBanka())
+                            @Html.RenderBootstrapTabContent("tab-iptal-sartlari", @TabIptalSartları())
+                            @Html.RenderBootstrapTabContent("tab-otel", @TabOtelTanımlama())
+                            @Html.RenderBootstrapTabContent("tab-kayıt", @TabKayıtTanımlama())
+                            @Html.RenderBootstrapTabContent("tab-kurs", @TabKursTanımlama())
+                            @Html.RenderBootstrapTabContent("tab-spon", @TabSponTanımlama())
+                            @Html.RenderBootstrapTabContent("tab-transfer", @TabTransferTanımlama())
+                            @Html.RenderBootstrapTabContent("tab-firma", @TabFirmaTanımlama())
+                            @Html.RenderBootstrapTabContent("tab-takvim", @TabKongreTakvimi())
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <input type="hidden" id="selected-tab-name" name="selected-tab-name" value="@(Html.GetSelectedTabName())">
+
+        @helper TabBilgi()
+        {
+            <script type="text/javascript">
+    $(function () {
+        $("#SehirId").change(function () {
+                 var selectedItem = $(this).val();
+                 var ddlIlce = $("#IlceId");
+                 var ilceProgress = $("#ilce-loading-progress");
+                 ilceProgress.show();
+             $.ajax({
+                 cache: false,
+                 type: "GET",
+                 url: "@Html.Raw(Url.Action("IlceAlSehirId", "Tanımlamalar"))",
+                    data: { "sehirId": selectedItem },
+                    success: function (data) {
+                        ddlIlce.html('');
+                        $.each(data, function (id, option) {
+                            ddlIlce.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                        ilceProgress.hide();
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('İlçeler alınırken hata oluştu.');
+                        ilceProgress.hide();
+                    }
+                });
+            });
+        });
+            </script>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.Kodu)
+                            </div>
+                            <div class="col-md-10">
+                                @Html.EditorFor_(m => m.Kodu)
+                                @Html.ValidationMessageFor(m => m.Kodu)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.Adı)
+                            </div>
+                            <div class="col-md-10">
+                                @Html.EditorFor_(m => m.Adı)
+                                @Html.ValidationMessageFor(m => m.Adı)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.SehirId)
+                            </div>
+                            <div class="col-md-10">
+                                @Html.DropDownListFor_(model => model.SehirId, new SelectList(Model.Sehirler, "Value", "Text"))
+                                @Html.ValidationMessageFor(m => m.SehirId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.IlceId)
+                            </div>
+                            <div class="col-md-10">
+                                @Html.DropDownListFor_(model => model.IlceId, new SelectList(Model.Ilceler, "Value", "Text"))
+                                <span id="ilce-loading-progress" style="display: none;">Lütfen bekleyiniz..</span>
+                                @Html.ValidationMessageFor(m => m.IlceId)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.BaslamaTarihi)
+                            </div>
+                            <div class="col-md-10">
+                                @Html.EditorFor_(m => m.BaslamaTarihi)
+                                @Html.ValidationMessageFor(m => m.BaslamaTarihi)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.BitisTarihi)
+                            </div>
+                            <div class="col-md-10">
+                                @Html.EditorFor_(m => m.BitisTarihi)
+                                @Html.ValidationMessageFor(m => m.BitisTarihi)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.Açıklama)
+                            </div>
+                            <div class="col-md-10">
+                                @Html.EditorFor_(m => m.Açıklama)
+                                @Html.ValidationMessageFor(m => m.Açıklama)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabBanka()
+        {
+            <div id="bankaBilgileri"></div>
+            <script>
+        $(document).ready(function () {
+            bankaBilgileriHesapla();
+        });
+        function bankaBilgileriHesapla() {
+            var el = $("#bankaBilgileri")[0];
+            var be = document.getElementById("bankaEkle");
+            var bd = document.getElementById("bankaDuzenle");
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Html.Raw(Url.Action("BankaBilgileriListele", "Kongre"))",
+                data: { "kongreId": @Model.Id },
+                success: function (data) {
+                    if (data) {
+                        var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                        $.each(data, function (id, option) {
+                            if (id != "Id" && id != "CustomProperties") {
+                                text = text + '<tr><td>' + id + '</td><td>' + option + '</td>';
+                            }
+                        });
+                        text = text + "</tbody></table>";
+                        el.innerHTML = text;
+                        be.style.display="none";
+                        bd.style.display="block";
+                    }
+                    else {
+                        console.log("test");
+                        be.style.display="block";
+                        bd.style.display="none";
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Banka bilgileri alınırken hata oluştu.');
+                }
+            });
+        }
+            </script>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="kongre-banka"></div>
+                    </div>
+                    <div class="panel-footer">
+                        <button id="bankaEkle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("BankaBilgileriEkle", new {kongreId = Model.Id})'">
+                            Banka Hesap Bilgileri Ekle
+                        </button>
+                        <button id="bankaDuzenle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("BankaBilgileriDüzenle", new {kongreId = Model.Id})'">
+                            Banka Hesap Bilgileri Düzenle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabIptalSartları()
+        {
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.KongreIptalSartları)
+                            </div>
+                            <div class="col-md-10">
+                                @Html.EditorFor_(m => m.KongreIptalSartları)
+                                @Html.ValidationMessageFor(m => m.KongreIptalSartları)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabOtelTanımlama()
+        {
+            <script>
+        $(document).ready(function () {
+            kontenjanHesapla();
+        });
+            function kontenjanHesapla() {
+            var el = $("#kongre-kontenjan")[0];
+            var ke = document.getElementById("kontenjanEkle");
+            //var kd = document.getElementById("kontenjanDuzenle");
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Html.Raw(Url.Action("KontenjanBilgileriListele", "Kongre"))",
+                data: { "kongreId": @Model.Id },
+                success: function (data) {
+                    if (data) {
+                        var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                        text = text + '<tr><th>Adı</th><th>Kişi sayısı</th><th>Tutar</th><th>Düzenle</th>';
+                        $.each(data, function (id, option) {
+                            if (id != "Id" && id != "CustomProperties") {
+                                var d = data[id].Döviz == 1 ? "TL" : (data[id].Döviz == 2 ? "$" : "€");
+                                var date = new Date(parseInt(data[id].Tarihinden.substr(6)));
+                                text = text + '<tr><td>' + data[id].Adı + '</td><td>' + data[id].OdaKisiSayısı + '</td>' + '</td><td>' + data[id].Tutar + ' ' + date + '</td><td><a href="../KontenjanBilgileriDüzenle?kontenjanId=' + data[id].Id + '&&kongreId=@Model.Id">Düzenle</a>'
+                            }
+                        });
+                        text = text + "</tbody></table>";
+                        el.innerHTML = text;
+                        //ke.style.display="none";
+                    }
+                    else {
+                       // ke.style.display="block";
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Kontenjan bilgileri alınırken hata oluştu.');
+                }
+            });
+        }
+            </script>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="kongre-kontenjan"></div>
+                    </div>
+                    <div class="panel-footer">
+                        <button id="kontenjanEkle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("KontenjanBilgileriEkle", new {kongreId = Model.Id})'">
+                            Otel Fiyat/Kontenjan Bilgileri Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabKayıtTanımlama()
+        {
+            <script>
+        $(document).ready(function () {
+            kayıtHesapla();
+        });
+        function kayıtHesapla() {
+            var el = $("#kongre-kayıt")[0];
+            var ke = document.getElementById("kayıtEkle");
+            //var kd = document.getElementById("kontenjanDuzenle");
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Html.Raw(Url.Action("KayıtBilgileriListele", "Kongre"))",
+                data: { "kongreId": @Model.Id },
+                success: function (data) {
+                    if (data) {
+                        var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                        text = text + '<tr><th>Adı</th><th>Kişi sayısı</th><th>Tutar</th><th>Düzenle</th>';
+                        $.each(data, function (id, option) {
+                            if (id != "Id" && id != "CustomProperties") {
+                                var d = data[id].Döviz == 1 ? "TL" : (data[id].Döviz == 2 ? "$" : "€");
+                                var date = new Date(parseInt(data[id].Tarihinden.substr(6)));
+                                text = text + '<tr><td>' + data[id].Adı + '</td><td>' + data[id].OdaKisiSayısı + '</td>' + '</td><td>' + data[id].Tutar + ' ' + d + '</td><td><a href="../KayıtBilgileriDüzenle?kayıtId=' + data[id].Id + '&&kongreId=@Model.Id">Düzenle</a>'
+                            }
+                        });
+                        text = text + "</tbody></table>";
+                        el.innerHTML = text;
+                        //ke.style.display="none";
+                    }
+                    else {
+                       // ke.style.display="block";
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Kontenjan bilgileri alınırken hata oluştu.');
+                }
+            });
+        }
+            </script>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="kongre-kayıt"></div>
+                    </div>
+                    <div class="panel-footer">
+                        <button id="kontenjanEkle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("KayıtBilgileriEkle", new {kongreId = Model.Id})'">
+                            Kayıt Bilgileri Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabKursTanımlama()
+        {
+            <script>
+        $(document).ready(function () {
+            kursHesapla();
+        });
+        function kursHesapla() {
+            var el = $("#kongre-kurs")[0];
+            var ke = document.getElementById("kursEkle");
+            //var kd = document.getElementById("kontenjanDuzenle");
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Html.Raw(Url.Action("KursBilgileriListele", "Kongre"))",
+                data: { "kongreId": @Model.Id },
+                success: function (data) {
+                    if (data) {
+                        var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                        text = text + '<tr><th>Adı</th><th>Kişi sayısı</th><th>Tutar</th><th>Düzenle</th>';
+                        $.each(data, function (id, option) {
+                            if (id != "Id" && id != "CustomProperties") {
+                                var d = data[id].Döviz == 1 ? "TL" : (data[id].Döviz == 2 ? "$" : "€");
+                                var date = new Date(parseInt(data[id].Tarih.substr(6)));
+                                text = text + '<tr><td>' + data[id].Adı + '</td><td>' + data[id].OdaKisiSayısı + '</td>' + '</td><td>' + data[id].Tutar + ' ' + d + '</td><td><a href="../KursBilgileriDüzenle?kayıtId=' + data[id].Id + '&&kongreId=@Model.Id">Düzenle</a>'
+                            }
+                        });
+                        text = text + "</tbody></table>";
+                        el.innerHTML = text;
+                        //ke.style.display="none";
+                    }
+                    else {
+                       // ke.style.display="block";
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Kurs bilgileri alınırken hata oluştu.');
+                }
+            });
+        }
+            </script>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="kongre-kurs"></div>
+                    </div>
+                    <div class="panel-footer">
+                        <button id="kursEkle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("KursBilgileriEkle", new {kongreId = Model.Id})'">
+                            Kurs Bilgileri Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabSponTanımlama()
+        {
+            <script>
+        $(document).ready(function () {
+            sponHesapla();
+        });
+        function sponHesapla() {
+            var el = $("#kongre-spon")[0];
+            var ke = document.getElementById("sponEkle");
+            //var kd = document.getElementById("kontenjanDuzenle");
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Html.Raw(Url.Action("GenelSponsorlukListele", "Kongre"))",
+                data: { "kongreId": @Model.Id },
+                success: function (data) {
+                    if (data) {
+                        var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                        text = text + '<tr><th>Adı</th><th>Kişi sayısı</th><th>Tutar</th><th>Düzenle</th>';
+                        $.each(data, function (id, option) {
+                            if (id != "Id" && id != "CustomProperties") {
+                                var d = data[id].Döviz == 1 ? "TL" : (data[id].Döviz == 2 ? "$" : "€");
+                                var date = new Date(parseInt(data[id].Tarih.substr(6)));
+                                text = text + '<tr><td>' + data[id].Adı + '</td><td>' + data[id].OdaKisiSayısı + '</td>' + '</td><td>' + data[id].Tutar + ' ' + d + '</td><td><a href="../KursBilgileriDüzenle?kayıtId=' + data[id].Id + '&&kongreId=@Model.Id">Düzenle</a>'
+                            }
+                        });
+                        text = text + "</tbody></table>";
+                        el.innerHTML = text;
+                        //ke.style.display="none";
+                    }
+                    else {
+                       // ke.style.display="block";
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Genel sponsorluk alınırken hata oluştu.');
+                }
+            });
+        }
+            </script>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="kongre-spon"></div>
+                    </div>
+                    <div class="panel-footer">
+                        <button id="sponEkle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("GenelSponsorlukEkle", new {kongreId = Model.Id})'">
+                            Genel Sponsorluk Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabTransferTanımlama()
+        {
+            <script>
+        $(document).ready(function () {
+            transferHesapla();
+        });
+        function transferHesapla() {
+            var el = $("#kongre-transfer")[0];
+            var ke = document.getElementById("transferEkle");
+            //var kd = document.getElementById("kontenjanDuzenle");
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Html.Raw(Url.Action("TransferListele", "Kongre"))",
+                data: { "kongreId": @Model.Id },
+                success: function (data) {
+                    if (data) {
+                        var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                        text = text + '<tr><th>Adı</th><th>Kişi sayısı</th><th>Tutar</th><th>Düzenle</th>';
+                        $.each(data, function (id, option) {
+                            if (id != "Id" && id != "CustomProperties") {
+                                var d = data[id].Döviz == 1 ? "TL" : (data[id].Döviz == 2 ? "$" : "€");
+                                var date = new Date(parseInt(data[id].Tarih.substr(6)));
+                                text = text + '<tr><td>' + data[id].Adı + '</td><td>' + data[id].OdaKisiSayısı + '</td>' + '</td><td>' + data[id].Tutar + ' ' + d + '</td><td><a href="../KursBilgileriDüzenle?kayıtId=' + data[id].Id + '&&kongreId=@Model.Id">Düzenle</a>'
+                            }
+                        });
+                        text = text + "</tbody></table>";
+                        el.innerHTML = text;
+                        //ke.style.display="none";
+                    }
+                    else {
+                       // ke.style.display="block";
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Transfer alınırken hata oluştu.');
+                }
+            });
+        }
+            </script>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="kongre-transfer"></div>
+                    </div>
+                    <div class="panel-footer">
+                        <button id="transferEkle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("TransferEkle", new {kongreId = Model.Id})'">
+                            Transfer Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabFirmaTanımlama()
+        {
+            <script>
+        $(document).ready(function () {
+            firmaHesapla();
+        });
+        function firmaHesapla() {
+            var el = $("#kongre-firma")[0];
+            var fe = document.getElementById("firmaEkle");
+            var fd = document.getElementById("firmaDüzenle");
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Html.Raw(Url.Action("FirmaBilgileriListele", "Kongre"))",
+                data: { "kongreId": @Model.Id },
+                success: function (data) {
+                    if (data) {
+                        var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+
+                        $.each(data, function (id, option) {
+                            if (id != "Id" && id != "CustomProperties") {
+                                text = text + '<tr><td>' + data[id].Adı + '</td></tr>';
+                                console.log("test");
+                            }
+                        });
+                        text = text + "</tbody></table>";
+                        el.innerHTML = text;
+                        fe.style.display = "none";
+                        fd.style.display ="block";
+                    }
+                    else {
+                        fe.style.display = "block";
+                        fd.style.display="none";
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Kontenjan bilgileri alınırken hata oluştu.');
+                }
+            });
+        }
+            </script>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="kongre-firma"></div>
+                    </div>
+                    <div class="panel-footer">
+                        <button id="firmaEkle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("FirmaBilgileriEkle", new {kongreId = Model.Id})'">
+                            Firma Bilgileri Ekle
+                        </button>
+                        <button id="firmaDüzenle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("FirmaBilgileriDüzenle", new {kongreId = Model.Id})'">
+                            Firma Bilgileri Düzenle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabKongreTakvimi()
+        {
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="scheduler"></div>
+                        <script>
+                        $(function () {
+                            $("#scheduler").kendoScheduler({
+                                date: new Date(Date.now()),
+                                startTime: new Date("2018/6/13 07:00 AM"),
+                                height: 600,
+                                views: [
+                                    "day",
+                                    "workWeek",
+                                    "week",
+                                    { type: "month", selected: true },
+                                    "agenda"
+                                ],
+                                timezone: "Etc/UTC",
+                                dataSource: {
+                                    batch: true,
+                                    transport: {
+                                        read: {
+                                            url: "@Html.Raw(Url.Action("TakvimListe", "Kongre",new { kongreId = Model.Id }))",
+                                            dataType: "json",
+                                            type: "POST",
+                                        },
+                                        update: {
+                                            url: "@Html.Raw(Url.Action("TakvimGüncelle", "Kongre", new { kongreId = Model.Id }))",
+                                            dataType: "json",
+                                            type: "POST",
+                                        },
+                                        create: {
+                                            url: "@Html.Raw(Url.Action("TakvimEkle", "Kongre", new { kongreId = Model.Id }))",
+                                            dataType: "json",
+                                            type: "POST",
+                                        },
+                                        destroy: {
+                                            url: "@Html.Raw(Url.Action("TakvimSil", "Kongre", new { kongreId = Model.Id }))",
+                                            dataType: "json",
+                                            type: "POST",
+                                        },
+                                        parameterMap: function (options, operation) {
+                                            if (operation !== "read" && options.models) {
+                                                return { models: kendo.stringify(options.models) };
+                                            }
+                                        }
+                                    },
+                                    schema: {
+                                        model: {
+                                            id: "Id",
+                                            fields: {
+                                                Id: { type: "number" },
+                                                taskId: { from: "TaskID", type: "number" },
+                                                title: { from: "Title", defaultValue: "Başlık yok", validation: { required: true } },
+                                                start: { type: "date", from: "Start" },
+                                                end: { type: "date", from: "End" },
+                                                startTimezone: { from: "StartTimezone" },
+                                                endTimezone: { from: "EndTimezone" },
+                                                description: { from: "Description" },
+                                                recurrenceId: { from: "RecurrenceID" },
+                                                recurrenceRule: { from: "RecurrenceRule" },
+                                                recurrenceException: { from: "RecurrenceException" },
+                                                ownerId: { from: "OwnerID", defaultValue: 1 },
+                                                isAllDay: { type: "boolean", from: "IsAllDay" }
+                                            }
+                                        }
+                                    },
+                                },
+                            });
+                        });
+                        </script>
+                    </div>
+                </div>
+            </div>
+        }
+

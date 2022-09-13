@@ -1,0 +1,78 @@
+﻿@model KongreKayıtBilgileriModel
+@{
+    var parabirimi = new List<SelectListItem>();
+    parabirimi.Add(new SelectListItem() { Text = "TL", Value = "1" });
+    parabirimi.Add(new SelectListItem() { Text = "$", Value = "2" });
+    parabirimi.Add(new SelectListItem() { Text = "€", Value = "3" });
+}
+@Html.ValidationSummary(true)
+
+
+<script>
+
+</script>
+@Html.HiddenFor(x => x.KayıtBilgileriModel.Id)
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KayıtBilgileriModel.KayıtTipiId)
+                        </div>
+                        <div class="col-md-10">
+                            <div class="input-group">
+                                @Html.DropDownListFor_(m => m.KayıtBilgileriModel.KayıtTipiId, new SelectList(Model.KayıtBilgileriModel.KayıtTipleri, "Value", "Text"))
+                                @Html.ValidationMessageFor(m => m.KayıtBilgileriModel.KayıtTipiId)
+                                <div class="input-group-addon">
+                                    <a href="#" class="btn btn-default" data-toggle="modal" data-target="#kayitTipiModal">Yeni Kayıt Tipi</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KayıtBilgileriModel.Adı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.KayıtBilgileriModel.Adı)
+                            @Html.ValidationMessageFor(m => m.KayıtBilgileriModel.Adı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KayıtBilgileriModel.Tutar)
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                @Html.EditorFor_(m => m.KayıtBilgileriModel.Tutar)
+                                <div class="input-group-addon">
+                                    @Html.DropDownListFor_(m => m.KayıtBilgileriModel.Döviz, parabirimi)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KayıtBilgileriModel.Tarihinden)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.KayıtBilgileriModel.Tarihinden)
+                            @Html.ValidationMessageFor(m => m.KayıtBilgileriModel.Tarihinden)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KayıtBilgileriModel.Tarihine)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.KayıtBilgileriModel.Tarihine)
+                            @Html.ValidationMessageFor(m => m.KayıtBilgileriModel.Tarihine)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,82 @@
+﻿@model KongrelerModel
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "Kongreler";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Kongreler");
+    Html.CssParçasıIlaveEt("~/Content/fx-card.css");
+}
+@Html.AntiForgeryToken()
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Kongreler
+    </h1>
+    <div class="pull-right">
+        <a href="KongreEkle" class="btn bg-blue">
+            <i class="fa fa-plus-square"></i>
+            Yeni
+        </a>
+    </div>
+</div>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    @if (Model.Kongreler.Count > 0)
+                    {
+                        <div class="product-grid home-page-product-grid">
+                            <div class="item-grid">
+                                @foreach (var item in Model.Kongreler)
+                                {
+                                    <div class="item-box">
+                                        @Html.Partial("_KongreKutusu", item)
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        var pager = Html.Pager(Model.PagerModel);
+                        if (!MvcHtmlString.IsNullOrEmpty(pager))
+                        {
+                            <div class="pager">
+                                @pager
+                            </div>
+                        }
+                    }
+                    <script type="text/javascript">
+                        $(document).on('click', '.flip', function () {
+                            var card = $(this).closest('.card');
+                            if (card.hasClass('flip-it')) card.removeClass('flip-it'); else card.addClass('flip-it');
+                        });
+
+                        $('.card').each(function () {
+                            var href = $(this).data('href');
+                            $(this).find('.image').css({
+                                backgroundImage: ['url(', href, ')'].join('')
+                            });
+                        });
+                    </script>
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('#musteri-ara').click(function () {
+                                var grid = $('#musteri-grid').data('kendoGrid');
+                                grid.dataSource.read();
+                                return false;
+                            });
+                        });
+
+                        function additionalData() {
+                            var data = {
+                                SearchStoreId: $('#SiteIdAra').val()
+                            };
+                            addAntiForgeryToken(data);
+                            return data;
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

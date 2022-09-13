@@ -1,0 +1,55 @@
+﻿@model KongreKursBilgileriModel
+@{
+    var parabirimi = new List<SelectListItem>();
+    parabirimi.Add(new SelectListItem() { Text = "TL", Value = "1" });
+    parabirimi.Add(new SelectListItem() { Text = "$", Value = "2" });
+    parabirimi.Add(new SelectListItem() { Text = "€", Value = "3" });
+}
+@Html.ValidationSummary(true)
+
+
+<script>
+
+</script>
+@Html.HiddenFor(x => x.KursBilgileriModel.Id)
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KursBilgileriModel.Adı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.KursBilgileriModel.Adı)
+                            @Html.ValidationMessageFor(m => m.KursBilgileriModel.Adı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KursBilgileriModel.Tutar)
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                @Html.EditorFor_(m => m.KursBilgileriModel.Tutar)
+                                <div class="input-group-addon">
+                                    @Html.DropDownListFor_(m => m.KursBilgileriModel.Döviz, parabirimi)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KursBilgileriModel.Tarih)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.KursBilgileriModel.Tarih)
+                            @Html.ValidationMessageFor(m => m.KursBilgileriModel.Tarih)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

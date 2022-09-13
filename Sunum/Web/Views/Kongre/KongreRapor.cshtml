@@ -1,0 +1,744 @@
+﻿@model KongreModel
+@using System.Globalization
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "Kongreler";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Kongreler");
+    CultureInfo ci = new CultureInfo("tr-TR");
+    //var mutabakat;
+}
+@Html.AntiForgeryToken();
+
+<script src="~/Scripts/kendo/2018.1.117/jszip.min.js"></script>
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Kongre Raporları
+    </h1>
+</div>
+<div class="content">
+    <div class="form-horizontal">
+        <div id="katılımcı-düzenle" class="nav-tabs-custom">
+            <ul class="nav-tabs nav">
+                @Html.RenderBootstrapTabHeader("tab-bilgi", "Genel", true)
+                @Html.RenderBootstrapTabHeader("kayıt", "Kayıt")
+                @Html.RenderBootstrapTabHeader("konaklama", "Konaklama")
+                @Html.RenderBootstrapTabHeader("transfer", "Transfer")
+                @Html.RenderBootstrapTabHeader("kurs", "Kurs")
+                @Html.RenderBootstrapTabHeader("mutabakata", "Acenta Mutabakat")
+                @Html.RenderBootstrapTabHeader("mutabakato", "Otel Mutabakat")
+            </ul>
+            <div class="tab-content">
+                @Html.RenderBootstrapTabContent("tab-bilgi", @Genel(), true)
+                @Html.RenderBootstrapTabContent("kayıt", @Kayıt())
+                @Html.RenderBootstrapTabContent("konaklama", @Konaklama())
+                @Html.RenderBootstrapTabContent("transfer", @Transfer())
+                @Html.RenderBootstrapTabContent("kurs", @Kurs())
+                @Html.RenderBootstrapTabContent("mutabakata", @Mutabakat())
+                @Html.RenderBootstrapTabContent("mutabakato", @MutabakatOtel())
+            </div>
+        </div>
+    </div>
+</div>
+@helper Genel()
+    {
+        <div class="pull-right">
+            <button class="btn bg-blue" type="submit" name="kaydet" onclick="printDiv('printGenel')">
+                <i class="fa fa-print"></i>
+                Yazdır
+            </button>
+        </div>
+        <div id="printGenel" class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <table class="table table-bordered table-hover table-striped">
+                        <tbody>
+                            <tr>
+                                <td class="doc-table-left">Toplam kayıt sayısı:</td>
+                                <td>
+                                    <div id="tKayıtSayı"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="doc-table-left">Toplam konaklama sayısı:</td>
+                                <td>
+                                    <div id="tKonaklamaSayı"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="doc-table-left">Toplam transfer sayısı:</td>
+                                <td>
+                                    <div id="tTransferSayı"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="doc-table-left">Toplam kurs sayısı:</td>
+                                <td>
+                                    <div id="tKursSayı"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="doc-table-left">Toplam kayıt geliri:</td>
+                                <td>
+                                    <div id="tKayıtKazanc"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="doc-table-left">Toplam konaklama geliri:</td>
+                                <td>
+                                    <div id="tKonaklamaKazanc"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+}
+@helper Kayıt()
+    {
+        <div class="pull-right">
+            <button class="btn bg-blue" type="submit" name="kaydet" onclick="printDiv('printKayıt')">
+                <i class="fa fa-print"></i>
+                Yazdır
+            </button>
+        </div>
+        <div id="printKayıt" class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="chart"></div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="chart2"></div>
+                </div>
+            </div>
+        </div>
+}
+@helper Konaklama()
+    {
+        <div class="pull-right">
+            <button class="btn bg-blue" type="submit" name="kaydet" onclick="printDiv('printKonaklama')">
+                <i class="fa fa-print"></i>
+                Yazdır
+            </button>
+        </div>
+        <div id="printKonaklama" class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="chart3"></div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="chart4"></div>
+                </div>
+            </div>
+        </div>
+}
+@helper Transfer()
+    {
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                </div>
+            </div>
+        </div>
+}
+@helper Kurs()
+    {
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                </div>
+            </div>
+        </div>
+}
+
+@helper Mutabakat()
+    {
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(model => model.MevcutMusteri)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(model => model.KullanılabilirMusteriler, Model.KullanılabilirMusteriler, required: true)
+                            @Html.ValidationMessageFor(model => model.MevcutMusteri)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+}
+@helper MutabakatOtel()
+    {
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            Single oda tutarı
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control text-box single-line" id="singleTutar" type="text" value="">
+                        </div>
+                        <div class="col-md-2">
+                            Double oda tutarı
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control text-box single-line" id="doubleTutar" type="text" value="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            Triple oda tutarı
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control text-box single-line" id="tripleTutar" type="text" value="">
+                        </div>
+                        <div class="col-md-6">
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            Ücretsiz single oda
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control text-box single-line" id="sngOda" type="text" value="">
+                        </div>
+                        <div class="col-md-2">
+                            Tarihi
+                        </div>
+                        <div class="col-md-4">
+                            <input id="sngTarih" value="@((DateTime.Today).ToShortDateString())" />
+                            <script>
+                                $("#sngTarih").kendoDatePicker({
+                                    format: kendo.culture("tr-TR"),
+                                    popup: {
+                                        position: "bottom right",
+                                        origin: "top right"
+                                    }
+                                });
+                            </script>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            Ücretsiz double oda
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control text-box single-line" id="dblOda" type="text" value="">
+                        </div>
+                        <div class="col-md-2">
+                            Tarihi
+                        </div>
+                        <div class="col-md-4">
+                            <input id="dblTarih" value="@((DateTime.Today).ToShortDateString())" />
+                            <script>
+                                $("#dblTarih").kendoDatePicker({
+                                    format: kendo.culture("tr-TR"),
+                                    //parseFormats: ["dd.MM.yyyy"],
+                                    popup: {
+                                        position: "bottom right",
+                                        origin: "top right"
+                                    }
+                                });
+                            </script>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            Ücretsiz triple oda
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control text-box single-line" id="trpOda" type="text" value="">
+                        </div>
+                        <div class="col-md-2">
+                            Tarihi
+                        </div>
+                        <div class="col-md-4">
+                            <input id="trpTarih" value="@((DateTime.Today).ToShortDateString())" />
+                            <script>
+                                $("#trpTarih").kendoDatePicker({
+                                    format: kendo.culture("tr-TR"),
+                                    popup: {
+                                        position: "bottom right",
+                                        origin: "top right"
+                                    }
+                                });
+                            </script>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-6">
+                            <input id="hesapla" type="button" class="btn bg-blue" value="Hesapla" />
+                            <button class="btn bg-blue" type="submit" name="kaydet" onclick="printDiv('printThis')">
+                                <i class="fa fa-print"></i>
+                                Yazdır
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="printThis">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div id="sOge"></div>
+                                <div id="sOge2"></div>
+                                <div id="sOge3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+}
+<script type="text/javascript">
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+    $(document).ready(function () {
+        var data2;
+        var sbBolum = $("#tBolum");
+        $('#hesapla').click(function () {
+
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: '@Url.Action("OtelMutebakat", "Kongre")',
+                data: { "kongreId": @Model.Id },
+                success: function (data) {
+                    var toplamSingle = 0;
+                    var toplamDouble = 0;
+                    var toplamTriple = 0;
+                    var toplamTutar = 0;
+                    var toplamOda = 0;
+                    var sinleRate = document.getElementById("singleTutar").value;
+                    var doubleRate = document.getElementById("doubleTutar").value;
+                    var tripleRate = document.getElementById("tripleTutar").value;
+                    var freesingle = document.getElementById("sngOda").value;
+                    var freedouble = document.getElementById("dblOda").value;
+                    var freetriple = document.getElementById("trpOda").value;
+                    var sngTarih = document.getElementById("sngTarih").value;
+                    var dblTarih = document.getElementById("dblTarih").value;
+                    var trpTarih = document.getElementById("trpTarih").value;
+
+                    var el = $("#sOge")[0];
+                    //var el2 = $("#sOge2")[0];
+                    //var el3 = $("#sOge3")[0];
+                    var text = '<table class="table table-bordered table-hover table-striped" style="font-size:9px;"><tbody>';
+                    text += "<tr>" +
+                        "<td>Tarih</td>" +
+                        "<td colspan='2'>Single Room</td>" +
+                        "<td colspan='2'>Double Room</td>" +
+                        "<td colspan='2'>Triple Room</td>" +
+                        "<td colspan='2'></td>" +
+                        "<td colspan='2'></td>" +
+                        "<td colspan='2'>Paying Room</td>" +
+                        "<td colspan='5' align='center'>FREE ROOMS</td>" +
+                        "<td colspan='3' align='center'>TOTAL</td><td></td>" +
+                        "</tr><tr>" +
+                        "<td>Rate</td>" +
+                        "<td>Room</td>" +
+                        "<td>Rate</td>" +
+                        "<td>Room</td>" +
+                        "<td>Rate</td>" +
+                        "<td>Room</td>" +
+                        "<td>Rate</td>" +
+                        "<td>Room</td>" +
+                        "<td>Rate</td>" +
+                        "<td>Room</td>" +
+                        "<td>Rate</td>" +
+                        "<td>Room</td>" +
+                        "<td>Revenue</td>" +
+                        "<td>Sng</td>" +
+                        "<td>Dbl</td>" +
+                        "<td>Trp</td>" +
+                        "<td>Total Free</td>" +
+                        "<td>Total Free Pax</td>" +
+                        "<td>Total Room</td>" +
+                        "<td>Total Pax</td>" +
+                        "<td>Revenue</td>" +
+                        "<td>Revenue</td>";
+                    for (var i = 0; i < data.length; i++) {
+                        var toplamGunlukOda = 0;
+                        var toplamGunlukTutar = 0;
+                        var toplamPax = 0;
+                        toplamGunlukOda = data[i].SingleSayi + data[i].DoubleSayi + data[i].TripleSayi;
+                        toplamGunlukTutar = data[i].SingleSayi * sinleRate + data[i].DoubleSayi * doubleRate + data[i].TripleSayi * tripleRate;
+                        toplamTutar += toplamGunlukTutar;
+                        toplamOda += toplamGunlukOda;
+                        toplamPax = data[i].SingleSayi + data[i].DoubleSayi * 2 + data[i].TripleSayi * 3;
+                        var skf = 0;
+                        var dkf = 0;
+                        var tkf = 0;
+                        var skfToplam = 0;
+                        var dkfToplam = 0;
+                        var tkfToplam = 0;
+                        var skf = data[i].SingleKontenjan - data[i].SingleSayi;
+                        var dkf = data[i].DoubleKontenjan - data[i].DoubleSayi;
+                        var tkf = data[i].TripleKontenjan - data[i].TripleSayi;
+                        var trh = data[i].Tarihi;
+                        text += "<tr><td>" + trh + "</td>" +
+                            "<td>" + data[i].SingleSayi + "</td>" +
+                            "<td>" + sinleRate + "</td>" +
+                            "<td>" + data[i].DoubleSayi + "</td>" +
+                            "<td>" + doubleRate + "</td>" +
+                            "<td>" + data[i].TripleSayi + "</td>" +
+                            "<td>" + tripleRate + "</td>" +
+                            "<td>Room</td>" +
+                            "<td>Rate</td>" +
+                            "<td>Room</td>" +
+                            "<td>Rate</td>" +
+                            "<td>" + toplamGunlukOda + "</td>" +
+                            "<td>" + toplamGunlukTutar + "</td>" +
+
+                            "<td>" + (trh == sngTarih ? freesingle : "") + "</td>" +
+                            "<td>" + (trh == dblTarih ? freedouble : "") + "</td>" +
+                            "<td>" + (trh == trpTarih ? freetriple : "") + "</td>" +
+                            "<td>" + (skf + dkf + tkf) + "</td>" +
+                            "<td>" + (skf + dkf * 2 + tkf * 3) + "</td>" +
+                            "<td>" + (toplamGunlukOda + skf + dkf + tkf) + "</td>" +
+                            "<td>" + ((skf + dkf * 2 + tkf * 3) + toplamPax) + "</td>" +
+                            "<td>" + toplamGunlukTutar + "</td>" +
+                            "<td>" + + "</td>" +
+                            "</tr>";
+                        toplamSingle += data[i].SingleSayi;
+                        toplamDouble += data[i].DoubleSayi;
+                        toplamTriple += data[i].TripleSayi;
+                        skfToplam += skf;
+                        dkfToplam += dkf;
+                        tkfToplam += tkf;
+                    }
+                    text += "<tr>" +
+                        "<td>Total</td>" +
+                        "<td>" + toplamSingle + "</td>" +
+                        "<td>0</td>" +
+                        "<td>" + toplamDouble + "</td>" +
+                        "<td>Rate</td>" +
+                        "<td>" + toplamTriple + "</td>" +
+                        "<td>Rate</td>" +
+                        "<td>Room</td>" +
+                        "<td>Rate</td>" +
+                        "<td>Room</td>" +
+                        "<td>Rate</td>" +
+                        "<td>" + toplamOda + "</td>" +
+                        "<td>" + toplamTutar + "</td></tr>";
+                    text = text + "</tbody></table>";
+                    el.innerHTML = text;
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Failed to retrieve states.');
+                }
+            });
+        });
+    });
+</script>
+<script>
+    $(function () {
+        var ddl = @Html.FieldIdFor(model => model.KullanılabilirMusteriler);
+        $(ddl).change(function () {
+            var selectedItem = $(this).val();
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: "@Html.Raw(Url.Action("GenerateSpreadsheet", "Kongre"))",
+            data: { "musteri": selectedItem,"kongreId":@Model.Id },
+            success: function (data) {
+                if (data != null && (data.errorMessage == null || data.errorMessage === "")) {
+
+                    if (data.fileName != "") {
+                        window.location.href = "DownloadSpreadsheet/?file=" + data.fileName;
+                    }
+                } else {
+                    alert("Dosya alınırken hata oluştu.", data.errorMessage);
+                }
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert('Dosya alınırken hata oluştu.');
+            }
+        });
+        });
+    });
+</script>
+<script>
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+    $(document).ready(createChart);
+    $(document).ready(createChart2);
+    $(document).ready(createChart3);
+    $(document).ready(createChart4);
+    $(document).ready(createChart4);
+    $(document).bind("kendo:skinChange", createChart);
+    $(document).bind("kendo:skinChange", createChart2);
+    $(document).bind("kendo:skinChange", createChart3);
+    $(document).bind("kendo:skinChange", createChart4);
+    var tKayıt = $("#tKayıtSayı");
+    var tKayıtKazanc = $("#tKayıtKazanc");
+    var tKonaklama = $("#tKonaklamaSayı");
+    var tKonaklamaKazanc = $("#tKonaklamaKazanc");
+    var f = function (num) {
+        return parseFloat(num).toFixed(2).toLocaleString();
+    };
+    $.ajax({
+        cache: false,
+        type: "POST",
+        url: "@Html.Raw(Url.Action("GenelToplamKonaklama", "Kongre"))",
+        data: { "kongreId": @Model.Id },
+        success: function (data) {
+            tKayıt.html('');
+            tKayıtKazanc.html('');
+            tKayıtKazanc.append(f(data.KayıtGeliri));
+            tKonaklamaKazanc.append(f(data.KonaklamaGeliri));
+            tKayıt.append(data.KayıtSayısı);
+            tKonaklama.append(data.KonaklamaSayısı);
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            alert('Rapor alınırken hata oluştu.');
+        }
+    });
+
+    function createChart() {
+        $("#chart").kendoChart({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "@Html.Raw(Url.Action("MusteriSayısıKayıt", "Kongre",new { kongreId=Model.Id}))",
+                        type: "POST",
+                        dataType: "json"
+                    }
+                }
+            },
+            title: {
+                text: "Müşterilere göre katılımcı kayıt sayısı dağılımı"
+            },
+            legend: {
+                position: "top"
+            },
+            seriesDefaults: {
+                type: "bar",
+                labels: {
+                    visible: true,
+                    background: "transparent"
+                }
+            },
+            series:
+                [{
+                    field: 'Count',
+                    categoryField: "KayıtSponsoru",
+                    name: "Müşteriler"
+                }],
+            categoryAxis: {
+                labels: {
+                    rotation: 0
+                },
+                majorGridLines: {
+                    visible: false
+                }
+            },
+            valueAxis: {
+                labels: {
+                    format: "N0"
+                },
+                majorUnit: 10,
+                line: {
+                    visible: false
+                }
+            },
+            tooltip: {
+                visible: true,
+                format: "N0"
+            }
+        });
+    }
+
+    function createChart2() {
+        $("#chart2").kendoChart({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "@Html.Raw(Url.Action("MusteriSayısıKayıt", "Kongre",new { kongreId= Model.Id }))",
+                        type: "POST",
+                        dataType: "json"
+                    }
+                }
+            },
+            title: {
+                text: "Müşterilere göre katılımcı kayıt kazancı dağılımı"
+            },
+            legend: {
+                position: "top"
+            },
+            seriesDefaults: {
+                type: "bar",
+                labels: {
+                    visible: true,
+                    background: "transparent"
+                }
+            },
+            series:
+                [{
+                    field: 'Kazanc',
+                    categoryField: "KayıtSponsoru",
+                    name: "Müşteriler"
+                }],
+            categoryAxis: {
+                labels: {
+                    rotation: 0
+                },
+                majorGridLines: {
+                    visible: false
+                }
+            },
+            valueAxis: {
+                labels: {
+                    format: "N0"
+                },
+                majorUnit: 10000,
+                line: {
+                    visible: false
+                }
+            },
+            tooltip: {
+                visible: true,
+                format: "N0"
+            }
+        });
+    }
+    function createChart3() {
+        $("#chart3").kendoChart({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "@Html.Raw(Url.Action("MusteriSayısıKonaklama", "Kongre",new { kongreId= Model.Id }))",
+                        type: "POST",
+                        dataType: "json"
+                    }
+                }
+            },
+            title: {
+                text: "Müşterilere göre katılımcı konaklama sayısı dağılımı"
+            },
+            legend: {
+                position: "top"
+            },
+            seriesDefaults: {
+                type: "bar",
+                labels: {
+                    visible: true,
+                    background: "transparent"
+                }
+            },
+            series:
+                [{
+                    field: 'Count',
+                    categoryField: "KonaklamaSponsoru",
+                    name: "Müşteriler"
+                }],
+            categoryAxis: {
+                labels: {
+                    rotation: 0
+                },
+                majorGridLines: {
+                    visible: false
+                }
+            },
+            valueAxis: {
+                labels: {
+                    format: "N0"
+                },
+                majorUnit: 10,
+                line: {
+                    visible: false
+                }
+            },
+            tooltip: {
+                visible: true,
+                format: "N0"
+            }
+        });
+    }
+
+    function createChart4() {
+        $("#chart4").kendoChart({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "@Html.Raw(Url.Action("MusteriSayısıKonaklama", "Kongre",new { kongreId= Model.Id }))",
+                        type: "POST",
+                        dataType: "json"
+                    }
+                }
+            },
+            title: {
+                text: "Müşterilere göre katılımcı kayıt kazancı dağılımı"
+            },
+            legend: {
+                position: "top"
+            },
+            seriesDefaults: {
+                type: "bar",
+                labels: {
+                    visible: true,
+                    background: "transparent"
+                }
+            },
+            series:
+                [{
+                    field: 'Kazanc',
+                    categoryField: "KonaklamaSponsoru",
+                    name: "Müşteriler"
+                }],
+            categoryAxis: {
+                labels: {
+                    rotation: 0
+                },
+                majorGridLines: {
+                    visible: false
+                }
+            },
+            valueAxis: {
+                labels: {
+                    format: "N0"
+                },
+                majorUnit: 10000,
+                line: {
+                    visible: false
+                }
+            },
+            tooltip: {
+                visible: true,
+                format: "N0"
+            }
+        });
+    }
+
+</script>

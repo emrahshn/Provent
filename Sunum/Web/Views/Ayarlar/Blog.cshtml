@@ -1,0 +1,119 @@
+﻿@model BlogAyarlarModel
+
+@{
+    ViewBag.Title = "Blog";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Blog");
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Blog
+        </h1>
+        <div class="pull-right">
+            <button type="submit" name="kaydet" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet
+            </button>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="form-horizontal">
+            @Html.Action("Mod", "Ayarlar")
+            @Html.ValidationSummary(false)
+
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Blog Ayarları
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.LabelFor_(model => model.Etkin)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.Etkin)
+                                @Html.ValidationMessageFor(model => model.Etkin)
+                            </div>
+                        </div>
+                        <div class="form-group advanced-setting">
+                            <div class="col-md-3">
+                                @Html.LabelFor_(model => model.GirdilerSayfaBüyüklüğü)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.GirdilerSayfaBüyüklüğü)
+                                @Html.ValidationMessageFor(model => model.GirdilerSayfaBüyüklüğü)
+                            </div>
+                        </div>
+                        <div class="form-group advanced-setting">
+                            <div class="col-md-3">
+                                @Html.LabelFor_(model => model.TagSayısı)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.TagSayısı)
+                                @Html.ValidationMessageFor(model => model.TagSayısı)
+                            </div>
+                        </div>
+                        <div class="form-group advanced-setting">
+                            <div class="col-md-3">
+                                @Html.LabelFor_(model => model.RssURLBaşlığıGöster)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.RssURLBaşlığıGöster)
+                                @Html.ValidationMessageFor(model => model.RssURLBaşlığıGöster)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Blog yorumları ayarları
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.LabelFor_(model => model.ZiyaretçilerYorumYapabilir)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.ZiyaretçilerYorumYapabilir)
+                                @Html.ValidationMessageFor(model => model.ZiyaretçilerYorumYapabilir)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.LabelFor_(model => model.BlogYorumlarıOnaylanmalı)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.BlogYorumlarıOnaylanmalı)
+                                @Html.ValidationMessageFor(model => model.BlogYorumlarıOnaylanmalı)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-3">
+                                @Html.LabelFor_(model => model.YeniBlogYorumunuUyar)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.YeniBlogYorumunuUyar)
+                                @Html.ValidationMessageFor(model => model.YeniBlogYorumunuUyar)
+                            </div>
+                        </div>
+                        <div class="form-group advanced-setting">
+                            <div class="col-md-3">
+                                @Html.LabelFor_(model => model.BlogYorumlarıTümSitelerdeGöster)
+                            </div>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.BlogYorumlarıTümSitelerdeGöster)
+                                @Html.ValidationMessageFor(model => model.BlogYorumlarıTümSitelerdeGöster)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+}

@@ -1,0 +1,26 @@
+﻿@model KongreModel
+@{
+    ViewBag.Title = "Ekle";
+    Html.AktifMenuÖğesiSistemAdıBelirle("KongreEkle");
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Kongre Ekle
+            <small><i class="fa fa-arrow-circle-left"></i>@Html.ActionLink("Kongreler listesine geri dön", "KongreListe")</small>
+        </h1>
+        <div class="pull-right">
+            <button class="btn bg-blue" type="submit" name="kaydet">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet
+            </button>
+            <button class="btn bg-blue" type="submit" name="kaydet-devam">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet ve Devam Et
+            </button>
+        </div>
+    </div>
+    @Html.Partial("_EkleVeyaDüzenleKongre", Model)
+}

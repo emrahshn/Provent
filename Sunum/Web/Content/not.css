@@ -1,0 +1,56 @@
+﻿.faturaResim {
+    display: none;
+}
+    .faturaResim.active {
+        position: absolute;
+        z-index: 100;
+        width: 400px;
+        box-shadow: 0 0 2px rgba(0,0,0,0.25);
+        background-color: #fff;
+        display: block;
+    }
+
+    .faturaResim .items {
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        margin: 10px;
+        white-space: normal;
+        text-align: left;
+    }
+span#resimlink.grid-report-item {
+    padding: 8px 13px !important;
+}
+.not {
+    display: none;
+}
+
+    .not .desc {
+        margin:10px;
+    }
+
+    .not.active {
+        position: absolute;
+        right: 20px;
+        z-index: 100;
+        width: 300px;
+        box-shadow: 0 0 2px rgba(0,0,0,0.25);
+        background-color: #fff;
+        display: block;
+        margin: -10px;
+    }
+
+    .not .items {
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        margin: 10px;
+        white-space: normal;
+        text-align: left;
+    }
+
+    .not .buttons {
+        margin: 0 0 5px;
+    }
+
+ span#notlink.grid-report-item {
+    padding: 8px 13px !important;
+}

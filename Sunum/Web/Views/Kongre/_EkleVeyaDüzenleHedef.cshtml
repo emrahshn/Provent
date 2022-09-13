@@ -1,0 +1,126 @@
+﻿@model KongreGelirGiderHedefModel
+
+@Html.ValidationSummary(true)
+@{
+    var parabirimi = new List<SelectListItem>();
+    parabirimi.Add(new SelectListItem() { Text = "TL", Value = "1" });
+    parabirimi.Add(new SelectListItem() { Text = "$", Value = "2" });
+    parabirimi.Add(new SelectListItem() { Text = "€", Value = "3" });
+}
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+
+                        <div class="col-md-2"></div>
+                        <div class="col-md-10">
+                            <script type="text/javascript">
+                                function checkGelirModel(gelir) {
+                                    var ddl = $("#GelirGiderHedefiModel_GelirKalemiId");
+                                    if (gelir) {
+                                        @Model.GelirGiderHedefiModel.Gelir=true;
+                                        $("#gelirgider").val(true);
+                                        $('#onoffswitch').val(true);
+                                        ddl.html('');
+                                        $.ajax({
+                                            cache: false,
+                                            type: "GET",
+                                            url: "@Html.Raw(Url.Action("GelirKalemleriAl", "Kongre"))",
+                                                data: { "gelir": true },
+                                                success: function (data) {
+                                                $.each(data, function (id, option) {
+                                                    ddl.append($('<option></option>').val(option.id).html(option.name));
+                                                });
+                                            },
+                                            error: function (xhr, ajaxOptions, thrownError) {
+                                                alert('İlçeler alınırken hata oluştu.');
+                                            }
+                                        });
+                                    } else {
+                                        @Model.GelirGiderHedefiModel.Gelir=false;
+                                        $("#gelirgider").val(false);
+                                        $('#onoffswitch').val(false);
+                                        ddl.html('');
+                                        $.ajax({
+                                            cache: false,
+                                            type: "GET",
+                                            url: "@Html.Raw(Url.Action("GelirKalemleriAl", "Kongre"))",
+                                                data: { "gelir": false },
+                                                success: function (data) {
+                                                $.each(data, function (id, option) {
+                                                    ddl.append($('<option></option>').val(option.id).html(option.name));
+                                                });
+                                            },
+                                            error: function (xhr, ajaxOptions, thrownError) {
+                                                alert('İlçeler alınırken hata oluştu.');
+                                            }
+                                        });
+                                    }
+                                }
+                                checkGelirModel($("#gelirModel").is(':checked'));
+                                $(document).ready(function () {
+                                    $("#gelirMode").click(function () {
+                                        checkGelirModel($(this).is(':checked'));
+                                    });
+                                });
+                            </script>
+                            <div class="onoffswitch">
+                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="gelirMode" checked="checked">
+                                <label class="onoffswitch-label" for="gelirMode">
+                                    <span class="onoffswitch-inner"
+                                          data-locale-basic="Gider"
+                                          data-locale-advanced="Gelir"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    @Html.HiddenFor(x => x.GelirGiderHedefiModel.Gelir, new { id = "gelirgider" })
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.GelirGiderHedefiModel.Adı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(model => model.GelirGiderHedefiModel.GelirKalemiId, new SelectList(Model.GelirGiderHedefiModel.KullanılabilirKalemler, "Value", "Text"))
+                            @Html.ValidationMessageFor(m => m.GelirGiderHedefiModel.KullanılabilirKalemler)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.GelirGiderHedefiModel.Adet)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.GelirGiderHedefiModel.Adet)
+                            @Html.ValidationMessageFor(m => m.GelirGiderHedefiModel.Adet)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.GelirGiderHedefiModel.Gün)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.GelirGiderHedefiModel.Gün)
+                            @Html.ValidationMessageFor(m => m.GelirGiderHedefiModel.Gün)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.GelirGiderHedefiModel.BirimFiyat)
+                        </div>
+                        <div class="col-md-6">
+                            @Html.EditorFor_(m => m.GelirGiderHedefiModel.BirimFiyat)
+                            @Html.ValidationMessageFor(m => m.GelirGiderHedefiModel.BirimFiyat)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor_(m => m.GelirGiderHedefiModel.Döviz, parabirimi)
+                            @Html.ValidationMessageFor(m => m.GelirGiderHedefiModel.Döviz)
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

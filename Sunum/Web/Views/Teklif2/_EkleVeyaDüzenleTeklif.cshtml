@@ -1,0 +1,581 @@
+﻿@model Teklif2Model
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "Teklif Sektörü";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Teklif");
+    CultureInfo tr = new CultureInfo("tr-TR");
+    bool hazırlık = false;
+    bool konfirme = false;
+    bool biten = false;
+    var gridText = ""; gridText = @hazırlık ? "Hazırlık" : (konfirme ? "Konfirme" : "Tamamlandı");
+}
+<link href="~/Content/wizard/wizard.css" rel="stylesheet" />
+<script src="@Url.Content("~/Scripts/kendo/2018.1.117/cultures/kendo.culture.tr-TR.min.js")"></script>
+@using System.Globalization;
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+<style type="text/css">
+    .k-numeric-wrap.k-state-default {
+        padding-right: 0;
+    }
+
+    .k-numerictextbox {
+        margin-right: 0 !important;
+    }
+
+    div .k-treeview {
+        border-width: 0;
+        background: 0 0;
+        overflow: auto;
+        white-space: normal;
+    }
+
+    .donut-wrapper {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        background-color: #3f3f3f;
+    }
+
+    .donut-chart {
+        width: 180px;
+        height: 180px;
+    }
+
+    .wizard .tab-pane {
+        padding-top: 0;
+    }
+
+    .k-grouping-row p {
+        width: 100%;
+    }
+</style>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="row">
+                        <section>
+                            <div class="wizard">
+                                <div class="wizard-inner">
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li role="presentation" class="active" id="liYeniTeklif">
+                                            <a href="#step1" data-toggle="tab" aria-controls="Teklif Bilgileri" role="tab" title="Teklif Bilgileri">
+                                                <span class="round-tab">
+                                                    <i class="glyphicon glyphicon-edit"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li role="presentation" class="disabled" id="liOperasyon">
+                                            <a href="#step2" data-toggle="tab" aria-controls="Teklif Kalemleri" role="tab" title="Teklif Kalemleri">
+                                                <span class="round-tab">
+                                                    <i class="glyphicon glyphicon-copy"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li role="presentation" class="disabled" id="liKonfirme">
+                                            <a href="#step3" data-toggle="tab" aria-controls="Konfirme Teklif" role="tab" title="Konfirme Teklif">
+                                                <span class="round-tab">
+                                                    <i class="glyphicon glyphicon-certificate"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li role="presentation" class="disabled" id="liBiten">
+                                            <a href="#step4" data-toggle="tab" aria-controls="Tamamlanan Teklif" role="tab" title="Tamamlanan Teklif">
+                                                <span class="round-tab">
+                                                    <i class="glyphicon glyphicon-ok"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <form role="form">
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" role="tabpanel" id="step1">
+                                            <div id="tKayit">
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.Adı)
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.EditorFor_(m => m.Adı)
+                                                        @Html.ValidationMessageFor(m => m.Adı)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.Aciklama)
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.EditorFor_(m => m.Aciklama)
+                                                        @Html.ValidationMessageFor(m => m.Aciklama)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.UlkeId)
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        @Html.DropDownListFor_(model => model.UlkeId, new SelectList(Model.Ulkeler, "Id", "Adı"))
+                                                        <span id="sehir-loading-progress" style="display: none;">Lütfen bekleyiniz..</span>
+                                                        @Html.ValidationMessageFor(m => m.UlkeId)
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        @Html.LabelFor_(m => m.SehirId)
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        @Html.DropDownListFor_(model => model.SehirId, new SelectList(Model.Sehirler, "Id", "Adı"))
+                                                        @Html.ValidationMessageFor(m => m.SehirId)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.Konum)
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.EditorFor_(m => m.Konum)
+                                                        @Html.ValidationMessageFor(m => m.Konum)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.MekanAdı)
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.EditorFor_(m => m.MekanAdı)
+                                                        @Html.ValidationMessageFor(m => m.MekanAdı)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.ToplantıAdı)
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.EditorFor_(m => m.ToplantıAdı)
+                                                        @Html.ValidationMessageFor(m => m.ToplantıAdı)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.Kod)
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.EditorFor_(m => m.Kod)
+                                                        @Html.ValidationMessageFor(m => m.Kod)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.KurDolar)
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <script type="text/javascript">
+                                                        function dolarKuruAl() {
+                                                            var tDolar = @Html.FieldIdFor(m => m.KurDolar);
+                                                                $.ajax({
+                                                                    cache: false,
+                                                                    type: "GET",
+                                                                    url: "@Html.Raw(Url.Action("DolarKuruAl", "Teklif"))",
+                                                                    success: function (data) {
+                                                                        tDolar.value = data;
+                                                                        var input = document.createElement("input");
+                                                                        tDolar.append(data, input);
+                                                                        tDolar.innerText = data;
+                                                                        //tDolar.closest("span")[0].childNodes[0].title =data
+                                                                    },
+                                                                    error: function (xhr, ajaxOptions, thrownError) {
+                                                                        alert('Dolar kuru alınırken hata oluştu.');
+                                                                    }
+                                                                });
+                                                            }
+                                                        </script>
+                                                        <div class="input-group input-group-short">
+                                                            @Html.EditorFor_(m => m.KurDolar, "TL")
+                                                            <span class="input-group-btn">
+                                                                <button id="imkb" name="dolar-kuru-kaydet" class="btn btn-primary" onclick="dolarKuruAl();return false;">
+                                                                    Dolar(IMKB)
+                                                                </button>
+                                                            </span>
+                                                            @Html.ValidationMessageFor(m => m.KurDolar)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.KurEuro)
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <script type="text/javascript">
+                                                    function euroKuruAl() {
+                                                        var tEuro = @Html.FieldIdFor(m => m.KurEuro);
+                                                        $.ajax({
+                                                            cache: false,
+                                                            type: "GET",
+                                                            url: "@Html.Raw(Url.Action("EuroKuruAl", "Teklif"))",
+                                                            success: function (data) {
+                                                                tEuro.value = data;
+                                                                tEuro.innerText = data;
+                                                                //tDolar.closest("span")[0].childNodes[0].title =data
+                                                            },
+                                                            error: function (xhr, ajaxOptions, thrownError) {
+                                                                alert('Euro kuru alınırken hata oluştu.');
+                                                            }
+                                                        });
+                                                    }
+                                                        </script>
+                                                        <div class="input-group input-group-short">
+                                                            @Html.EditorFor_(m => m.KurEuro, "TL")
+                                                            <span class="input-group-btn">
+                                                                <button id="imkb" name="euro-kuru-kaydet" class="btn btn-primary" onclick="euroKuruAl(); return false;">
+                                                                    EURO(IMKB)
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                        @Html.ValidationMessageFor(m => m.KurEuro)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.HizmetBedeli)
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        @Html.EditorFor_(m => m.HizmetBedeli, "%")
+                                                        @Html.ValidationMessageFor(m => m.HizmetBedeli)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.BaslamaTarihi)
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.EditorFor_(m => m.BaslamaTarihi)
+                                                        @Html.ValidationMessageFor(m => m.BaslamaTarihi)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.BitisTarihi)
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.EditorFor_(m => m.BitisTarihi)
+                                                        @Html.ValidationMessageFor(m => m.BitisTarihi)
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="col-md-2">
+                                                        @Html.LabelFor_(m => m.OpsiyonTarihi)
+                                                    </div>
+                                                    <div class="col-md-8">
+                                                        @Html.EditorFor_(m => m.OpsiyonTarihi)
+                                                        @Html.ValidationMessageFor(m => m.OpsiyonTarihi)
+                                                    </div>
+                                                </div>
+                                                <ul class="list-inline pull-right">
+                                                    <li>
+                                                        <button type="submit" class="btn btn-primary next-step">Kaydet ve Devam Et</button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" role="tabpanel" id="step2">
+                                        </div>
+                                        <div class="tab-pane" role="tabpanel" id="step3">
+                                        </div>
+                                        <div class="tab-pane" role="tabpanel" id="step4">
+                                        </div>
+                                    </div>
+
+                                    <div id="tGrid">
+                                        <div class="demo-section k-content">
+                                            <div class="col-md-2">
+                                                <h4>Teklif Kalemleri</h4>
+                                                <div id="teklif-tree"></div>
+                                                <div class="donut-wrapper">
+                                                    <div id="chart" class="donut-chart"></div>
+                                                    <div class="inner-content"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <div id="katılımcı-düzenle" class="nav-tabs-custom">
+                                                    <ul class="nav md-pills nav-justified pills-secondary">
+                                                        @Html.RenderBootstrapTabHeader("tab-teklif", "Teklif", true)
+                                                        @Html.RenderBootstrapTabHeader("hesap", "Hesaplamalar")
+                                                    </ul>
+                                                    <div class="tab-content">
+                                                        @Html.RenderBootstrapTabContent("tab-teklif", @Teklif(), true)
+                                                        @Html.RenderBootstrapTabContent("hesap", @Hesaplamalar())
+                                                    </div>
+                                                </div>
+                                                @helper Teklif()
+                                                {
+                                                    <div id="dropHere" class="grid" style="z-index:0;">
+                                                        <div id="teklif-grid"></div>
+                                                    </div>
+                                                }
+                                                @helper Hesaplamalar()
+                                                {
+
+                                                    <div id="hesapTable" class="hesapTable"></div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <ul class="list-inline pull-right">
+                                            <li>
+                                                <span id="teklif-sil" class="btn bg-red">
+                                                    <i class="fa fa-trash-o"></i>
+                                                    Sil
+                                                </span>
+                                            </li>
+                                            @Html.DeleteConfirmation("TeklifSil", "teklif-sil")
+                                            <li><button type="button" class="btn btn-default prev-step">Önceki</button></li>
+                                            <li id="btnOperasyon">
+                                                <button type="button" class="btn btn-default" onclick="setLocation('@(Url.Action("TeklifKopyala", new { teklifId = Model.Id, durumu = "Konfirme" }))')">Konfirme Et</button>
+                                            </li>
+                                            <li id="btnKonfirme">
+                                                <button type="button" class="btn btn-default" onclick="setLocation('@(Url.Action("TeklifKopyala", new { teklifId = Model.Id, durumu = "Tamamlandı" }))')">Tamamla</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </form>
+                            </div>
+                        </section>
+                    </div>
+                    <script id="toolbartemplate" type="text/x-kendo-template">
+                        <a href="@Url.Action("PdfTeklif", new { teklifId = Model.Id })" class="btn bg-purple pull-right">
+                            <i class="fa fa-file-pdf-o"></i>
+                            Teklif(Pdf)
+                        </a>
+                    </script>
+                    <script id="toolbartemplate2" type="text/x-kendo-template">
+
+                        <a href="@Url.Action("PdfTeklif", new { teklifId = Model.Id })" class="btn bg-purple pull-right">
+                            <i class="fa fa-file-pdf-o"></i>
+                            Teklif(Pdf)
+                        </a>
+                        <a href="@Url.Action("PdfRapor", new { teklifId = Model.Id })" class="btn bg-purple pull-right">
+                            <i class="fa fa-file-pdf-o"></i>
+                            Rapor(Pdf)
+                        </a>
+                        <a href="@Url.Action("XlsRapor", new { teklifId = Model.Id })" class="btn bg-purple pull-right">
+                            <i class="fa fa-file-pdf-o"></i>
+                            Rapor(Xls)
+                        </a>
+                    </script>
+                    <script type="text/x-kendo-template" id="template">
+                        <span><span id="count" class="count">#=items[0].Tparent #</span> <span>(#:count#) Parabirimi :#=items[0].ParabirimiDeger # </span></span>
+                        <span style="float:right;"><input class="dropdowns" style="width: 110px!important" /></span>
+                    </script>
+                    @Html.Partial("BağlıTeklifOperasyon", Model)
+                    @Html.Partial("Chart", Model)
+                    @Html.Partial("Ağaç", Model)
+                    <script>
+                        $(document).ready(function () {
+                            $(function () {
+                                kendo.init($(document.body));
+                            })
+                            $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+                                var $target = $(e.target);
+                                if ($target.parent().hasClass('disabled')) {
+                                    return false;
+                                }
+                                var x = document.getElementById("tKayit");
+                                var y = document.getElementById("tGrid");
+                                var z = document.getElementById("btnOperasyon");
+                                var t = document.getElementById("btnKonfirme");
+                                //var grid = document.getElementById("teklif-grid");
+                                if ($target.parent().attr('id') == "liYeniTeklif") {
+                                    x.style.display = "block";
+                                    y.style.display = "none";
+
+                                }
+                                else {
+                                    if ($target.parent().attr('id') == "liOperasyon") {
+                                        z.style.display = "inline-block";
+                                        t.style.display = "none";
+                                        teklifGrid.setDataSource(dataSource);
+                                    }
+                                    if ($target.parent().attr('id') == "liKonfirme") {
+                                        z.style.display = "none";
+                                        t.style.display = "inline-block";
+                                        teklifGrid.setDataSource(dataSource2);
+                                    }
+                                    if ($target.parent().attr('id') == "liBiten") {
+                                        z.style.display = "none";
+                                        t.style.display = "none";
+                                        teklifGrid.setDataSource(dataSource3);
+                                    }
+                                    x.style.display = "none";
+                                    y.style.display = "block";
+                                }
+                            });
+
+                            $(".next-step").click(function (e) {
+                                var $active = $('.wizard .nav-tabs li.active');
+                                $active.next().removeClass('disabled');
+                                nextTab($active);
+                            });
+                            $(".prev-step").click(function (e) {
+                                var $active = $('.wizard .nav-tabs li.active');
+                                prevTab($active);
+
+                            });
+
+                            function nextTab(elem) {
+                                $(elem).next().find('a[data-toggle="tab"]').click();
+                            }
+                            function prevTab(elem) {
+                                $(elem).prev().find('a[data-toggle="tab"]').click();
+                            }
+                            //wizard
+                            if (@Model.Id< 0) {
+                                $("#liYeniTeklif").removeClass('disabled');
+                                $("#liYeniTeklif").addClass('active');
+                                $("#liOperasyon").removeClass('active');
+                                $("#liKonfirme").removeClass('active');
+                                $("#liBiten").removeClass('active');
+
+                                $("#step1").addClass('active');
+                                $("#step2").removeClass('active');
+                                $("#step3").removeClass('active');
+                                $("#step4").removeClass('active');
+                            }
+                            if (@Model.Id> 0 &&@Model.Operasyon) {
+                                $("#liOperasyon").removeClass('disabled');
+                                $("#liOperasyon").addClass('active');
+                                $("#liYeniTeklif").removeClass('active');
+                                $("#liKonfirme").removeClass('active');
+                                $("#liBiten").removeClass('active');
+
+                                $("#step1").removeClass('active');
+                                $("#step2").addClass('active');
+                                $("#step3").removeClass('active');
+                                $("#step4").removeClass('active');
+                                @hazırlık=true;
+                            }
+                            if (@Model.Id> 0 &&@Model.Konfirme) {
+                                $("#liOperasyon").removeClass('disabled');
+                                $("#liKonfirme").removeClass('disabled');
+                                $("#liKonfirme").addClass('active');
+                                $("#liYeniTeklif").removeClass('active');
+                                $("#liOperasyon").removeClass('active');
+                                $("#liBiten").removeClass('active');
+
+                                $("#step1").removeClass('active');
+                                $("#step2").removeClass('active');
+                                $("#step3").addClass('active');
+                                $("#step4").removeClass('active');
+                                @konfirme=true;
+                            }
+                            if (@Model.Id> 0 &&@Model.Biten) {
+                                $("#liOperasyon").removeClass('disabled');
+                                $("#liKonfirme").removeClass('disabled');
+                                $("#liBiten").removeClass('disabled');
+                                $("#liBiten").addClass('active');
+                                $("#liYeniTeklif").removeClass('active');
+                                $("#liOperasyon").removeClass('active');
+                                $("#liKonfirme").removeClass('active');
+
+                                $("#step1").removeClass('active');
+                                $("#step2").removeClass('active');
+                                $("#step3").removeClass('active');
+                                $("#step4").addClass('active');
+                                @biten=true;
+
+                            }
+                            var x = document.getElementById("tKayit");
+                            var y = document.getElementById("tGrid");
+                            var liYeni = document.getElementById("liYeniTeklif");
+                            var liOp = document.getElementById("liOperasyon");
+                            var liKon = document.getElementById("liKonfirme");
+                            var liBit = document.getElementById("liBiten");
+                            var z = document.getElementById("btnOperasyon");
+                            var t = document.getElementById("btnKonfirme");
+                            if (liYeni.classList.contains('active')) {
+                                x.style.display = "block";
+                                y.style.display = "none";
+                            }
+                            else {
+                                x.style.display = "none";
+                                y.style.display = "block";
+                                if (liOp.classList.contains('active')) {
+                                    z.style.display = "inline-block";
+                                    t.style.display = "none";
+                                }
+                                if (liKonfirme.classList.contains('active')) {
+                                    z.style.display = "none";
+                                    t.style.display = "inline-block";
+                                }
+                                if (liBit.classList.contains('active')) {
+                                    z.style.display = "none";
+                                    t.style.display = "none";
+                                }
+                            }
+                            //ülke seçimi
+                            $(function () {
+                                $("#UlkeId").change(function () {
+                                    var selectedItem = $(this).val();
+                                    var ddlSehir = $("#SehirId");
+                                    var sehirProgress = $("#sehir-loading-progress");
+                                    sehirProgress.show();
+                                    $.ajax({
+                                        cache: false,
+                                        type: "GET",
+                                        url: "@Html.Raw(Url.Action("SehirAlUlkeId", "Tanımlamalar"))",
+                                        data: { "ulkeId": selectedItem },
+                                        success: function (data) {
+                                            ddlSehir.html('');
+                                            $.each(data, function (id, option) {
+                                                ddlSehir.append($('<option></option>').val(option.id).html(option.name));
+                                            });
+                                            sehirProgress.hide();
+                                        },
+                                        error: function (xhr, ajaxOptions, thrownError) {
+                                            alert('Sehirler alınırken hata oluştu.');
+                                            sehirProgress.hide();
+                                        }
+                                    });
+                                });
+                            });
+
+                            //paraDDEditor
+                            function paraDDEditor(container, options) {
+                                $('<input required data-bind="value:' + options.field + '"/>')
+                                    .appendTo(container)
+                                    .kendoDropDownList({
+                                        autoBind: false,
+                                        dataTextField: "paraAdı",
+                                        dataValueField: "Id",
+                                        dataSource: {
+                                            data: [{ "paraAdı": "TL", "Id": 1 }, { "paraAdı": "USD", "Id": 2 }, { "paraAdı": "Euro", "Id": 3 }]
+                                        }
+                                    });
+                            }
+                            //firmaAutoCompleteEditor
+                            function firmaAutoCompleteEditor(container, options) {
+                                $('<input required data-bind="value:' + options.field + '"/>')
+                                    .appendTo(container)
+                                    .kendoAutoComplete({
+                                        dataSource: {
+                                            transport: {
+                                                read: {
+                                                    url: "@Html.Raw(Url.Action("FirmalarListe", "Teklif"))",
+                                                    dataType: "json",
+                                                    type: "GET"
+                                                }
+                                            }
+                                        },
+                                        dataTextField: "FirmaAdı",
+                                        dataValueField: "Id",
+                                        filter: "contains",
+                                        minLength: 1
+                                    });
+                            }
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

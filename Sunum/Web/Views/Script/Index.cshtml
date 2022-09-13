@@ -1,0 +1,12 @@
+﻿@{
+    Layout = "~/Views/Shared/ColumnsOne.cshtml";
+
+    //page class
+    Html.CssParçasıIlaveEt("html-home-page");
+}
+<div class="page home-page">
+    <div class="page-body">
+        <a href="@Url.Action("TeklifOrijinalId")">Orijinal Teklif Duzenle</a>
+        <a href="@Url.Action("BagliTeklifOgeisDuzenle",new { eskiid=1179,yeniid=1180})">Bagli Teklif Ogesi Duzenle</a>
+    </div>
+</div>

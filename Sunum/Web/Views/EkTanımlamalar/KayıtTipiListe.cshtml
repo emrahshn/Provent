@@ -1,0 +1,102 @@
+﻿@model KayıtTipiModel
+
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "KayıtTipi";
+    Html.AktifMenuÖğesiSistemAdıBelirle("KayıtTipi");
+}
+
+@Html.AntiForgeryToken()
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Kayıt Tipleri
+    </h1>
+    <div class="pull-right">
+        <a href="KayıtTipiEkle" class="btn bg-blue">
+            <i class="fa fa-plus-square"></i>
+            Yeni
+        </a>
+    </div>
+</div>
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="kayit-grid"></div>
+
+                    <script>
+                        $(document).ready(function () {
+                            $("#kayit-grid").kendoGrid({
+                                dataSource: {
+                                    type: "json",
+                                    transport: {
+                                        read: {
+                                            url: "@Html.Raw(Url.Action("KayıtTipiListe", "EkTanımlamalar"))",
+                                            type: "POST",
+                                            dataType: "json",
+                                            data: additionalData
+                                        }
+                                    },
+                                    schema: {
+                                        data: "Data",
+                                        total: "Toplam"
+                                    },
+                                    error: function (e) {
+                                        display_kendoui_grid_error(e);
+                                        this.cancelChanges();
+                                    },
+                                    pageSize: @(varsayılanGridSayfaBüyüklüğü),
+                                    serverFiltering: true,
+                                    serverSorting: true
+                                },
+                                pageable: {
+                                    refresh: true,
+                                    pageSizes: [@(gridSayfaBüyüklüğü)],
+                                    @Html.Partial("_GridMesajları")
+                                },
+                                editable: {
+                                    confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                                    mode: "inline"
+                                },
+                                scrollable: false,
+                                columns: [
+                                {
+                                    field: "Adı",
+                                    title: "Adı"
+                                }, {
+                                    field: "Id",
+                                    title: "Düzenle",
+                                    width: 100,
+                                    headerAttributes: { style: "text-align:center" },
+                                    attributes: { style: "text-align:center" },
+                                    template: '<a class="btn btn-default" href="KayıtTipiDüzenle/#=Id#"><i class="fa fa-pencil"></i>Düzenle</a>'                                }
+                                ]
+                            });
+                        });
+                    </script>
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('#unvan-ara').click(function () {
+                                var grid = $('#kayittipi-grid').data('kendoGrid');
+                                grid.dataSource.read();
+                                return false;
+                            });
+                        });
+
+                        function additionalData() {
+                            var data = {
+                                SearchStoreId: $('#SiteIdAra').val()
+                            };
+                            addAntiForgeryToken(data);
+                            return data;
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

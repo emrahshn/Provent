@@ -1,0 +1,209 @@
+﻿@model OdemeFormuModel
+@using Services.EkTanımlamalar;
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+
+@{
+    Html.CssParçasıIlaveEt("~/Content/odemeFormu.css");
+    List<string> KalemTutarAdları = new List<string>();
+    List<string> KalemTutarPOları = new List<string>();
+    List<string> KalemTutarları = new List<string>();
+    List<string> KalemTutarParabirimi = new List<string>();
+    List<string> Tutarlar = new List<string>();
+    List<string> TutarParabirimi = new List<string>();
+
+    string parsedTutarGrup = Model.TutarGrup;
+    int cnt3 = 0;
+    int cnt4 = 0;
+    if (parsedTutarGrup != "" && parsedTutarGrup != String.Empty && parsedTutarGrup != null)
+    {
+        List<string> ls3 = parsedTutarGrup.Split(':').ToList();
+        cnt3 = ls3.Count;
+        for (int i = 0; i < cnt3; i++)
+        {
+            List<string> ls4 = ls3[i].Split('|').ToList();
+            cnt4 = ls4.Count();
+            for (int j = 0; j < cnt4; j++)
+            {
+                string ps = ls4[j].ToString();
+                Tutarlar.Add(ls4[j].ToString());
+                string parabirimi = Convert.ToInt32(ls4[j + 1]) == 1 ? "TL" : (Convert.ToInt32(ls4[j + 1]) == 2) ? "$" : "€";
+                TutarParabirimi.Add(parabirimi);
+                j = j + 1;
+            }
+        }
+    }
+    var tutarlar = "";
+
+    for (int i=0;i< Tutarlar.Count; i++)
+    {
+        tutarlar += Tutarlar[i] + " " + TutarParabirimi[i] + (i!=Tutarlar.Count-1? " | ":"");
+    }
+    }
+<script type="text/javascript">
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+    $(document).ready(function () {
+        var sbBolum = $("#tBolum");
+        var sbOdemeSekli = $("#tOdemeSekli");
+        var sbOdemeTuru = $("#tOdemeTuru");
+        //var sbMeblag = $("#tMeblag");
+         $.ajax({
+            cache: false,
+            type: "POST",
+            url: '@Url.Action("Bolum", "Finans")',
+            data: { "formId": @Model.Id },
+            success: function (data) {
+                sbBolum.html('');
+                sbBolum.html(data[0] +'  Id: ' +@Model.Id);
+                sbOdemeSekli.html('');
+                sbOdemeSekli.html(data[1]);
+                sbOdemeTuru.html('');
+                sbOdemeTuru.html(data[2]);
+                //sbMeblag.html('');
+                //sbMeblag.html(data[3]);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert('Failed to retrieve states.');
+            }
+        });
+    });
+</script>
+
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Ödeme formu
+        <small><i class="fa fa-arrow-circle-left"></i>@Html.ActionLink("Ödeme formu listesine geri dön", "Liste")</small>
+    </h1>
+    <div class="pull-right">
+        <button class="btn bg-blue" type="submit" name="kaydet" onclick="printDiv('printThis')">
+            <i class="fa fa-print"></i>
+            Yazdır
+        </button>
+    </div>
+</div>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="printThis" class="modal-body ">
+                        <div style="padding:20px 30px;">
+                            <table class="doc">
+                                <tr>
+                                    <td rowspan="7">
+                                        <img src="~/Content/Images/Thumbs/0000024.png" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td rowspan="7" class="doc-table-mid"><h2>ÖDEME FORMU</h2></td>
+                                </tr>
+                                <tr>
+                                    <td>page</td>
+                                    <td>1/1</td>
+                                </tr>
+                                <tr>
+                                    <td>Doc. No</td>
+                                    <td>SYS.AC.FR.01</td>
+                                </tr>
+                                <tr>
+                                    <td>Rev.No</td>
+                                    <td>00</td>
+                                </tr>
+                                <tr>
+                                    <td>Rev.Date</td>
+                                    <td>...</td>
+                                </tr>
+                                <tr>
+                                    <td>Publ. Date</td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                            <br />
+                            <table class="alt-tablo">
+                                <tr>
+                                    <td class="doc-table-left">BÖLÜM</td>
+                                    <td>
+                                        <div id="tBolum"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="doc-table-left">PO</td>
+                                    <td>
+                                        @Model.PO - @Model.BelgeTuruAdı 
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="doc-table-left">FİRMA</td>
+                                    <td>@Model.Firma</td>
+                                </tr>
+                                <tr>
+                                    <td class="doc-table-left">BANKA</td>
+                                    <td><ul><li style="padding: 0;">Banka: @Model.BankaAdı</li><li> Şube Kodu: @Model.SubeKodu</li><li> Hesap No:@Model.HesapNo</li></ul></td>
+                                </tr>
+                                <tr>
+                                    <td class="doc-table-left">IBAN / SWIFT</td>
+                                    <td>@Model.IBAN</td>
+                                </tr>
+                                <tr>
+                                    <td class="doc-table-left">TUTAR</td>
+                                    <td><div id="tMeblag">@tutarlar</div></td>
+                                </tr>
+                                <tr>
+                                    <td class="doc-table-left">ÖDEME ŞEKLİ</td>
+                                    <td><ul><li style="padding: 0;"><div id="tOdemeSekli" style="width: 380px;"></div></li><li style="padding-left:10px;">Ödeme Tarihi: @Model.OdemeTarihi.ToShortDateString()</li></ul></td>
+                                </tr>
+                                <tr>
+                                    <td class="doc-table-left">ÖDEME TIPI</td>
+                                    <td><div id="tOdemeTuru"></div></td>
+                                </tr>
+                                <tr>
+                                    <td class="doc-table-left">EK BİLGİLER</td>
+                                    <td><ul><li style="padding: 0;">Kongre Adı:@Model.KongreAdı</li><li> Kongre Tarihi:@Model.KongreTarihi.ToShortDateString()</li></ul><ul><li style="padding: 0;">PO:@Model.PO</li></ul></td>
+                                </tr>
+                                <tr>
+                                    <td class="doc-table-left">AÇIKLAMA</td>
+                                    <td>@Model.Aciklama<br />@Model.KalemTutarS</td>
+                                </tr>
+                                <tr>
+                                    <td class="doc-table-left">FATURA NO</td>
+                                    <td>@Model.FaturaNo</td>
+                                </tr>
+                            </table>
+                            <table class="footer-tablo">
+                                <tr>
+                                    <td><h4>TALEP EDEN İLGİLİ</h4><h5>Tarih ..../..../20..</h5></td>
+                                    <td><h4>DEPARTMAN MÜDÜRÜ</h4><h5>Tarih ..../..../20..</h5></td>
+                                    <td><h4>MALİ İŞLER DİREKTÖRÜ</h4><h5>Tarih ..../..../20..</h5></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2"><h4>GENEL MÜDÜR</h4><h5>Tarih ..../..../20..</h5></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <ul>
+                                            <li>Tüm ödeme talep formlarına ekinde yapılacak olan ödemenin anlaşması konulacaktır.</li>
+                                            <li>Sadece Acenta ismine göre ödeme yapılmadığından Ticari unvanı olmayan ödeme yapılamaz.</li>
+                                            <li>Yönetim tarafından onaylanmayan ödeme tarafından ödenmeyecektir.</li>
+                                            <li>Ödeme talep formları en az işlem tarihinden 7 iş günü öncesi muhasebeye verilecektir.</li>
+                                            <li>Faturası gelmeyen ödeme talepleri yapılmayacaktır.</li>
+                                        </ul>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

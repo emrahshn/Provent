@@ -1,0 +1,26 @@
+﻿@model CrmKisiGorusmeModel
+@{
+    ViewBag.Title = "Ekle";
+    Html.AktifMenuÖğesiSistemAdıBelirle("CrmKisiGorusmeEkle");
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Görüşme ekle
+            <small><i class="fa fa-arrow-circle-left"></i>@Html.ActionLink("Kişi sayfasına geri dön", "KişiDüzenle", new { id = Model.KisiId })</small>
+        </h1>
+        <div class="pull-right">
+            <button class="btn bg-blue" type="submit" name="kaydet">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet
+            </button>
+            <button class="btn bg-blue" type="submit" name="kaydet-devam">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet ve Devam Et
+            </button>
+        </div>
+    </div>
+    @Html.Partial("_EkleVeyaDüzenleGorusmeler", Model)
+}

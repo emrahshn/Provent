@@ -1,0 +1,124 @@
+﻿@model KongreModel
+@{
+    ViewBag.Title = "Kongreler";
+    Html.AktifMenuÖğesiSistemAdıBelirle("KongreEkle");
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="fx-wrap">
+        <div class="card" data-href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZIbTuWRSqUVqo_Qdo4O9PKBwhRuwHBcmDdJlDez5oSwdXel-7pw">
+            <div class="front">
+                <div class="image">
+                    <p class="heading">@Model.Adı</p>
+                </div>
+                <div class="text">
+                    <header class="clearfix">
+                        <a class="flip btn"><i class="fa fa-refresh"></i></a>
+                    </header>
+                    <p>
+                        <i class="fa fa-calendar-o"></i>Başlama Tarihi:@Model.BaslamaTarihi.ToShortDateString()
+                        <i class="fa fa-calendar-o"></i>Bitiş Tarihi:@Model.BitisTarihi.ToShortDateString()
+                    </p><a href="@Url.Action("KongreDüzenle", "Kongre", new { Id = Model.Id })" class="small-box-footer">
+                        Düzenle
+                        <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="back">
+                <div class="text">
+                    <header class="clearfix">
+                        <a class="flip"><i class="fa fa-refresh"></i></a>
+                    </header>
+                    <p><a class="btn btn-info btn-block" href="@Html.Raw(Url.Action("SponsorlukBilgileri", "Kongre",new { kongreId=Model.Id}))"><span></span>Sponsorluk</a>
+                    <a class="btn btn-info btn-block" href="@Html.Raw(Url.Action("Hedefler", "Kongre",new { kongreId=Model.Id}))"><span></span>Hedefler</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*
+            <div class="panel panel-default">
+                <div class="panel-body profile">
+                    <div class="profile-data">
+                        <div class="profile-data-name">@Model.Adı</div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row" style="margin-left: 0px; margin-right: 0px;padding-top:70px;">
+                        <div class="col-md-4" style="padding-left:0px;padding-right:0px;">
+                            <a id="ctl00_MainContent_RadListView1_ctrl0_bKayit" class="btn btn-info btn-block" href="javascript:__doPostBack('ctl00$MainContent$RadListView1$ctrl0$bKayit','')"><span class="fa fa-edit"></span>Kayıt</a>
+                        </div>
+                        <div class="col-md-4" style="padding-left:2px;padding-right:2px;">
+                            <a id="ctl00_MainContent_RadListView1_ctrl0_bKonaklama" class="btn btn-info btn-block" href="javascript:__doPostBack('ctl00$MainContent$RadListView1$ctrl0$bKonaklama','')"><span class="fa fa-building"></span>Konaklama</a>
+                        </div>
+                        <div class="col-md-4" style="padding-left:0px;padding-right:0px;">
+                            <a id="ctl00_MainContent_RadListView1_ctrl0_bTransfer" class="btn btn-info btn-block" href="javascript:__doPostBack('ctl00$MainContent$RadListView1$ctrl0$bTransfer','')"><span class="fa fa-truck"></span>Transfer</a>
+                        </div>
+
+                    </div>
+                    <div class="row" style="margin-left: 0px; margin-right: 0px;padding-top:5px;">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4" style="padding-left:0px;padding-right:0px;">
+                            <a class="btn btn-info btn-block" href="@Html.Raw(Url.Action("KongreRapor", "Kongre",new { kongreId=Model.Id}))"><span></span>Rapor</a>
+                            <a class="btn btn-info btn-block" href="@Html.Raw(Url.Action("KongreSponsorluk", "Kongre",new { kongreId=Model.Id}))"><span></span>Sponsorluk</a>
+                            <a class="btn btn-info btn-block" onclick="downloadSpreadsheet()" ><span></span>Butce</a>
+        <script>
+            function downloadSpreadsheet() {
+                $.ajax({
+                    type: "POST",
+                    url: '/Kongre/GenerateSpreadsheet', //call your controller and action
+                    success: function (data) {
+                        if (data != null && (data.errorMessage == null || data.errorMessage === "")) {
+
+                            // Get the file name for download
+                            if (data.fileName != "") {
+                                // use window.location.href for redirect to download action for download the file
+                                window.location.href = "DownloadSpreadsheet/?file=" + data.fileName;
+                            }
+                        } else {
+                            alert("An error ocurred", data.errorMessage);
+                        }
+                    }
+                });
+            }
+
+        </script>
+        </div>
+        </div>
+        </div>
+        <div class="panel-body">
+            <div class="contact-info">
+                <ul class="list-group border-bottom">
+                    <li class="list-group-item"><span class="fa fa-users"></span>Katılımcı sayısı:<span class="pull-right">0</span></li>
+                    <li class="list-group-item"><span class="fa fa-edit"></span>Kayıt geliri<span class="pull-right">00,00</span></li>
+                    <li class="list-group-item"><span class="fa fa-sitemap"></span>Konaklama geliri<span class="pull-right">00,00</span></li>
+                    <li class="list-group-item"><span class="fa fa-truck"></span>Transfer geliri<span class="pull-right">00,00</span></li>
+                    <li class="list-group-item"><span class="fa fa-flask"></span>Kurs geliri<span class="pull-right">00,00</span></li>
+                    <li class="list-group-item"><span class="fa fa-plane"></span>Ulaşım geliri<span class="pull-right">00,00</span></li>
+                    <li class="list-group-item"><span class="fa fa-share-square-o"></span>Dış Katılım geliri<span class="pull-right">0</span></li>
+                    <li class="list-group-item"><span class="fa fa-money"></span>Toplam gelir<span class="pull-right">00,00</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <div class="form-group">
+                <div class="col-md-8">
+                    <i class="fa fa-calendar-o"></i>Başlama Tarihi:@Model.BaslamaTarihi.ToShortDateString()
+                </div>
+                <div class="col-md-4">
+                    <a href="@Url.Action("KongreDüzenle", "Kongre", new { Id = Model.Id })" class="small-box-footer">
+                        Düzenle
+                        <i class="fa fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="col-md-8">
+                    <i class="fa fa-calendar-o"></i>Bitiş Tarihi:@Model.BitisTarihi.ToShortDateString()
+                </div>
+            </div>
+        </div>
+        </div>
+    *@
+}

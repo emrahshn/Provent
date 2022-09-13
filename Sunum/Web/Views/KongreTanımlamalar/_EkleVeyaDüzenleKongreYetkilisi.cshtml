@@ -1,0 +1,177 @@
+﻿@model KongreYetkilileriModel
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#SehirId').change(function () {
+            var selectedItem = $(this).val();
+            var ddlIlce = $("#IlceId");
+            var ilceProgress = $("#ilce-loading-progress");
+            ilceProgress.show();
+            $.ajax({
+                cache: false,
+                type: "GET",
+                /**/
+                url: "@Html.Raw(Url.Action("IlceAlSehirId", "Tanımlamalar"))",
+                /**/
+                data: { "sehirId": selectedItem },
+                success: function (data) {
+                    ddlIlce.html('');
+                    $.each(data, function (id, option) {
+                        ddlIlce.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                    ilceProgress.hide();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('İlçeler alınırken hata oluştu.');
+                    ilceProgress.hide();
+                }
+            });
+        });
+        $('#UlkeId').change(function () {
+            var selectedItem = $(this).val();
+            var ddlSehir = $("#SehirId");
+            var sehirProgress = $("#sehir-loading-progress");
+            sehirProgress.show();
+            $.ajax({
+                cache: false,
+                type: "GET",
+                /**/
+                url: "@Html.Raw(Url.Action("SehirAlUlkeId", "Tanımlamalar"))",
+                /**/
+                data: { "ulkeId": selectedItem },
+                success: function (data) {
+                    ddlSehir.html('');
+                    $.each(data, function (id, option) {
+                        ddlSehir.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                    sehirProgress.hide();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Şehirler alınırken hata oluştu.');
+                    sehirProgress.hide();
+                }
+            });
+        });
+    });
+</script>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.UnvanId)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(m => m.UnvanId, new SelectList(Model.Görevler, "Id", "Adı", selectedValue: Model.UnvanId))
+                            @Html.ValidationMessageFor(m => m.UnvanId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Adı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Adı)
+                            @Html.ValidationMessageFor(m => m.Adı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Soyadı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Soyadı)
+                            @Html.ValidationMessageFor(m => m.Soyadı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.CepTel1)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.CepTel1)
+                            @Html.ValidationMessageFor(m => m.CepTel1)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.CepTel2)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.CepTel2)
+                            @Html.ValidationMessageFor(m => m.CepTel2)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Email1)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Email1)
+                            @Html.ValidationMessageFor(m => m.Email1)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Email2)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Email2)
+                            @Html.ValidationMessageFor(m => m.Email2)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Adres)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Adres)
+                            @Html.ValidationMessageFor(m => m.Adres)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.SehirId)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(model => model.SehirId, new SelectList(Model.Sehirler, "Id", "Adı"))
+                            @Html.ValidationMessageFor(m => m.SehirId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.IlceId)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(model => model.IlceId, new SelectList(Model.Ilceler, "Id", "Adı"))
+                            <span id="ilce-loading-progress" style="display: none;">Lütfen bekleyiniz..</span>
+                            @Html.ValidationMessageFor(m => m.IlceId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.PostaKodu)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.PostaKodu)
+                            @Html.ValidationMessageFor(m => m.PostaKodu)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.DoğumTarihi)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.DoğumTarihi)
+                            @Html.ValidationMessageFor(m => m.DoğumTarihi)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

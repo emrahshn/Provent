@@ -1,0 +1,45 @@
+﻿@model Teklif2Model
+@{
+
+}
+<script type="text/javascript">
+    function createChart() {
+        $("#chart").kendoChart({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "@Html.Raw(Url.Action("Chart", "Teklif",new { teklifId=Model.Id}))",
+                        dataType: "json"
+                    }
+                }
+            },
+            title: {
+                text: "Kalem Oranları"
+            },
+            legend: {
+                position: "top",
+                visible: false
+            },
+            seriesDefaults: {
+                labels: {
+                    template: "#= category #",
+                    visible: true,
+                    background: "transparent"
+                }
+            },
+            seriesDefaults: {
+                type: "donut"
+            },
+            series: [{
+                field: "count",
+                categoryField: "ad",
+                padding: 1
+            }],
+            tooltip: {
+                visible: true,
+                template: "#= category # - #= kendo.format('{0:P}', percentage) #"
+            },
+        });
+    }
+    createChart();
+</script>

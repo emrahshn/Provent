@@ -1,0 +1,23 @@
+﻿@model AdminHeaderModel
+@using Web.Models.Genel;
+
+@if (Model.KullanıcıKimliğineBürünüldü || Model.AdminLinkiGörüntüle)
+{
+    <div class="admin-header-links">
+        @if (Model.KullanıcıKimliğineBürünüldü)
+        {
+            <div class="impersonate">
+                <span>@string.Format("Kimliğine Bürünülen Kullanıcı", Model.KimliğineBürünülenKullanıcı)</span>
+                <a href="@Url.RouteUrl("Logout")" class="finish-impersonation" title="Kimliğine bürünülen oturumu bitirmek için burayı tıklayın.">Kimliğine bürünülen oturumu bitir</a>
+            </div>
+        }
+        @if (Model.AdminLinkiGörüntüle)
+        {
+            <a href="@Url.Content("~/Admin")" class="administration">Yönetim</a>
+        }
+        @if (!String.IsNullOrEmpty(Model.SayfayıDüzenle))
+        {
+            <a href="@Model.SayfayıDüzenle" class="manage-page">Bu sayfayı yönet</a>
+        }
+    </div>
+}

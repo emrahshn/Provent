@@ -1,0 +1,116 @@
+﻿@model KongreSponsorlukBilgileriModel
+
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "SponsorlukBilgileri";
+    Html.AktifMenuÖğesiSistemAdıBelirle("SponsorlukBilgileri");
+
+    var islemlerList = new List<SelectListItem>();
+    islemlerList.Add(new SelectListItem { Text = "Satış Yap", Value = "1" });
+    islemlerList.Add(new SelectListItem { Text = "Teklif Olarak Gönder", Value = "2" });
+}
+<style>
+    .badgehead {
+        display: inline-block;
+        min-width: 10px;
+        padding: 6px 40px 6px 1px;
+        /* font-size: 12px; */
+        font-weight: 700;
+        line-height: 1;
+        color: #fff;
+        text-align: left;
+        white-space: nowrap;
+        vertical-align: middle;
+        background-color: #e7a61a;
+        /*border-radius: 3px;*/
+        -webkit-box-shadow: -2px 2px 6px 0px rgba(0,0,0,0.75);
+        -moz-box-shadow: -2px 2px 6px 0px rgba(0,0,0,0.75);
+        box-shadow: -2px 2px 6px 0px rgba(0,0,0,0.75);
+        border-radius: 0px 100px 50px 0px;
+        -moz-border-radius: 0px 100px 50px 0px;
+        -webkit-border-radius: 0px 100px 50px 0px;
+        border: 2px hidden #000000;
+    }
+    .panelbilgi {
+        min-width: 10px;
+        text-align: left;
+        white-space: nowrap;
+        vertical-align: middle;
+        background-color: #ecf0f5;
+        padding: 6px;
+    }
+</style>
+@Html.AntiForgeryToken()
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Sponsorluk Bilgileri
+    </h1>
+    <div class="pull-right">
+        <a href="@Html.Raw(Url.Action("SponsorlukBilgileriEkle", "Kongre",new { kongreId=Model.KongreId}))" class="btn bg-blue">
+            <i class="fa fa-plus-square"></i>
+            Yeni Sponsor
+        </a>
+    </div>
+</div>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            @if (Model.SponsorlukBilgileriModel.Count > 0)
+            {
+                foreach (var item in Model.SponsorlukBilgileriModel)
+                {
+            <div class='widget'>
+                <header>
+                    <h3>@item.Adı</h3>
+                </header>
+                <div class="wcontent">
+                    <div class='chart'>
+                        <div class='canvas-container'>
+                            <div class="canvas">
+                                @Html.Partial("_SponsorKutusu", item)
+                            </div>
+                        </div>
+                    </div>
+                    <div class='info'>
+                        <h4>Sponsor Bilgileri:</h4>
+                        <div class='info-module'>
+                            <div class='heading'>
+                                <span>Yetkili</span>
+                                <span> @Model.GörüsmeRaporlarıModel.Where(x => x.MusteriId == item.Id).FirstOrDefault().YetkiliAdı</span>
+                            </div>
+                        </div>
+                        <div class='info-module'>
+                            <div class='heading'>
+                                <span>Görüşme Tarihi</span>
+                                <span>@Model.GörüsmeRaporlarıModel.Where(x => x.MusteriId == item.Id).FirstOrDefault().GörüsmeTarihi.ToShortDateString()</span>
+                            </div>
+                        </div>
+                        <div class='info-module'>
+                            <div class='heading'>
+                                <span>Görüşme Raporu</span>
+                                <span class="ellipsis">@Html.Raw(Model.GörüsmeRaporlarıModel.Where(x => x.MusteriId == item.Id).FirstOrDefault().Rapor)</span>
+                            </div>
+                        </div>
+
+                        <nav>
+                            <a href="@Url.Action("SponsorlukBilgileriDüzenle", "Kongre", new { kongreId = Model.KongreId, musteriId = item.Id })"><span>Düzenle</span></a>
+                        </nav>
+                    </div>
+                    <div class="islemler">
+                        <div class="islem">
+                                    @Html.DropDownList_("test", islemlerList)
+                                    <a href="#" class="btn btn-default">İşlem Yap</a>
+                                </div>
+                        <div class="toplam">
+                            Toplam: xxxTL
+                        </div>
+                    </div>
+                </div>
+                <div class="clear"></div>
+            </div>
+                }
+            }
+        </div>
+    </div>
+</div>

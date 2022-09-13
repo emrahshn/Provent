@@ -1,0 +1,96 @@
+﻿@model KullanıcıRolModel
+@{
+    ViewBag.Title = "KullanıcıRolleri";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Kullanıcı Rolleri");
+}
+@Html.AntiForgeryToken()
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Kullanıcı Rolleri
+    </h1>
+    <div class="pull-right">
+        <a href="@Url.Action("Ekle")" class="btn bg-blue">
+            <i class="fa fa-plus-square"></i>
+            Yeni
+        </a>
+    </div>
+</div>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="kullanıcırolleri-grid"></div>
+                    <script>
+                        $(document).ready(function () {
+                            $("#kullanıcırolleri-grid").kendoGrid({
+                                dataSource: {
+                                    type: "json",
+                                    transport: {
+                                        read: {
+                                            url: "@Html.Raw(Url.Action("Liste", "KullanıcıRolleri"))",
+                                            type: "POST",
+                                            dataType: "json",
+                                            data: addAntiForgeryToken
+                                        }
+                                    },
+                                    schema: {
+                                        data: "Data",
+                                        total: "Toplam",
+                                        errors: "Hatalar"
+                                    },
+                                    error: function (e) {
+                                        display_kendoui_grid_error(e);
+                                        this.cancelChanges();
+                                    },
+                                    serverPaging: true,
+                                    serverFiltering: true,
+                                    serverSorting: true
+                                },
+                                pageable: {
+                                    refresh: true,
+                                    numeric: false,
+                                    previousNext: false,
+                                    info: false,
+                                    @Html.Partial("_GridMesajları")
+                                },
+                                editable: {
+                                    confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                                    mode: "inline"
+                                },
+                                scrollable: false,
+                                columns: [{
+                                    field: "Adı",
+                                    title: "Adı",
+                                    width: 300
+                                }, {
+                                    field: "Aktif",
+                                    title: "Aktif",
+                                    width: 100,
+                                    headerAttributes: { style: "text-align:center" },
+                                    attributes: { style: "text-align:center" },
+                                    template: '# if(Aktif) {# <i class="fa fa-check true-icon"></i> #} else {# <i class="fa fa-close false-icon"></i> #} #'
+                                }, {
+                                    field: "SistemRolü",
+                                    title: "Sistem Rolü",
+                                    width: 100,
+                                    headerAttributes: { style: "text-align:center" },
+                                    attributes: { style: "text-align:center" },
+                                    template: '# if(SistemRolü) {# <i class="fa fa-check true-icon"></i> #} else {# <i class="fa fa-close false-icon"></i> #} #'
+                                }, {
+                                    field: "Id",
+                                    title: "Düzenle",
+                                    width: 100,
+                                    headerAttributes: { style: "text-align:center" },
+                                    attributes: { style: "text-align:center" },
+                                    template: '<a class="btn btn-default" href="Düzenle/#=Id#"><i class="fa fa-pencil"></i>Düzenle</a>'
+                                }]
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

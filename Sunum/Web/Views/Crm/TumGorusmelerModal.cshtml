@@ -1,0 +1,59 @@
+﻿@model CrmFirmaModel
+<div class="content clearfix">
+    <div class="form-horizontal">
+        <div class="modal fade" id="tümGörüsmeler" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Görüşmeler</h4>
+                    </div>
+                    <div class="modal-body">
+                        @foreach (var g in Model.Görüsmeler)
+                        {
+                            <div class="box box-info">
+                                <div class="box-body">
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            Firma Adı:
+                                        </div>
+                                        <div class="col-md-9">
+                                            @g.FirmaAdı
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            Yetkili
+                                        </div>
+                                        <div class="col-md-9">
+                                            @g.YetkiliAdı
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            Görüşme Tarihi
+                                        </div>
+                                        <div class="col-md-9">
+                                            @g.GorusmeTarihi.ToShortDateString()
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-3">
+                                            Notlar
+                                        </div>
+                                        <div class="col-md-9">
+                                            @Html.Raw(HttpUtility.HtmlDecode(g.Notlar))
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

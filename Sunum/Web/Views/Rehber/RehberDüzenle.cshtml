@@ -1,0 +1,32 @@
+﻿@model YetkililerModel
+@{
+    ViewBag.Title = "Düzenle";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Rehber");
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Yetkili düzenle - @Model.Adı
+        </h1>
+        <div class="pull-right">
+            <button type="submit" name="kaydet" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet
+            </button>
+            <button type="submit" name="kaydet-devam" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet ve Devam
+            </button>
+            <span id="reheber-sil" class="btn bg-red">
+                <i class="fa fa-trash-o"></i>
+                Sil
+            </span>
+        </div>
+    </div>
+    @Html.Partial("_EkleVeyaDüzenleRehber", Model)
+}
+@Html.DeleteConfirmation("RehberSil", "rehber-sil")
+

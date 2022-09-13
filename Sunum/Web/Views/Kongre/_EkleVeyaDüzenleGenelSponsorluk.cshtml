@@ -1,0 +1,50 @@
+﻿@model KongreGenelSponsorlukModel
+@{
+    var parabirimi = new List<SelectListItem>();
+    parabirimi.Add(new SelectListItem() { Text = "TL", Value = "1" });
+    parabirimi.Add(new SelectListItem() { Text = "$", Value = "2" });
+    parabirimi.Add(new SelectListItem() { Text = "€", Value = "3" });
+}
+@Html.ValidationSummary(true)
+@Html.HiddenFor(x => x.GenelSponsorlukModel.Id)
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.GenelSponsorlukModel.Adı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.GenelSponsorlukModel.Adı)
+                            @Html.ValidationMessageFor(m => m.GenelSponsorlukModel.Adı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.GenelSponsorlukModel.Tutar)
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                @Html.EditorFor_(m => m.GenelSponsorlukModel.Tutar)
+                                <div class="input-group-addon">
+                                    @Html.DropDownListFor_(m => m.GenelSponsorlukModel.Döviz, parabirimi)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.GenelSponsorlukModel.Tarih)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.GenelSponsorlukModel.Tarih)
+                            @Html.ValidationMessageFor(m => m.GenelSponsorlukModel.Tarih)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

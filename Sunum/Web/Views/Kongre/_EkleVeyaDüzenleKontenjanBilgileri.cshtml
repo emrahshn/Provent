@@ -1,0 +1,82 @@
+﻿@model KongreKontenjanBilgileriModel
+@{
+    var parabirimi = new List<SelectListItem>();
+    parabirimi.Add(new SelectListItem() { Text = "TL", Value = "1" });
+    parabirimi.Add(new SelectListItem() { Text = "$", Value = "2" });
+    parabirimi.Add(new SelectListItem() { Text = "€", Value = "3" });
+}
+@Html.ValidationSummary(true)
+
+
+<script>
+
+</script>
+@Html.HiddenFor(x=>x.KontenjanBilgileriModel.Id)
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KontenjanBilgileriModel.OtelId)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(m => m.KontenjanBilgileriModel.OtelId, new SelectList(Model.KontenjanBilgileriModel.Oteller, "Value", "Text"))
+                            @Html.ValidationMessageFor(m => m.KontenjanBilgileriModel.OtelId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KontenjanBilgileriModel.Adı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.KontenjanBilgileriModel.Adı)
+                            @Html.ValidationMessageFor(m => m.KontenjanBilgileriModel.Adı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KontenjanBilgileriModel.Tutar)
+                        </div>
+                        <div class="col-md-6">
+                            @Html.EditorFor_(m => m.KontenjanBilgileriModel.Tutar)
+                            @Html.ValidationMessageFor(m => m.KontenjanBilgileriModel.Tutar)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor_(m => m.KontenjanBilgileriModel.Döviz,parabirimi)
+                            @Html.ValidationMessageFor(m => m.KontenjanBilgileriModel.Döviz)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KontenjanBilgileriModel.OdaKisiSayısı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.KontenjanBilgileriModel.OdaKisiSayısı)
+                            @Html.ValidationMessageFor(m => m.KontenjanBilgileriModel.OdaKisiSayısı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KontenjanBilgileriModel.Tarihinden)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.KontenjanBilgileriModel.Tarihinden)
+                            @Html.ValidationMessageFor(m => m.KontenjanBilgileriModel.Tarihinden)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KontenjanBilgileriModel.Tarihine)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.KontenjanBilgileriModel.Tarihine)
+                            @Html.ValidationMessageFor(m => m.KontenjanBilgileriModel.Tarihine)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

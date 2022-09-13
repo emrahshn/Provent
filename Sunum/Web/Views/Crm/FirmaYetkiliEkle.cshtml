@@ -1,0 +1,139 @@
+﻿@model CrmFirmaYetkilisiModel
+@{
+    var cins = new List<SelectListItem>();
+    cins.Add(new SelectListItem() { Text = "Erkek", Value = "1" });
+    cins.Add(new SelectListItem() { Text = "Kadın", Value = "2" });
+}
+@using (Html.BeginForm("FirmaYetkilisiEkle", "Crm", new { returnUrl = this.Request.RawUrl }, FormMethod.Post))
+{
+
+    foreach (var tumSehirler in EngineContext.Current.Resolve<Services.Konum.IKonumServisi>().SehirlerAlUlkeId(1))
+    {
+        var sehirModel = tumSehirler.ToModel();
+        Model.Sehirler.Add(sehirModel);
+    }
+    foreach (var tumIlceler in EngineContext.Current.Resolve<Services.Konum.IKonumServisi>().IlcelerAlSehirId(1))
+    {
+        var ilceModel = tumIlceler.ToModel();
+        Model.Ilceler.Add(ilceModel);
+    }
+    foreach (var unvanlar in EngineContext.Current.Resolve<Services.EkTanımlamalar.IUnvanlarServisi>().TümUnvanlarıAl())
+    {
+        var unvan = unvanlar.ToModel();
+        Model.Görevler.Add(unvanlar);
+    }
+    <div class="content clearfix">
+        <div class="form-horizontal">
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"
+                                    aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <h4 class="modal-title" id="myModalLabel">Yeni Yetkili Ekle</h4>
+                        </div>
+                        <div class="modal-body">
+                            <script type="text/javascript">
+                                $(document).on('change', '#YSehirId', function () {
+                                    var selectedItem = $(this).val();
+                                    var ddlIlce2 = $('#YIlceId');
+                                    var ilceProgress2 = $("#ilce-loading-progress");
+                                    ilceProgress2.show();
+                                    $('#YIlceId').html('');
+                                    $.ajax({
+
+                                        cache: false,
+                                        type: "GET",
+                                        /**/
+                                        url: "@Html.Raw(Url.Action("IlceAlSehirId", "Tanımlamalar"))",
+                                        /**/
+                                        data: { "sehirId": selectedItem },
+                                        success: function (data) {
+                                            ddlIlce2.html('');
+                                            $.each(data, function (id, option) {
+                                                $('#YIlceId').append($('<option></option>').val(option.id).html(option.name));
+                                            });
+                                            ilceProgress2.hide();
+                                        },
+                                        error: function (xhr, ajaxOptions, thrownError) {
+                                            alert('İlçeler alınırken hata oluştu.');
+                                            ilceProgress2.hide();
+                                        }
+                                    });
+                                });
+                            </script>
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    @Html.LabelFor_(m => m.Unvan)
+                                </div>
+                                <div class="col-md-10">
+                                    @Html.DropDownListFor_(m => m.Unvan, new SelectList(Model.Görevler, "Id", "Adı", selectedValue: Model.Unvan))
+                                    @Html.ValidationMessageFor(m => m.Unvan)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    @Html.LabelFor_(m => m.Adı)
+                                </div>
+                                <div class="col-md-10">
+                                    @Html.EditorFor_(m => m.Adı)
+                                    @Html.ValidationMessageFor(m => m.Adı)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    @Html.LabelFor_(m => m.Soyadı)
+                                </div>
+                                <div class="col-md-10">
+                                    @Html.EditorFor_(m => m.Soyadı)
+                                    @Html.ValidationMessageFor(m => m.Soyadı)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    @Html.LabelFor_(m => m.Cinsiyet)
+                                </div>
+                                <div class="col-md-10">
+                                    @Html.DropDownListFor_(model => model.Cinsiyet, cins)
+                                    @Html.ValidationMessageFor(m => m.Cinsiyet)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    @Html.LabelFor_(m => m.CepTel)
+                                </div>
+                                <div class="col-md-10">
+                                    @Html.EditorFor_(model => model.CepTel)
+                                    @Html.ValidationMessageFor(m => m.CepTel)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    @Html.LabelFor_(m => m.Email)
+                                </div>
+                                <div class="col-md-10">
+                                    @Html.EditorFor_(model => model.Email, required: true)
+                                    @Html.ValidationMessageFor(m => m.Email)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-2">
+                                    @Html.LabelFor_(m => m.DoğumTarihi)
+                                </div>
+                                <div class="col-md-10">
+                                    @Html.EditorFor_(model => model.DoğumTarihi)
+                                    @Html.ValidationMessageFor(m => m.DoğumTarihi)
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,57 @@
+﻿@model HeaderElemanlarıModel
+@using Web.Models.Genel;
+<div class="header-links">
+    <ul>
+        @Html.Widget("header_links_before")
+        @if (Model.GirişYapıldı)
+    {
+        <li><a href="@Url.RouteUrl("KullanıcıBilgi")" class="ico-account">Hesabım @Model.KullanıcıAdı</a></li>
+        <li><a href="@Url.RouteUrl("Çıkış")" class="ico-logout">Çıkış</a></li>
+}
+else
+{
+    <li><a href="@Url.RouteUrl("Kayıt")" class="ico-register">Kayıt</a></li>
+    <li><a href="@Url.RouteUrl("Giriş")" class="ico-login">Oturum Aç</a></li>
+}
+        <li id="mesajlar">
+            <a href="/ter" class="ico-cart">
+                <span class="cart-label">Mesajlar</span>
+                <span class="cart-qty">mesajlar</span>
+            </a>
+        </li>
+        @*
+        @if (Model.ÖzelMesajlarİzinli)
+        {
+            <li>
+                <a href="@Url.RouteUrl("PrivateMessages", new { tab = "" })" class="ico-inbox">
+                    <span class="inbox-label">@T("PrivateMessages.Inbox")</span>
+                    <span class="inbox-unread">@Model.OkunmamışÖzelMesajlar</span>
+                </a>
+            </li>
+        }
+        *@
+        @Html.Widget("header_links_after")
+    </ul>
+    @if (Model.ÖzelMesajlarİzinli && !string.IsNullOrEmpty(Model.UyarıMesajları))
+    {
+        //new private message notification
+        <script type="text/javascript">
+            $(document).ready(function () {
+                displayPopupNotification('@Html.Raw(HttpUtility.JavaScriptStringEncode(Model.UyarıMesajları))', 'başarılı', false);
+
+                $('.header').on('mouseenter', '#mesajlar', function () {
+                    $('mesaj').addClass('active');
+                });
+                $('.header').on('mouseleave', '#mesajlar', function () {
+                    $('#mesaj').removeClass('active');
+                });
+                $('.header').on('mouseenter', '#mesaj', function () {
+                    $('#mesaj').addClass('active');
+                });
+                $('.header').on('mouseleave', '#mesaj', function () {
+                    $('#mesaj').removeClass('active');
+                });
+            });
+        </script>
+    }
+</div>

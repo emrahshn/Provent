@@ -1,0 +1,154 @@
+﻿@model GorusmeRaporlariModel
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+
+<script>
+    $(document).ready(function () {
+        var gorusulen = new kendo.data.DataSource({
+            type: "json",
+            transport: {
+                read: {
+                    url: "@Html.Raw(Url.Action("GorusulenListe", "Gorusmeler"))",
+                    type: "POST",
+                    dataType: "json",
+                    data: additionalData,
+                }
+            }
+
+        });
+        var grup;
+        var grupId;
+        var email;
+        var tel;
+        function additionalData() {
+            var data = {
+                grup: grup,
+                grupId: grupId
+            };
+            addAntiForgeryToken(data);
+            return data;
+        };
+        function onSelect(e) {
+            var dataItem = this.dataItem(e.item.index());
+            grup = e.dataItem.Grup;
+            grupId = e.dataItem.GrupId;
+        }
+        function onSelectGorusulen(e) {
+            var dataItem = this.dataItem(e.item.index());
+            $("#Email").val(e.dataItem.Email);
+            $("#Tel").val(e.dataItem.Tel);
+        }
+        
+        $("#GorusulenAd_").kendoAutoComplete({
+            dataTextField: "Adı",
+            template: '<h4>#: data.Adı # #: data.Soyadı #</h4><p>#: data.Unvan #</p>',
+            select:onSelectGorusulen
+        }).data("kendoAutoComplete").setDataSource(gorusulen);
+
+        $("#FirmaAd_").kendoAutoComplete({
+            dataTextField: "FirmaAdı",
+            select: onSelect,
+            dataSource: {
+                type: "json",
+                transport: {
+                    read: {
+                        url: "@Html.Raw(Url.Action("FirmalarListe", "Gorusmeler"))",
+                        type: "POST",
+                        dataType: "json"
+                    }
+                }
+            },
+            placeholder: "Firma Seçiniz...",
+        });
+    });
+</script>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.FirmaAdı)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.FirmaAdı)
+                            @Html.ValidationMessageFor(m => m.FirmaAdı)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.GorusulenAdı)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.GorusulenAdı)
+                            @Html.ValidationMessageFor(m => m.GorusulenAdı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Email)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Email)
+                            @Html.ValidationMessageFor(m => m.Email)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Tel)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Tel)
+                            @Html.ValidationMessageFor(m => m.Tel)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Konu)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.TextAreaFor_(m => m.Konu)
+                            @Html.ValidationMessageFor(m => m.Konu)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Tarih)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Tarih)
+                            @Html.ValidationMessageFor(m => m.Tarih)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Deadline)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Deadline)
+                            @Html.ValidationMessageFor(m => m.Deadline)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Durumu)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Durumu)
+                            @Html.ValidationMessageFor(m => m.Durumu)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Sorumlu)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Sorumlu)
+                            @Html.ValidationMessageFor(m => m.Sorumlu)
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

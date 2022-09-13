@@ -1,0 +1,25 @@
+﻿@model NotModel
+@{
+    ViewBag.Title = "Ekle";
+    Html.AktifMenuÖğesiSistemAdıBelirle("NotEkle");
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Not Ekle
+        </h1>
+        <div class="pull-right">
+            <button class="btn bg-blue" type="submit" name="kaydet">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet
+            </button>
+            <button class="btn bg-blue" type="submit" name="kaydet-devam">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet ve Devam Et
+            </button>
+        </div>
+    </div>
+    @Html.Partial("_EkleVeyaDüzenleNot", Model)
+}

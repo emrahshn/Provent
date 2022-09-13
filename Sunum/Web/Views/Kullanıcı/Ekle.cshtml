@@ -1,0 +1,26 @@
+﻿@model  KullanıcıModel
+@{ 
+    ViewBag.Title = "Yeni kullanıcı ekle";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Kullanıcı Listesi");
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Yeni kullanıcı ekle
+            <small><i class="fa fa-arrow-circle-left"></i>@Html.ActionLink("Kullanıcı listesine geri dön","Liste")</small>
+        </h1>
+        <div class="pull-right">
+            <button type="submit" class="btn bg-blue" name="kaydet">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet
+            </button>
+            <button type="submit" class="btn bg-blue" name="kaydet-devam">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet ve Devam Et
+            </button>
+        </div>
+    </div>
+    @Html.Partial("_EkleVeyaDüzenle",Model)
+}

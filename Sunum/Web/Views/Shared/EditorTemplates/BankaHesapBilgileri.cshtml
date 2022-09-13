@@ -1,0 +1,73 @@
+﻿@model BankaHesapBilgileriModel
+<div class="form-group">
+    <div class="col-md-3">
+        @Html.LabelFor_(model => model.BankaId)
+    </div>
+    <div class="col-md-9">
+        @Html.DropDownListFor_(model => model.BankaId,Model.KullanılabilirBankalar)
+        @Html.ValidationMessageFor(model => model.BankaId)
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-md-3">
+        @Html.LabelFor_(model => model.HesapAdı)
+    </div>
+    <div class="col-md-9">
+        @Html.EditorFor_(model => model.HesapAdı)
+        @Html.ValidationMessageFor(model => model.HesapAdı)
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-md-3">
+        @Html.LabelFor_(model => model.VergiDairesi)
+    </div>
+    <div class="col-md-9">
+        @Html.EditorFor_(model => model.VergiDairesi)
+        @Html.ValidationMessageFor(model => model.VergiDairesi)
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-md-3">
+        @Html.LabelFor_(model => model.VergiNo)
+    </div>
+    <div class="col-md-9">
+        @Html.EditorFor_(model => model.VergiNo)
+        @Html.ValidationMessageFor(model => model.VergiNo)
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-md-3">
+        @Html.LabelFor_(model => model.TlHesabı)
+    </div>
+    <div class="col-md-9">
+        @Html.EditorFor_(model => model.TlHesabı)
+        @Html.ValidationMessageFor(model => model.TlHesabı)
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-md-3">
+        @Html.LabelFor_(model => model.DolarHesabı)
+    </div>
+    <div class="col-md-9">
+        @Html.EditorFor_(model => model.DolarHesabı)
+        @Html.ValidationMessageFor(model => model.DolarHesabı)
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-md-3">
+        @Html.LabelFor_(model => model.EuroHesabı)
+    </div>
+    <div class="col-md-9">
+        @Html.EditorFor_(model => model.EuroHesabı)
+        @Html.ValidationMessageFor(model => model.EuroHesabı)
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-md-3">
+        @Html.LabelFor_(model => model.Swift)
+    </div>
+    <div class="col-md-9">
+        @Html.EditorFor_(model => model.Swift)
+        @Html.ValidationMessageFor(model => model.Swift)
+    </div>
+</div>

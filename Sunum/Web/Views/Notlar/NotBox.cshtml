@@ -1,0 +1,11 @@
+﻿@model  IList<NotModel>
+@using Web.Models.Notlar;
+@if (Model.Count > 0)
+{
+    <div id="not" class="not">
+        @foreach (var not in Model)
+        {
+            @not.Icerik;
+        }
+    </div>
+}

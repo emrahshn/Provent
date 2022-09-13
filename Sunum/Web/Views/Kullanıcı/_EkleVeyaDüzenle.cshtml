@@ -1,0 +1,418 @@
+﻿@using Services.Siteler
+@using System.Linq
+@model KullanıcıModel
+@Html.ValidationSummary(false)
+@Html.HiddenFor(model=>model.Id)
+
+<div class="content">
+    <div class="form-horizontal">
+        <div id="kullanıcı-düzenle" class="nav-tabs-custom">
+            <ul class="nav-tabs nav">
+                @Html.RenderBootstrapTabHeader("tab-bilgi","Kullanıcı Bilgileri",true)
+                @if (Model.Id > 0)
+                {
+                    @Html.RenderBootstrapTabHeader("tab-adres", "Kullanıcı Adresi")
+                }
+                @if (Model.ÖdülPuanıGeçmişiniGörüntüle)
+                {
+                    @Html.RenderBootstrapTabHeader("tab-ödül-puanı","Ödül Puanı")
+                }
+            </ul>
+            <div class="tab-content">
+                @Html.RenderBootstrapTabContent("tab-bilgi",@KullanıcıBilgileri(),true)
+            </div>
+        </div>
+    </div>
+</div>
+
+@helper KullanıcıBilgileri()
+{  
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                @if (Model.KullanıcıAdlarıEtkin)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.KullanıcıAdı)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model=>model.KullanıcıAdı)
+                            @Html.ValidationMessageFor(model=>model.KullanıcıAdı)
+                        </div>
+                    </div>
+                }
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model=>model.Email)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model=>model.Email)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.Şifre)
+                    </div>
+                    <div class="col-md-9">
+                        <div class="input-group-btn">
+                            @Html.EditorFor_(model => model.Şifre)
+                            @if (Model.Id > 0)
+                            {
+                                <button type="submit" name="şifreDeğiştir" class="btn btn-info">
+                                    Şifre Değiştir
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                @if (Model.Id > 0 && Model.İlişkilendirilmişHariciKimlikDoğrulamaKayıtları.Count > 0)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model=>model.İlişkilendirilmişHariciKimlikDoğrulamaKayıtları)
+                        </div>
+                        <div class="col-md-9">
+                            <div id="haricihimlikkayıtları-grid"></div>
+                            <script>
+                                var kayitlar = [
+                                    @for(int i = 0; i < Model.İlişkilendirilmişHariciKimlikDoğrulamaKayıtları.Count; i++)
+                                    {
+                                        var r = Model.İlişkilendirilmişHariciKimlikDoğrulamaKayıtları[i];
+                                        <text>
+                                    {
+                                        HariciMetodAdı: "@(Html.Raw(HttpUtility.JavaScriptStringEncode(r.HariciMetodAdı)))",
+                                        Email: "@(Html.Raw(HttpUtility.JavaScriptStringEncode(r.Email)))",
+                                        HariciDoğrulayıcı: "@(Html.Raw(HttpUtility.JavaScriptStringEncode(r.HariciDoğrulayıcı)))"
+                                    }
+                                    </text>
+                                        if (i != Model.İlişkilendirilmişHariciKimlikDoğrulamaKayıtları.Count - 1)
+                                            {
+                                            <text>,</text>
+                                            }
+                                        }
+                                ];
+                                $(document).ready(function () {
+                                    $("#haricihimlikkayıtları-grid").kendoGrid({
+                                        dataSource: {
+                                            data: kayitlar,
+                                            schema: {
+                                                model: {
+                                                    fields: {
+                                                        HariciMetodAdı: { type: "string" },
+                                                        Email: { type: "string" },
+                                                        HariciDoğrulayıcı: { type: "string" }
+                                                    }
+                                                }
+                                            },
+                                            error: function (e) {
+                                                display_kendoui_grid_error(e);
+                                                this.cancelChanges();
+                                            }
+                                        },
+                                        pageable: {
+                                            refresh: true,
+                                            numeric: false,
+                                            previousNext: false,
+                                            info: false,
+                                            @Html.Partial("_GridMesajları")
+                                        },
+                                        scrollable: false,
+                                        columns: [
+                                            {
+                                                field: "HariciMetodAdı",
+                                                title: "Harici Metod Adı",
+                                                width: 100
+                                            }, {
+                                                field: "Email",
+                                                title: "E-Mail",
+                                                width: 100
+                                            },{
+                                                field: "HariciDoğrulayıcı",
+                                                title: "Harici Doğrulayıcı",
+                                                width: 300
+                                            }
+                                        ]
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </div>
+                }
+                
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.SeçiliKullanıcıRolIdleri)
+                    </div>
+                    <div class="col-md-9">
+                        <div class="input-group input-group-required">
+                            @Html.EditorFor(model => model.SeçiliKullanıcıRolIdleri, new { SelectList = Model.KullanılabilirKullanıcıRolleri })
+                            <div class="input-group-btn">
+                                @Html.RequiredHint()
+                            </div>
+                        </div>
+                        <script>
+                        $(document).ready(function() {
+                            var customerRolesIdsInput = $('#@Html.FieldIdFor(model => model.SeçiliKullanıcıRolIdleri)').data("kendoMultiSelect");
+                            customerRolesIdsInput.setOptions({
+                                customerRolesIdsInput: false
+                            });
+
+                            @if (Model.KullanılabilirKullanıcıRolleri.Count == 0)
+                            {
+                                <text>
+                                    customerRolesIdsInput.setOptions({
+                                        enable: false,
+                                        placeholder: 'Mevcut kullanıcı rolü bulunmamaktadır'
+                                    });
+                                    customerRolesIdsInput._placeholder();
+                                    customerRolesIdsInput._enable();
+                                </text>
+                            }
+                        });
+                        </script>
+                    </div>
+                </div>
+                @if (Model.CinsiyetEtkin)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model=>model.Cinsiyet)
+                        </div>
+                        <div class="col-md-9">
+                            <div class="raw">
+                                <div class="col-md-1">
+                                    <div class="radio">
+                                        <label>
+                                            @Html.RadioButton("Cinsiyet", "E", Model.Cinsiyet == "E", new { id = "Cinseyet_Erkek" })
+                                            Erkek
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-11">
+                                    <div class="radio">
+                                        <label>
+                                            @Html.RadioButton("Cinsiyet", "K", Model.Cinsiyet == "K", new { id = "Cinsiyet_Kadın" })
+                                            Kadın
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model=>model.Adı)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model=>model.Adı)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model=>model.Soyadı)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model=>model.Soyadı)
+                    </div>
+                </div>
+                @if (Model.DoğumGünüEtkin)
+                {
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.DoğumGünü)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.DoğumGünü)
+                    </div>
+                </div>
+                }
+                @if (Model.ŞirketEtkin)
+                {
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model=>model.Şirket)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model=>model.Şirket)
+                    </div>
+                </div>
+                }
+                @if (Model.SokakAdresiEtkin)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.SokakAdresi)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model => model.SokakAdresi)
+                        </div>
+                    </div>
+                }
+                @if (Model.SokakAdresi2Etkin)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.SokakAdresi2)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model => model.SokakAdresi2)
+                        </div>
+                    </div>
+                }
+                @if (Model.PostaKoduEtkin)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.PostaKodu)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model => model.PostaKodu)
+                        </div>
+                    </div>
+                }
+                @if (Model.ŞehirEtkin)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.Şehir)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model => model.Şehir)
+                        </div>
+                    </div>
+                }
+                @if (Model.ÜlkeEtkin)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.ÜlkeId)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.DropDownList("ÜlkeId", Model.KullanılabilirÜlkeler)
+                        </div>
+                    </div>
+                }
+                @if (Model.TelEtkin)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.Tel)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model => model.Tel)
+                        </div>
+                    </div>
+                }
+                @if (Model.FaksEtkin)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.Faks)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model => model.Faks)
+                        </div>
+                    </div>
+                }
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdminYorumu)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.TextAreaFor_(model => model.AdminYorumu)
+                        @Html.ValidationMessageFor(model => model.AdminYorumu)
+                    </div>
+                </div>
+                @if (Model.AbonelikKayıtlarıKullanılabilirSiteler != null && Model.AbonelikKayıtlarıKullanılabilirSiteler.Count > 0)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.SeçiliAbonleikKayıtları)
+                        </div>
+                        <div class="col-md-9">
+                            @foreach (var site in Model.AbonelikKayıtlarıKullanılabilirSiteler)
+                            {
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="SeçiliAbonleikKayıtları" value="@site.Id" checked="@(Model.SeçiliAbonleikKayıtları != null && Model.SeçiliAbonleikKayıtları.Contains(site.Id))" />
+                                        (@(site.Adı))
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    "No customer roles available. Create at least one customer role before mapping.".ToString();
+                }
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.Aktif)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.Aktif)
+                    </div>
+                </div>
+                
+                @if (Model.Id > 0 && !string.IsNullOrEmpty(Model.SitedeKayıtlı))
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.SitedeKayıtlı)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.DisplayFor_(model => model.SitedeKayıtlı)
+                        </div>
+                    </div>
+                }
+                @if (Model.Id > 0)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.SonIpAdresi)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.DisplayFor_(model => model.SonIpAdresi)
+                        </div>
+                    </div>
+                }
+                @if (Model.Id > 0)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.OluşturulmaTarihi)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.DisplayFor_(model => model.OluşturulmaTarihi)
+                        </div>
+                    </div>
+                }
+                @if (Model.Id > 0)
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.SonİşlemTarihi)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.DisplayFor_(model => model.SonİşlemTarihi)
+                        </div>
+                    </div>
+                }
+                @if (Model.Id > 0 && !String.IsNullOrEmpty(Model.SonZiyaretEdilenSayfa))
+                {
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(model => model.SonZiyaretEdilenSayfa)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.DisplayFor_(model => model.SonZiyaretEdilenSayfa)
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

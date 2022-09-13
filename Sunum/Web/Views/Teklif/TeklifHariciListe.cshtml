@@ -1,0 +1,645 @@
+﻿@model TeklifHariciModel
+@using System.Linq;
+@{
+    var varsayılanGridSayfaBüyüklüğü = 10;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    var resimServisi = EngineContext.Current.Resolve<Services.Medya.IResimServisi>();
+    ViewBag.Title = "Teklif";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Teklif");
+    ICollection<KullanıcıRolü> alınanRoller = EngineContext.Current.Resolve<Core.IWorkContext>().MevcutKullanıcı.KullanıcıRolleri;
+    IList<KullanıcıRolü> roller = alınanRoller.ToList();
+    bool muhasebe = false;
+    bool munferit = false;
+    foreach (var rol in roller)
+    {
+        if (roller[0].Adı.Contains("Finans") || roller[0].Adı.Contains("Muhasebe") || roller[0].Adı.Contains("Yönetici"))
+        {
+            muhasebe = true;
+            break;
+        }
+    }
+    foreach (var rol in roller)
+    {
+        if (roller[0].Adı.Contains("Münferit") || roller[0].Adı.Contains("Yönetici"))
+        {
+            munferit = true;
+            break;
+        }
+    }
+}
+
+<style type="text/css">
+    .k-grid table tr:hover > td {
+        background: none;
+    }
+
+    .k-grid table tr:hover {
+        background: none;
+    }
+
+    .k-group-footer td {
+        background-color: #ff9d00 !important;
+    }
+    .k-grid td {
+        max-width: 142px;
+    }
+</style>
+
+@Html.AntiForgeryToken()
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Teklif
+    </h1>
+    <div class="pull-right">
+        <a href="TeklifHariciEkle" class="btn bg-blue">
+            <i class="fa fa-plus-square"></i>
+            Yeni
+        </a>
+    </div>
+</div>
+<input type="hidden" id="selected-page" name="selected-page" value="@(Html.GetSelectedPage())">
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default panel-search">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.AdAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.AdAra)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.AcentaAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.AcentaAra)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.POAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.POAra)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.TalepNoAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.TalepNoAra)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor(m => m.BelgeTuru)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor_(m => m.BelgeTuru, new SelectList(Model.KullanılabilirHariciSektorler, "Id", "Adı"))
+                            @Html.ValidationMessageFor(m => m.BelgeTuru)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5 col-md-offset-5">
+                            <button type="button" id="teklif-ara" class="btn btn-primary btn-search">
+                                <i class="fa fa-search"></i>
+                                Ara
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <script type="text/x-kendo-template" id="notTemplate">
+                        #if(Notlar.length>0){#
+                        <span id="notlink" class="grid-report-item green">
+                            <i class="fa fa-sticky-note"></i>Not
+                        </span>
+                        <div id="not" class="not">
+                            <div class="desc"> Bu öğe için alınmış #=Notlar.length# adet notunuz bulunmaktadır.</div>
+                            # for (var i = 0; i < Notlar.length; i++) { #
+                            <div class="items">
+                                #= Notlar[i].Icerik #
+                            </div>
+
+                            <a class="btn bg-blue" href="../Notlar/NotDüzenle/#=Notlar[i].Id#?returnUrl=..%2FTeklif%2FTeklifHariciListe"><i class="fa fa-pencil-square"></i>Düzenle</a>
+                            <a class="btn bg-red" href="../Notlar/NotSil/#=Notlar[i].Id#?returnUrl=..%2FTeklif%2FTeklifHariciListe"><i class="fa fa-trash-o"></i>Sil</a>
+                            # } #
+                            <div class="buttons">
+                                <a class="btn bg-blue" href="../Notlar/NotEkle?grup=HariciTeklif&grupId=#=Id#&returnUrl=..%2FTeklif%2FTeklifHariciListe"><i class="fa fa-plus-square"></i>Yeni</a>
+                            </div>
+                        </div>
+                        #}#
+                        #if(Notlar.length<=0){#
+                        <span id="notlink">
+                            <a class="btn bg-blue" href="../Notlar/NotEkle?grup=HariciTeklif&grupId=#=Id#&returnUrl=..%2FTeklif%2FTeklifHariciListe"><i class="fa fa-plus-square"></i>Not</a>
+                        </span>
+                        #}#
+                    </script>
+                    <script type="text/x-kendo-template" id="resimTemplate">
+                        #if(FaturaResim>0){#
+                        <span id="resimlink">
+                            <img src="#=FaturaResimUrl#" width="30" />
+                        </span>
+                        <div id="faturaResim" class="faturaResim">
+                            <img src="#=FaturaResimUrl#" width="400" />
+                            <div class="buttons">
+                                <a class="btn bg-blue" href=""><i class="fa fa-download"></i>İndir</a>
+                            </div>
+                        </div>
+                            #}#
+                    </script>
+                    @Html.Partial("TeklifHariciRaporBilgi", new TeklifHariciRaporModel())
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            <div class="onoffswitch">
+                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="Mode" checked="checked">
+                                <label class="onoffswitch-label" for="Mode">
+                                    <span class="onoffswitch-inner"
+                                          data-locale-basic="Grup"
+                                          data-locale-advanced="Normal"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <script>
+                            function GetDateAndTime() {
+                                var startDate = kendo.toString($("#tarih1").data("kendoDateTimePicker").value(), 'MM/dd/yyyy');
+                                alert(startDate);
+                            }
+
+                            $(document).ready(function () {
+                                var tempDate = new Date();
+                                var tarihRapor = $("#@Html.FieldIdFor(model => model.TarihRapor1)").kendoDateTimePicker({
+                                    value: tempDate,
+                                }).data("kendoDatePicker");
+
+
+                                tarihRapor.on('change', function (e) {
+                                    console.log((tarihRapor.value(), 'd'));
+                                });
+                            });
+                        </script>
+                        <div class="col-md-8"></div>
+                        <div class="col-md-2">
+                                @Html.LabelFor(model => model.TarihRapor1)
+                                @Html.EditorFor_(model => model.TarihRapor1)
+                            <button type="button" id="exportexcel-selected" class="btn btn-default bg-blue pull-right">
+                                <i class="fa fa-file-archive-o"></i>
+                                Rapor
+                            </button>
+                            <button onclick="GetDateAndTime();">Get date an time separatly</button>
+                        </div>
+                    </div>
+                    <input type="text" id="tarih1" name="tarih1" value="" />
+                    <div id="teklif-grid"></div>
+                    @using (Html.BeginForm("TeklifHariciRapor", "Teklif", FormMethod.Post, new { id = "selected-form",tarih1="" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" id="selectedIds" name="selectedIds" value="" />
+                        
+                    }
+                    <script type="text/javascript">
+                        function onPaging(arg) {
+                            //bindGridPageSelectEvent('odeme-grid', arg.page);
+                            $("#selected-page").val(arg.page);
+                        }
+                        $(document).ready(function () {
+
+                            var dataSource2 = new kendo.data.DataSource({
+                                autoSync: true,
+                                transport: {
+                                    read: {
+                                        url: "@Html.Raw(Url.Action("TeklifHariciListe", "Teklif"))",
+                                        type: "POST",
+                                        dataType: "json",
+                                        data: ekData
+                                    },
+                                    update: {
+                                        url: "@Html.Raw(Url.Action("HariciDuzenle", "Teklif"))",
+                                        type: "POST",
+                                        dataType: "json",
+                                    },
+                                    parameterMap: function (data, operation) {
+                                        addAntiForgeryToken(data);
+                                        return data;
+                                    }
+                                },
+                                schema: {
+                                    data: "Data",
+                                    total: "Toplam",
+                                    model: {
+                                        id: "Id",
+                                        fields: {
+                                            Id: { editable: false, type: "number", aggregates: ["count"] },
+                                            Acenta: { editable: false, type: "string" },
+                                            PO: { editable: false, type: "string" },
+                                            Adı: { editable: false, type: "string" },
+                                            TalepNo: { editable: false, type: "string" },
+                                            TeslimTarihi: { editable: false, type: "date" },
+                                            Onay: { editable: true, type: "boolean" },
+                                            FaturaResim: { editable: false },
+                                            FaturaResimUrl: { editable: false },
+                                            FaturaNo: { editable: true, type: "string" },
+                                            Notlar: { editable: false },
+                                        }
+                                    }
+                                },
+
+                                 @if (munferit) {
+                                        <text>
+                                    group: {
+                                        field: "PO", aggregates: [
+                                            { field: "PO", aggregate: "count"},
+                                            { field: "Id", aggregate: "count"},
+                                        ],
+                                    },
+                                            </text>
+                                        }
+
+                                //aggregate: [{ field: "PO", aggregate: "count" }],
+                                error: function (e) {
+                                    display_kendoui_grid_error(e);
+                                    this.cancelChanges();
+                                },
+                                batch: true,
+                                pageSize: @(varsayılanGridSayfaBüyüklüğü),
+                                serverPaging: true,
+                                serverFiltering: true,
+                                serverSorting: true
+                            });
+
+                            var dataSource = new kendo.data.DataSource({
+                                autoSync: true,
+                                transport: {
+                                    read: {
+                                        url: "@Html.Raw(Url.Action("TeklifHariciListe", "Teklif"))",
+                                        type: "POST",
+                                        dataType: "json",
+                                        data: ekData
+                                    },
+                                    update: {
+                                        url: "@Html.Raw(Url.Action("HariciDuzenle", "Teklif"))",
+                                        type: "POST",
+                                        dataType: "json",
+                                    },
+                                    parameterMap: function (data, operation) {
+                                        addAntiForgeryToken(data);
+                                        return data;
+                                    }
+                                },
+                                schema: {
+                                    data: "Data",
+                                    total: "Toplam",
+                                    model: {
+                                        id: "Id",
+                                        fields: {
+                                            Id: { editable: false, type: "number" },
+                                            Acenta: { editable: false, type: "string" },
+                                            PO: { editable: false, type: "string" },
+                                            Adı: { editable: false, type: "string" },
+                                            TalepNo: { editable: false, type: "string" },
+                                            TeslimTarihi: { editable: false, type: "date" },
+                                            Onay: { editable: true, type: "boolean" },
+                                            FaturaResim: { editable: false },
+                                            FaturaNo: { editable: true, type: "string" },
+                                            Notlar: { editable: false},
+                                        }
+                                    }
+                                },
+                                error: function (e) {
+                                    display_kendoui_grid_error(e);
+                                    this.cancelChanges();
+                                },
+                                batch: true,
+                                pageSize: @(varsayılanGridSayfaBüyüklüğü),
+                                serverPaging: true,
+                                serverFiltering: true,
+                                serverSorting: true
+                            });
+
+                            var grid = $("#teklif-grid").kendoGrid({
+                                dataSource: dataSource,
+                                pageable: {
+                                    refresh: true,
+                                    pageSizes: [@(gridSayfaBüyüklüğü)],
+                                    @Html.Partial("_GridMesajları")
+                                },
+                                editable: {
+                                    confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                                    mode: "incell"
+                                },
+                                scrollable: true,
+                                persistSelection: true,
+                                scrollable: false,
+                                change: onChange,
+                                columns: [
+                                    {
+                                        field: "Id",
+                                        headerTemplate: "<input id='mastercheckbox' type='checkbox'/>",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: "<input type='checkbox' value='#=Id#' class='checkboxGroups'/>",
+                                        width: 50
+                                    },
+                                    {
+                                        field: "Id",
+                                        title: "Id",
+                                        width: 60,
+                                    }
+                                    , {
+                                        field: "PO",
+                                        title: "Po",
+                                        width: 100,
+                                        groupFooterTemplate: function (e) {
+                                            return "Toplam: " + e.PO.count ;
+                                        },
+                                    }, {
+                                        field: "Adı",
+                                        title: "Adı",
+                                        width: 120,
+                                    }, {
+                                        field: "Acenta",
+                                        title: "Acenta",
+                                        width: 60,
+                                    }, {
+                                        field: "TalepNo",
+                                        title: "Talep No",
+                                        width: 80,
+                                    }, {
+                                        field: "TeslimTarihi",
+                                        title: "Tarih",
+                                        width: 80,
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        type: "date",
+                                        format: "{0:d}"
+                                    },
+                                    {
+                                        field: "FaturaResim",
+                                        title: "Fatura",
+                                        width: 80,
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        hidden:@if(muhasebe||munferit){ <text>false</text>} else{<text>true</text>},
+                                        template: kendo.template($("#resimTemplate").html()),
+                                    },
+                                    {
+                                        field: "FaturaNo",
+                                        title: "Fatura No",
+                                        width: 80,
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        hidden:@if (muhasebe||munferit){ <text>false</text>} else{<text>true</text>},
+                                    },
+                                    {
+                                        field: "Id",
+                                        title: "Görüntüle",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: '<a class="btn btn-default" href="TeklifHariciGoruntule/#=Id#"><i class="fa fa-eye"></i>Görüntüle</a>',
+                                        width: 130,
+                                        groupFooterTemplate: '<a class="btn btn-default" href="TeklifHariciGoruntuleGrup?po=#: data.PO.group.value #"><i class="fa fa-eye"></i>Görüntüle</a>'
+                                    },
+                                    {
+                                        field: "Onay",
+                                        title: "İşlendi",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: '# if(Onay) {# <i class="fa fa-check true-icon"></i> #} else {# <i class="fa fa-close false-icon"></i> #} #',
+                                        width: 60,
+                                        hidden: @if(muhasebe || munferit){ <text>false</text>} else{<text>true</text>},
+                                    }, {
+                                        field: "Notlar",
+                                        title: "Not",
+                                        editable: false,
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: kendo.template($("#notTemplate").html()),
+                                        width: 100
+                                    },
+                                    {
+                                        field: "Id",
+                                        title: "Düzenle",
+                                        editable: false,
+                                        width: 100,
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: '<a class="btn btn-default" href="TeklifHariciDüzenle/#=Id#"><i class="fa fa-pencil"></i>Düzenle</a>'
+                                    }],
+                                dataBound: function (e) {
+                                            var dataItems = e.sender.dataSource.view();
+                                            for (var j = 0; j < dataItems.length; j++) {
+                                                var onay;
+                                                var resim;
+                                                if (this.dataSource.group().length > 0) {
+                                                    onay = dataItems[j].items[0].get("Onay");
+                                                }
+                                                else {
+                                                    onay = dataItems[j].get("Onay");
+                                                    resim = dataItems[j].get("FaturaResim");
+                                                }
+
+                                                var row = e.sender.tbody.find("[data-uid='" + dataItems[j].uid + "']");
+                                                if (onay) {
+                                                    row.addClass("bg-lightyellow");
+                                                    row.removeClass("k-alt");
+                                                }
+                                            }
+                                            if (this.dataSource.group().length > 0) {
+                                                var groups = $(".k-grouping-row");
+                                                for (var i = 0; i < groups.length; i++) {
+                                                    this.collapseGroup(groups[i]);
+                                                }
+                                            }
+                                            $('#customers-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]').each(function () {
+                                                var currentId = $(this).val();
+                                                var checked = jQuery.inArray(currentId, selectedIds);
+                                                //set checked based on if current checkbox's value is in selectedIds.
+                                                $(this).attr('checked', checked > -1);
+                                            });
+
+                                            updateMasterCheckbox();
+                                        }
+                            }).data('kendoGrid');
+
+                            function getDate() {
+                                var today = new Date();
+                                var dd = today.getDate();
+                                var mm = today.getMonth() + 1; //January is 0!
+                                var yyyy = today.getFullYear();
+                                if (dd < 10) { dd = '0' + dd } if (mm < 10) { mm = '0' + mm }
+                                today = yyyy + "" + mm + "" + dd;
+
+                                document.getElementById("tarih1").value = today;
+                            }
+                            getDate();
+                            function GetDateAndTime() {
+                                var startDate = kendo.toString($("#tarih1").data("kendoDateTimePicker").value(), 'MM/dd/yyyy');
+                                alert(startDate);
+                            }
+                            $(document).ready(function () {
+                                var tempDate = new Date();
+                                $("#tarih1").kendoDateTimePicker({
+                                    value: tempDate,
+                                });
+
+                                //var date = $("#@Html.FieldIdFor(model => model.TarihRapor1)").data("kendoDatePicker").value();
+                                //console.log(date);
+                                
+                                $("#@Html.FieldIdFor(model => model.TarihRapor1)").on('change', function (e) {
+                                     var datepicker = $("#@Html.FieldIdFor(model => model.TarihRapor1)").data("kendoDatePicker");
+                                    console.log(($("#@Html.FieldIdFor(model => model.TarihRapor1)").data("kendoDatePicker").value(), 'd'));
+                                    //document.getElementById("tarih1").val((datepicker.value(), 'd'));
+                                });
+                                var selectedIds = [];
+                                $('#mastercheckbox').click(function () {
+                                    $('.checkboxGroups').attr('checked', $(this).is(':checked')).change();
+                                });
+                                $('#teklif-grid').on('change', 'input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]', function (e) {
+                                    var $check = $(this);
+                                    if ($check.is(":checked") == true) {
+                                        var checked = jQuery.inArray($check.val(), selectedIds);
+                                        if (checked == -1) {
+                                            //add id to selectedIds.
+                                            selectedIds.push($check.val());
+                                        }
+                                    } else {
+                                        var checked = jQuery.inArray($check.val(), selectedIds);
+                                        if (checked > -1) {
+                                            //remove id from selectedIds.
+                                            selectedIds = $.grep(selectedIds, function (item, index) {
+                                                return item != $check.val();
+                                            });
+                                        }
+                                    }
+                                    updateMasterCheckbox();
+                                });
+
+                                $('#exportexcel-selected').click(function (e) {
+                                    e.preventDefault();
+                                    console.log(selectedIds);
+                                    var ids = selectedIds.join(",");
+                                    $('#selected-form #selectedIds').val(ids);
+                                    $('#selected-form').submit();
+                                    return false;
+                                });
+                            });
+
+                            function updateMasterCheckbox() {
+                                var numChkBoxes = $('#customers-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]').length;
+                                var numChkBoxesChecked = $('#customers-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]:checked').length;
+                                $('#mastercheckbox').attr('checked', numChkBoxes == numChkBoxesChecked && numChkBoxes > 0);
+                            }
+
+                            $("#Mode").click(function () {
+                                mod($(this).is(':checked'));
+                            });
+                            function onChange(arg) {
+                                console.log("The selected product ids are: [" + this.selectedKeyNames().join(", ") + "]");
+                            };
+
+                            function mod(gelir) {
+                                //var ddl = $("#GelirGiderHedefiModel_GelirKalemiId");
+                                if (gelir) {
+                                    $('#onoffswitch').val(true);
+                                        @munferit=true;
+                                    grid.setDataSource(dataSource);
+                                } else {
+                                    $('#onoffswitch').val(false);
+                                        @munferit=false;
+                                    grid.setDataSource(dataSource2);
+                                }
+                            };
+                            mod($("#Mode").is(':checked'));
+                            $('#teklif-ara').click(function () {
+                                var grid = $('#teklif-grid').data('kendoGrid');
+                                grid.dataSource.read();
+                                return false;
+                            });
+                            $('div.k-grid').on('mouseenter', '#notlink', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.not")[0];
+                                $(parent).addClass('active');
+                            });
+                            $('div.k-grid').on('mouseleave', '#notlink', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.not")[0];
+                                $(parent).removeClass('active');
+                            });
+                            $('div.k-grid').on('mouseenter', 'div.not', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.not")[0];
+                                $(parent).addClass('active');
+                            });
+                            $('div.k-grid').on('mouseleave', 'div.not', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.not")[0];
+                                $(parent).removeClass('active');
+                            });
+                            $('div.k-grid').on('mouseenter', '#resimlink', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.faturaResim")[0];
+                                $(parent).addClass('active');
+                            });
+                            $('div.k-grid').on('mouseleave', '#resimlink', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.faturaResim")[0];
+                                $(parent).removeClass('active');
+                            });
+                            $('div.k-grid').on('mouseenter', 'div.faturaResim', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.faturaResim")[0];
+                                $(parent).addClass('active');
+                            });
+                            $('div.k-grid').on('mouseleave', 'div.faturaResim', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.faturaResim")[0];
+                                $(parent).removeClass('active');
+                            });
+                        });
+                        $("".concat("#@Html.FieldIdFor(model => model.AdAra),",
+                            "#@Html.FieldIdFor(model => model.AcentaAra),",
+                            "#@Html.FieldIdFor(model => model.POAra),",
+                            "#@Html.FieldIdFor(model => model.BelgeTuru),",
+                            "#@Html.FieldIdFor(model => model.TalepNoAra)")).keydown(function (event) {
+                                if (event.keyCode === 13) {
+                                    $("#teklif-ara").click();
+                                    return false;
+                                }
+                            });
+                         function ekData() {
+                                var data = {
+                                    AdAra: $('#@Html.FieldIdFor(model => model.AdAra)').val(),
+                                    AcentaAra: $('#@Html.FieldIdFor(model => model.AcentaAra)').val(),
+                                    POAra: $('#@Html.FieldIdFor(model => model.POAra)').val(),
+                                    TalepNoAra: $('#@Html.FieldIdFor(model => model.TalepNoAra)').val(),
+                                    BelgeAra: $('#@Html.FieldIdFor(model => model.BelgeTuru)').val(),
+                             };
+                             addAntiForgeryToken(data);
+                             return data;
+                        };
+                        function raporGonder() {
+                            var grid = $('#teklif-grid').data('kendoGrid');
+                            data = grid.selectedKeyNames();
+                            var idler = grid.selectedKeyNames();
+                            var viewModel = { Idler: idler, Tarih1: "", Tarih2: "", Yurtici: 2, Text: "deneme" };
+                            var jsonOfLog = JSON.stringify(viewModel);
+                            $.ajax({
+                                type: 'POST',
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                url: '@Url.Action("TeklifHariciRapor", "Teklif")',
+                                data: jsonOfLog,
+                            }).done(function (res) {
+                                window.location.href = '@Url.Action("TeklifHariciRapor", "Teklif")';
+                            })
+                        };
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,432 @@
+﻿@model KullanıcılarListeModel
+
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "Kulanıcılar";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Kullanıcılar liste");
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Kullanıcılar
+        </h1>
+        <div class="pull-right">
+            <a href="@Url.Action("Ekle")" class="btn bg-blue">
+                Yeni
+            </a>
+            <div class="btn-group">
+                <button type="button" class="btn btn-success">
+                    <i class="fa fa-download"></i>Dışa Aktar
+                </button>
+                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <span class="caret"></span>
+                    <span class="sr-only">&nbsp;</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li>
+                        <button type="submit" name="exportxml-all">
+                            <i class="fa fa-file-code-o"></i>Xml olarak (Tümü)
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" id="exportxml-selected">
+                            <i class="fa fa-file-code-o"></i>Xml olarak (Seçili)
+                        </button>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <button type="submit" name="exportexcel-all">
+                            <i class="fa fa-file-excel-o"></i>Excel olarak (Tümü)
+                        </button>
+                    </li>
+                    <li>
+                        <button type="button" id="exportexcel-selected">
+                            <i class="fa fa-file-excel-o"></i>Excel olarak (Seçili)
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <div class="form-horizontal">
+            <div class="panel-group">
+                <div class="panel panel-default panel-search">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        @Html.LabelFor(model => model.EmailAra)
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.EditorFor_(model => model.EmailAra)
+                                    </div>
+                                </div>
+                                @if (Model.KullanıcıAdlarıEtkin)
+                                {
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.KullanıcıAdıAra)
+                                        </div>
+                                        <div class="col-md-8">
+                                            @Html.EditorFor_(model => model.KullanıcıAdıAra)
+                                        </div>
+                                    </div>
+                                }
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        @Html.LabelFor(model => model.AdAra)
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.EditorFor_(model => model.AdAra)
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        @Html.LabelFor(model => model.SoyadAra)
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.EditorFor_(model => model.SoyadAra)
+                                    </div>
+                                </div>
+                                @if (Model.DoğumGünüEtkin)
+                                {
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.DoğumGünüAra)
+                                        </div>
+                                        <div class="col-md-8">
+                                            @{
+                                                var ay = new List<SelectListItem>();
+                                                ay.Add(new SelectListItem { Text = "Ay", Value = "0" });
+                                                for (int i = 1; i <= 12; i++)
+                                                {
+                                                    ay.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                                                }
+                                                var gün = new List<SelectListItem>();
+                                                gün.Add(new SelectListItem { Text = "Gün", Value = "0" });
+                                                for (int i = 1; i <= 31; i++)
+                                                {
+                                                    gün.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                                                }
+                                            }
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    @Html.DropDownListFor_(model => model.DoğumAyıAra, ay)
+                                                </div>
+                                                <div class="col-md-6">
+                                                    @Html.DropDownListFor_(model => model.DoğumGünüAra, gün)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                                }
+                            </div>
+                            <div class="col-md-7">
+                                @if (Model.SirketEtkin)
+                                {
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.SirketAra)
+                                        </div>
+                                        <div class="col-md-8">
+                                            @Html.EditorFor_(model => model.SirketAra)
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.TelEtkin)
+                                {
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.TelAra)
+                                        </div>
+                                        <div class="col-md-8">
+                                            @Html.EditorFor_(model => model.TelAra)
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.PostaKoduEtkin)
+                                {
+                                    <div class="form-group">
+                                        <div class="col-md-4">
+                                            @Html.LabelFor(model => model.PostaKoduAra)
+                                        </div>
+                                        <div class="col-md-8">
+                                            @Html.EditorFor_(model => model.PostaKoduAra)
+                                        </div>
+                                    </div>
+                                }
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        @Html.LabelFor(model => model.IpAdresiAra)
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.EditorFor_(model => model.IpAdresiAra)
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                        @Html.LabelFor(model => model.KullaniciRolleriAra)
+                                    </div>
+                                    <div class="col-md-8">
+                                        @Html.EditorFor(model => model.KullaniciRolleriAra, new { SelectList = Model.KullanılabilirKullanıcıRolleri })
+                                        <script>
+                                            $(document).ready(function() {
+                                                var rolesIdsInput = $('#@Html.FieldIdFor(model => model.KullaniciRolleriAra)').data("kendoMultiSelect");
+                                                rolesIdsInput.setOptions({
+                                                    autoClose: false
+                                                });
+
+                                                @if (Model.KullanılabilirKullanıcıRolleri.Count == 0)
+                                                {
+                                                    <text>
+                                                rolesIdsInput.setOptions({
+                                                    enable: false,
+                                                    placeholder: 'Mevcut kullanıcı rolü bulunmamaktadır'
+                                                });
+                                                rolesIdsInput._placeholder();
+                                                rolesIdsInput._enable();
+                                                </text>
+                                                }
+                                            });
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-7 col-md-offset-5">
+                                <button type="button" id="search-customers" class="btn btn-primary btn-search">
+                                    <i class="fa fa-search"></i>
+                                    Ara
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="customers-grid"></div>
+                        <script>
+                            $(document).ready(function() {
+                                $("#customers-grid").kendoGrid({
+                                    dataSource: {
+                                        type: "json",
+                                        transport: {
+                                            read: {
+                                                url: "@Html.Raw(Url.Action("KullanıcıListe", "Kullanıcı"))",
+                                                type: "POST",
+                                                dataType: "json",
+                                                data: ekData
+                                            }
+                                        },
+                                        schema: {
+                                            data: "Data",
+                                            total: "Toplam",
+                                            errors: "Errors"
+                                        },
+                                        error: function(e) {
+                                            display_kendoui_grid_error(e);
+                                            // Cancel the changes
+                                            this.cancelChanges();
+                                        },
+                                        pageSize: @(varsayılanGridSayfaBüyüklüğü),
+                                        serverPaging: true,
+                                        serverFiltering: true,
+                                        serverSorting: true
+                                    },
+                                    pageable: {
+                                        refresh: true,
+                                        pageSizes: [@(gridSayfaBüyüklüğü)],
+                                        @Html.Partial("_GridMesajları")
+                                    },
+                                    scrollable: false,
+                                    dataBound: onDataBound,
+                                    columns: [
+                                        {
+                                            field: "Id",
+                                            headerTemplate: "<input id='mastercheckbox' type='checkbox'/>",
+                                            headerAttributes: { style: "text-align:center" },
+                                            attributes: { style: "text-align:center" },
+                                            template: "<input type='checkbox' value='#=Id#' class='checkboxGroups'/>",
+                                            width: 50
+                                        }, {
+                                            field: "Email",
+                                            title: "Email",
+                                            width: 200
+                                        },
+                                        @if (Model.KullanıcıAdlarıEtkin)
+                                        {
+                                            <text>{
+                                            field: "KullanıcıAdı",
+                                            title: "Kullanıcı Adı",
+                                            width: 200
+                                        },</text>
+                                        }
+                                        {
+                                            field: "TamAd",
+                                            title: "Adı",
+                                            width: 200
+                                        }, {
+                                            field: "KullanıcıRolAdları",
+                                            title: "Rolü",
+                                            width: 200
+                                        },
+
+                                        @if (Model.SirketEtkin)
+                                        {
+                                            <text>{
+                                            field: "Şirket",
+                                            title: "Şirket",
+                                            width: 200
+                                        },</text>
+                                        }
+
+                                        @if (Model.TelEtkin)
+                                        {
+                                            <text>{
+                                            field: "Telefon",
+                                            title: "Telefon",
+                                            width: 200
+                                        },</text>
+                                        }
+
+                                        @if (Model.PostaKoduEtkin)
+                                        {
+                                            <text>{
+                                            field: "PostaKodu",
+                                            title: "Posta Kodu",
+                                            width: 200
+                                        },</text>
+                                        }
+                                        {
+                                            field: "Aktif",
+                                            title: "Aktif",
+                                            width: 100,
+                                            headerAttributes: { style: "text-align:center" },
+                                            attributes: { style: "text-align:center" },
+                                            template: '# if(Aktif) {# <i class="fa fa-check true-icon"></i> #} else {# <i class="fa fa-close false-icon"></i> #} #'
+                                        }, {
+                                            field: "OluşturulmaTarihi",
+                                            title: "Oluşturulma Tarihi",
+                                            width: 200,
+                                            type: "date",
+                                            format: "{0:G}"
+                                        }, {
+                                            field: "SonİşlemTarihi",
+                                            title: "Son İşlem Tarihi",
+                                            width: 200,
+                                            type: "date",
+                                            format: "{0:G}"
+                                        }, {
+                                            field: "Id",
+                                            title: "Düzenle",
+                                            width: 50,
+                                            headerAttributes: { style: "text-align:center" },
+                                            attributes: { style: "text-align:center" },
+                                            template: '<a class="btn btn-default" href="Düzenle/#=Id#"><i class="fa fa-pencil"></i>Düzenle</a>'
+                                        }
+                                    ]
+                                });
+                            });
+                        </script>
+                        <script type="text/javascript">
+                            var selectedIds = [];
+
+                            $(document).ready(function() {
+                                //search button
+                                $('#search-customers').click(function() {
+                                    var grid = $('#customers-grid').data('kendoGrid');
+                                    grid.dataSource.page(1); 
+                                    $('.checkboxGroups').attr('checked', false).change();
+                                    selectedIds = [];
+                                    return false;
+                                });
+
+                                $("".concat("#@Html.FieldIdFor(model => model.EmailAra),",
+                                    "#@Html.FieldIdFor(model => model.KullanıcıAdıAra),",
+                                    "#@Html.FieldIdFor(model => model.AdAra),",
+                                    "#@Html.FieldIdFor(model => model.SoyadAra),",
+                                    "#@Html.FieldIdFor(model => model.SirketAra),",
+                                    "#@Html.FieldIdFor(model => model.TelAra),",
+                                    "#@Html.FieldIdFor(model => model.PostaKoduAra),",
+                                    "#@Html.FieldIdFor(model => model.IpAdresiAra)")).keydown(function(event) {
+                                        if (event.keyCode === 13) {
+                                            $("#search-customers").click();
+                                            return false;
+                                        }
+                                    });
+
+                                $('#mastercheckbox').click(function() {
+                                    $('.checkboxGroups').attr('checked', $(this).is(':checked')).change();
+                                });
+
+                                //wire up checkboxes.
+                                $('#customers-grid').on('change', 'input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]', function(e) {
+                                    var $check = $(this);
+                                    if ($check.is(":checked") == true) {
+                                        var checked = jQuery.inArray($check.val(), selectedIds);
+                                        if (checked == -1) {
+                                            //add id to selectedIds.
+                                            selectedIds.push($check.val());
+                                        }
+                                    } else {
+                                        var checked = jQuery.inArray($check.val(), selectedIds);
+                                        if (checked > -1) {
+                                            //remove id from selectedIds.
+                                            selectedIds = $.grep(selectedIds, function(item, index) {
+                                                return item != $check.val();
+                                            });
+                                        }
+                                    }
+                                    updateMasterCheckbox();
+                                });
+                            });
+
+
+                            function onDataBound(e) {
+                                $('#customers-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]').each(function() {
+                                    var currentId = $(this).val();
+                                    var checked = jQuery.inArray(currentId, selectedIds);
+                                    //set checked based on if current checkbox's value is in selectedIds.
+                                    $(this).attr('checked', checked > -1);
+                                });
+
+                                updateMasterCheckbox();
+                            }
+
+                            function updateMasterCheckbox() {
+                                var numChkBoxes = $('#customers-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]').length;
+                                var numChkBoxesChecked = $('#customers-grid input[type=checkbox][id!=mastercheckbox][class=checkboxGroups]:checked').length;
+                                $('#mastercheckbox').attr('checked', numChkBoxes == numChkBoxesChecked && numChkBoxes > 0);
+                            }
+
+                            function ekData() {
+                                var data = {
+                                    KullaniciRolleriAra: $('#@Html.FieldIdFor(model => model.KullaniciRolleriAra)').val(),
+                                    EmailAra: $('#@Html.FieldIdFor(model => model.EmailAra)').val(),
+                                    KullanıcıAdıAra: $('#@Html.FieldIdFor(model => model.KullanıcıAdıAra)').val(),
+                                    AdAra: $('#@Html.FieldIdFor(model => model.AdAra)').val(),
+                                    SoyadAra: $('#@Html.FieldIdFor(model => model.SoyadAra)').val(),
+                                    DoğumGünüAra: $('#@Html.FieldIdFor(model => model.DoğumGünüAra)').val(),
+                                    DoğumAyıAra: $('#@Html.FieldIdFor(model => model.DoğumAyıAra)').val(),
+                                    SirketAra: $('#@Html.FieldIdFor(model => model.SirketAra)').val(),
+                                    TelAra: $('#@Html.FieldIdFor(model => model.TelAra)').val(),
+                                    PostaKoduAra: $('#@Html.FieldIdFor(model => model.PostaKoduAra)').val(),
+                                    IpAdresiAra: $('#@Html.FieldIdFor(model => model.IpAdresiAra)').val()
+                                };
+                                addAntiForgeryToken(data);
+                                return data;
+                            }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,34 @@
+﻿.mesaj {
+    display: none;
+}
+
+    .mesaj .desc {
+        margin:10px;
+    }
+
+    .mesaj.active {
+        right: 20px;
+        z-index: 100;
+        width: 300px;
+        box-shadow: 0 0 2px rgba(0,0,0,0.25);
+        background-color: #fff;
+        display: block;
+        margin: 50px -20px;
+        position:absolute;
+    }
+
+    .mesaj .items {
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        margin: 10px;
+        white-space: normal;
+        text-align: left;
+    }
+
+    .mesaj .buttons {
+        margin: 0 0 5px;
+    }
+
+ span#mesajlink.grid-report-item {
+    padding: 8px 13px !important;
+}

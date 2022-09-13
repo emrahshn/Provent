@@ -1,0 +1,114 @@
+﻿@model GelirGiderTanımlamaModel
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            Gelir/Gider
+                        </div>
+                        <div class="col-md-10">
+                            @Html.HiddenFor(model => model.Gelir, new { @id = "onoffswitch" })
+                            <script type="text/javascript">
+                                function checkGelirModel(gelir) {
+                                    var ddl = $("#NodeId");
+                                    if (gelir) {
+                                        $('#onoffswitch').val(true);
+                                        ddl.html('');
+                                        $.ajax({
+                                            cache: false,
+                                            type: "GET",
+                                            url: "@Html.Raw(Url.Action("GelirKalemleriAl", "EkTanımlamalar"))",
+                                                data: { "gelir": true },
+                                                success: function (data) {
+                                                $.each(data, function (id, option) {
+                                                    ddl.append($('<option></option>').val(option.id).html(option.name));
+                                                });
+                                            },
+                                            error: function (xhr, ajaxOptions, thrownError) {
+                                                alert('İlçeler alınırken hata oluştu.');
+                                            }
+                                        });
+                                    } else {
+                                        $('#onoffswitch').val(false);
+                                        ddl.html('');
+                                        $.ajax({
+                                            cache: false,
+                                            type: "GET",
+                                            url: "@Html.Raw(Url.Action("GelirKalemleriAl", "EkTanımlamalar"))",
+                                                data: { "gelir": false },
+                                                success: function (data) {
+                                                $.each(data, function (id, option) {
+                                                    ddl.append($('<option></option>').val(option.id).html(option.name));
+                                                });
+                                            },
+                                            error: function (xhr, ajaxOptions, thrownError) {
+                                                alert('İlçeler alınırken hata oluştu.');
+                                            }
+                                        });
+                                    }
+                                }
+                                checkGelirModel($("#gelirModel").is(':checked'));
+                                $(document).ready(function () {
+                                    $("#gelirMode").click(function () {
+                                        checkGelirModel($(this).is(':checked'));
+                                    });
+                                    $("#@Html.FieldIdFor(model => model.Anabaşlık)").click(toggle);
+                                    $("#@Html.FieldIdFor(model=>model.NodeId)").has()
+                                    toggle();
+                                });
+
+                                function toggle() {
+                                    if ($('#@Html.FieldIdFor(model => model.Anabaşlık)').is(':checked')) {
+                                        $('#anaTeklifKalemi').hide();
+                                    } else {
+                                        $('#anaTeklifKalemi').show();
+                                    }
+                                }
+                            </script>
+                            <div class="onoffswitch">
+                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="gelirMode" checked="@Model.Gelir">
+                                <label class="onoffswitch-label" for="gelirMode">
+                                    <span class="onoffswitch-inner"
+                                          data-locale-basic="Gider"
+                                          data-locale-advanced="Gelir"></span>
+                                    <span class="onoffswitch-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Anabaşlık)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Anabaşlık)
+                            @Html.ValidationMessageFor(m => m.Anabaşlık)
+                        </div>
+                    </div>
+                    <div class="form-group" id="anaTeklifKalemi">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.NodeId)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(model => model.NodeId, new SelectList(Model.AnaTeklifKalemi, "Id", "Adı"))
+                            @Html.ValidationMessageFor(m => m.NodeId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Adı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Adı)
+                            @Html.ValidationMessageFor(m => m.Adı)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

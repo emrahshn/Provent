@@ -1,0 +1,94 @@
+﻿@model IzinMappingModel
+
+@{
+    ViewBag.Title = "Erişim kontrol listesi";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Erişim kontrol listesi");
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Erişim kontrol listesi
+        </h1>
+        <div class="pull-right">
+            <button type="submit" name="kaydet" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet
+            </button>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="form-horizontal">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        @if (Model.MevcutIzinler.Count == 0)
+                        {
+                            <text>İzin tanımlanmadı</text>
+                        }
+                        else if (Model.MevcutKullanıcıRolleri.Count == 0)
+                        {
+                            <text>Kullanılabilir müşteri rolü yok</text>
+                        }
+                        else
+                        {
+                            <script type="text/javascript">
+                                $(document).ready(function () {
+                                    @foreach (var cr in Model.MevcutKullanıcıRolleri)
+                                    {
+                                        <text>
+                                    $('#selectall-@(cr.Id)').click(function () {
+                                        $('.allow_@(cr.Id)').attr('checked', $(this).is(':checked')).change();
+                                    });
+
+                                    </text>
+                                    }
+                                });
+                            </script>
+                            <div class="scroll-wrapper">
+                                <table class="table table-hover table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="col">
+                                                <strong>İzinler</strong>
+                                            </th>
+                                            @foreach (var cr in Model.MevcutKullanıcıRolleri)
+                                            {
+                                                <th scope="col">
+                                                    <div class="checkbox">
+                                                        <label>
+                                                            <input type="checkbox" id="selectall-@(cr.Id)" />
+                                                            <strong>@cr.Adı</strong>
+                                                        </label>
+                                                    </div>
+                                                </th>
+                                            }
+                                        </tr>
+                                        @foreach (var pr in Model.MevcutIzinler)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <span>@pr.Adı</span>
+                                                </td>
+                                                @foreach (var cr in Model.MevcutKullanıcıRolleri)
+                                                {
+                                                    var izinli = Model.Izinli.ContainsKey(pr.SistemAdı) && Model.Izinli[pr.SistemAdı][cr.Id];
+                                                    <td>
+                                                        <input class="allow_@(cr.Id)" type="checkbox" value="@(pr.SistemAdı)" name="allow_@(cr.Id)" @(izinli ? " checked=checked" : null) />
+                                                    </td>
+                                                }
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

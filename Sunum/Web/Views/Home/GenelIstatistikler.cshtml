@@ -1,0 +1,101 @@
+﻿@model GenelIstatistiklerModel
+@using Core
+@using Services.Genel
+
+@{
+    const string panelId = "common-statistics-box";
+    const string hidePanelAttributeName = "HideCommonStatisticsPanel";
+    var hidePanel = EngineContext.Current.Resolve<IWorkContext>().MevcutKullanıcı.ÖznitelikAl<bool>(hidePanelAttributeName);
+}
+
+<div class="box box-info @if(hidePanel){<text>collapsed-box</text>}" id="@panelId">
+    <div class="box-header with-border clearfix">
+        <div class="box-title">
+            <i class="fa ion-stats-bars"></i>
+            Genel İstatistikler
+        </div>
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                @if (hidePanel)
+                {
+                    <text><i class="fa fa-plus"></i></text>
+                }
+                else
+                {
+                    <text><i class="fa fa-minus"></i></text>
+                }
+            </button>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>@Model.TeklifSayısı</h3>
+                    <p>Teklifler</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-bag"></i>
+                </div>
+                <a href="@Url.Action("TeklifListe", "Teklif")" class="small-box-footer">
+                    Görüntüle
+                    <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>@Model.KongreSayısı</h3>
+                    <p>Kongreler</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-refresh"></i>
+                </div>
+                <a href="@Url.Action("KongreListe", "Kongre")" class="small-box-footer">
+                    Görüntüle
+                    <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>@Model.OdemeFormuSayısı</h3>
+                    <p>Ödeme Formları</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-person-add"></i>
+                </div>
+                <a href="@Url.Action("OdemeFormuListe", "Finans")" class="small-box-footer">
+                    Görüntüle
+                    <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-6">
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>@Model.KullanıcıSayısı</h3>
+                    <p>Kullanıcılar</p>
+                </div>
+                <div class="icon">
+                    <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href="@Url.Action("Liste", "Kullanıcı")" class="small-box-footer">
+                    Görüntüle
+                    <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                $('#@panelId').on('click', 'button[data-widget="collapse"]', function () {
+                    var collapsed = !$('#@panelId').hasClass('collapsed-box');
+                    
+                });
+            });
+        </script>
+    </div>
+</div>

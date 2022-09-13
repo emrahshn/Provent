@@ -1,0 +1,516 @@
+﻿@model TeklifHariciModel
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "Teklif Sektörü";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Teklif");
+
+    var parabirimi = new List<SelectListItem>();
+    parabirimi.Add(new SelectListItem() { Text = "TL", Value = "1" });
+    parabirimi.Add(new SelectListItem() { Text = "$", Value = "2" });
+    parabirimi.Add(new SelectListItem() { Text = "€", Value = "3" });
+}
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+<style type="text/css">
+    div.k-treeview {
+        border-width: 0;
+        background: 0 0;
+        overflow: auto;
+        white-space: normal;
+    }
+
+    .donut-wrapper {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        background-color: #3f3f3f;
+    }
+
+    .donut-chart {
+        width: 180px;
+        height: 180px;
+    }
+
+    .wizard .tab-pane {
+        padding-top: 0;
+    }
+</style>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.BelgeTuru)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor_(m => m.BelgeTuru, new SelectList(Model.KullanılabilirHariciSektorler, "Id", "Adı"))
+                            @Html.ValidationMessageFor(m => m.BelgeTuru)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.PO)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.PO)
+                            @Html.ValidationMessageFor(m => m.PO)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Adı)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.Adı)
+                            @Html.ValidationMessageFor(m => m.Adı)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Acenta)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.Acenta)
+                            @Html.ValidationMessageFor(m => m.Acenta)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.TalepNo)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.TalepNo)
+                            @Html.ValidationMessageFor(m => m.TalepNo)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.UlkeId)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor_(model => model.UlkeId, new SelectList(Model.Ulkeler, "Id", "Adı"))
+                            <span id="sehir-loading-progress" style="display: none;">Lütfen bekleyiniz..</span>
+                            @Html.ValidationMessageFor(m => m.UlkeId)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.SehirId)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor_(model => model.SehirId, new SelectList(Model.Sehirler, "Id", "Adı"))
+                            @Html.ValidationMessageFor(m => m.SehirId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.HizmetBedeli)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.HizmetBedeli, "%")
+                            @Html.ValidationMessageFor(m => m.HizmetBedeli)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Parabirimi)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.DropDownListFor_(m => m.Parabirimi, parabirimi)
+                            @Html.ValidationMessageFor(m => m.Parabirimi)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Tarih)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.Tarih)
+                            @Html.ValidationMessageFor(m => m.Tarih)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.TeslimTarihi)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(m => m.TeslimTarihi)
+                            @Html.ValidationMessageFor(m => m.TeslimTarihi)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.FaturaResim)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.FaturaResim)
+                            @Html.ValidationMessageFor(m => m.FaturaResim)
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="col-md-2">
+                            <h4>Teklif Kalemleri</h4>
+                            <div id="teklif-tree"></div>
+                        </div>
+                        <div class="col-md-10">
+                            <div id="dropHere" class="grid" style="z-index:0;">
+                                <div id="teklif-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+
+    $(document).ready(function () {
+        //wizard
+
+        if (@Model.Id< 0) {
+            $("#liYeniTeklif").removeClass('disabled');
+            $("#liYeniTeklif").addClass('active');
+            $("#liOperasyon").removeClass('active');
+            $("#liKonfirme").removeClass('active');
+            $("#liBiten").removeClass('active');
+
+            $("#step1").addClass('active');
+            $("#step2").removeClass('active');
+            $("#step3").removeClass('active');
+            $("#step4").removeClass('active');
+        }
+        if (@Model.Id> 0) {
+            $("#liOperasyon").removeClass('disabled');
+            $("#liOperasyon").addClass('active');
+            $("#liYeniTeklif").removeClass('active');
+            $("#liKonfirme").removeClass('active');
+            $("#liBiten").removeClass('active');
+
+            $("#step1").removeClass('active');
+            $("#step2").addClass('active');
+            $("#step3").removeClass('active');
+            $("#step4").removeClass('active');
+
+        }
+        //ülke seçimi
+        $(function () {
+            $("#UlkeId").change(function () {
+                var selectedItem = $(this).val();
+                var ddlSehir = $("#SehirId");
+                var sehirProgress = $("#sehir-loading-progress");
+                sehirProgress.show();
+                $.ajax({
+                    cache: false,
+                    type: "GET",
+                    url: "@Html.Raw(Url.Action("SehirAlUlkeId", "Tanımlamalar"))",
+                    data: { "ulkeId": selectedItem },
+                    success: function (data) {
+                        ddlSehir.html('');
+                        $.each(data, function (id, option) {
+                            ddlSehir.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                        sehirProgress.hide();
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Sehirler alınırken hata oluştu.');
+                        sehirProgress.hide();
+                    }
+                });
+            });
+        });
+        //tree
+        var Ana = new kendo.data.HierarchicalDataSource({
+            transport: {
+                read: {
+                    url: "@Html.Raw(Url.Action("TeklifTree", "Teklif"))",
+                    type: "GET",
+                    dataType: "json"
+                }
+            },
+            schema: {
+                model: {
+                    children: "items"
+                }
+            }
+        });
+        treeitemid = 0;
+        $("#teklif-tree").kendoTreeView({
+            dragAndDrop: true,
+            dataSource: Ana,
+            moveSourceNode: false,
+            includeChildren: false,
+            dataTextField: ["adi", "adi"],
+            dataValueField: ["Id", "Id"],
+            dragstart: function (e) {
+                if ($(e.sourceNode).parentsUntil(".k-treeview", ".k-item").length == 0) {
+                    e.preventDefault();
+                }
+                var tree = e.sender;
+                var movingItem = tree.dataItem(e.sourceNode);
+                treeitemid = movingItem.id;
+            },
+            drop: function (e, args) {
+                if ($(e.sourceNode).parentsUntil(".k-treeview", ".k-item").length == 1) {
+                    e.preventDefault();
+                }
+            },
+        });
+        //hazırlık
+        var dataSource = new kendo.data.DataSource({
+            autoSync: true,
+            transport: {
+                read: {
+                    url: "@Html.Raw(Url.Action("BağlıTeklifHariciListe", "Teklif",new { teklifId=Model.Id,grid="Hazırlık"}))",
+                    type: "POST",
+                    dataType: "json"
+                },
+                update: {
+                    url: "@Html.Raw(Url.Action("BagliTeklifHariciDuzenle", "Teklif"))",
+                    type: "POST",
+                    dataType: "json"
+                },
+                destroy: {
+                    url: "@Html.Raw(Url.Action("BagliTeklifHariciSil", "Teklif"))",
+                    type: "POST",
+                    dataType: "json"
+                },
+                create: {
+                    url: "@Html.Raw(Url.Action("BağlıTeklifHariciEkle", "Teklif"))",
+                    type: "POST",
+                    dataType: "json",
+                    data: additionalData
+                },
+                parameterMap: function (data, operation) {
+                    if (operation != "read" && operation != "create") {
+                        var result = {};
+
+                        for (var i = 0; i < data.models.length; i++) {
+                            var entity = data.models[i];
+
+                            for (var member in entity) {
+                                result["ogeler[" + i + "]." + member] = entity[member];
+                            }
+                        }
+                        console.log(result);
+                        addAntiForgeryToken(result);
+                        return result;
+                    }
+                    else {
+                        addAntiForgeryToken(data);
+                        console.log(data);
+                        return data;
+                    }
+                }
+            },
+            schema: {
+                data: "Data",
+                total: "Toplam",
+                model: {
+                    id: "Id",
+                    fields: {
+                        TeklifId: { editable: false, type: "number" },
+                        Adı: { editable: false, type: "string" },
+                        Aciklama: { editable: true, type: "string" },
+                        Kurum: {},
+                        Adet: { editable: true, type: "number" },
+                        Gun: { editable: true, type: "number" },
+                        AlisBirimFiyat: { editable: true, type: "decimal" },
+                        SatisBirimFiyat: { editable: true, type: "decimal" },
+                        ParaBirimi: {},
+                        KdvRadio: { editable: true, field: "KdvRadio",type: "number",defaultValue: 1},
+                        Id: { editable: false, type: "number" }
+                    }
+                }
+            },
+            requestEnd: function (e) {
+                this.refresh;
+            },
+            error: function (e) {
+                display_kendoui_grid_error(e);
+                this.cancelChanges();
+            },
+            batch: true,
+            pageSize: @(varsayılanGridSayfaBüyüklüğü),
+            serverPaging: true,
+            serverFiltering: true,
+            serverSorting: true
+        });
+
+        var grid = $("#teklif-grid").kendoGrid({
+            
+            dataSource: dataSource,
+            pageable: {
+                refresh: true,
+                pageSizes: [@(gridSayfaBüyüklüğü)],
+                                        @Html.Partial("_GridMesajları")
+            },
+            editable: {
+                confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                //bulk editing
+                mode: "incell"
+            },
+            scrollable: false,
+            columns: [
+                {
+                    field: "Adı",
+                    title: "Adı",
+                    width: 80,
+                    editable: false
+                },
+                {
+                    field: "Aciklama",
+                    title: "Açıklama",
+                    width: 260
+                },
+                {
+                    field: "Adet",
+                    title: "Adet",
+                    width: 70
+                }, {
+                    field: "AlisBirimFiyat",
+                    title: "Alış Fiyat",
+                    width: 70,
+                    format: "{0:n2}"
+                }, {
+                    field: "SatisBirimFiyat",
+                    title: "Satış Fiyat",
+                    width: 70,
+                    format: "{0:n2}"
+                },
+                {
+                    field: "Parabirimi",
+                    title: "Parabirimi",
+                    width: 70,
+                    editor: paraDDEditor,
+                    template: '# if(Parabirimi == 1) {# TL #} #' +
+                        '# if(Parabirimi == 2) {# USD #} #' +
+                        '# if(Parabirimi == 3) {# Euro #} #'
+                },
+                {
+                    field: "KdvRadio",
+                    width: 80,
+                    title: "Kdv",
+                    editor: kdvRadioEditor,
+                    template: '# if(KdvRadio == 1) {# KDV 0% #} #' +
+                        '# if(KdvRadio == 2) {# KDV 8% #} #' +
+                        '# if(KdvRadio == 3) {# KDV 18% #} #'
+                }, {
+                    command: { name: "destroy", text: "Sil" },
+                    title: "Sil",
+                    width: 10,
+                },
+
+            ],
+            editable: true
+        }).kendoDropTarget({ drop: onDrop });
+
+
+        function additionalData() {
+            var data = {
+                treeItemId: treeitemid,
+                teklifId: "@Html.Raw(Model.Id)"
+            };
+            addAntiForgeryToken(data);
+            return data;
+        };
+        //chart hazırlık
+        function onDrop(e) {
+            dataSource.transport.create();
+            $("#teklif-grid").data("kendoGrid").dataSource.read();
+            $("#teklif-grid").data("kendoGrid").refresh();
+        };
+
+        //paraDDEditor
+        function paraDDEditor(container, options) {
+            $('<input required data-bind="value:' + options.field + '"/>')
+                .appendTo(container)
+                .kendoDropDownList({
+                    autoBind: false,
+                    dataTextField: "paraAdı",
+                    dataValueField: "Id",
+                    dataSource: {
+                        data: [{ "paraAdı": "TL", "Id": 1 }, { "paraAdı": "USD", "Id": 2 }, { "paraAdı": "Euro", "Id": 3 }]
+                    }
+                });
+        }
+        function kdvRadioEditor(container, options) {
+            $('<input required data-bind="value:' + options.field + '"/>')
+                .appendTo(container)
+                .kendoDropDownList({
+                    autoBind: false,
+                    dataTextField: "text",
+                    dataValueField: "value",
+                    dataSource: {
+                        data: categories
+                    }
+                });
+        }
+        var categories = [{
+            "value": 1,
+            "text": "KDV 0%"
+        }, {
+            "value": 2,
+                "text": "KDV 8%"
+        }, {
+            "value": 3,
+                "text": "KDV 18%"
+        }];
+
+        function templateFunction(dataItem) {
+            var cell = "";
+            var category = dataItem.KdvRadio - 1;
+            console.log(dataItem.KdvRadio);
+            for (var i = 0; i < categories.length; i++) {
+                var item = "";
+
+                item += "<label>"
+                if (category === i) {
+                    item += "<input type='radio' name='" + dataItem.uid + "' checked=checked />";
+                } else {
+                    item += "<input type='radio' name='" + dataItem.uid + "' />";
+                }
+                item += categories[i].text;
+                item += "</label>"
+                item += "</br>";
+
+                cell += item;
+            }
+            return cell;
+        };
+
+        function setDataItem(item) {
+            var grid = $("#teklif-grid").data("kendoGrid");
+            var row = $(item).closest("tr");
+            var dataItem = grid.dataItem(row);
+            var category = $(item)[0].labels[0].innerText;
+            var ID;
+
+            for (var i = 0; i < categories.length; i++) {
+                if (categories[i].text === category) {
+                    ID = i;
+                    break;
+                }
+            };
+
+            dataItem.set("KDV", ID + 1);
+        };
+
+        //firmaAutoCompleteEditor
+        function firmaAutoCompleteEditor(container, options) {
+            $('<input required data-bind="value:' + options.field + '"/>')
+                .appendTo(container)
+                .kendoAutoComplete({
+                    dataSource: {
+                        transport: {
+                            read: {
+                                url: "@Html.Raw(Url.Action("FirmalarListe", "Teklif"))",
+                                dataType: "json",
+                                type: "GET"
+                            }
+                        }
+                    },
+                    dataTextField: "FirmaAdı",
+                    dataValueField: "Id",
+                    filter: "contains",
+                    minLength: 1
+                });
+        }
+    });
+</script>

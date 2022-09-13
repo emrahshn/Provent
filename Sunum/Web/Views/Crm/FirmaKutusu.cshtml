@@ -1,0 +1,134 @@
+﻿@model CrmFirmaModel
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+
+    ViewBag.Title = "Ekle";
+    Html.AktifMenuÖğesiSistemAdıBelirle("KişiEkle");
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content">
+        <div class="form-horizontal">
+            <div id="kongre-duzenle" class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    @Html.RenderBootstrapTabHeader("tab-gorusme", "Görüşme Geçmişi", true)
+                    @Html.RenderBootstrapTabHeader("tab-yetkili", "Yetkililer")
+                </ul>
+                <div class="tab-content">
+                    @Html.RenderBootstrapTabContent("tab-gorusme", @TabGorusme(), true)
+                    @Html.RenderBootstrapTabContent("tab-yetkili", @TabYetkili())
+                </div>
+            </div>
+            @helper TabGorusme()
+            {
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div id="gorusme-grid"></div>
+                            <script>
+                            $(document).ready(function () {
+                                gorusmeHesapla();
+                            });
+
+                            function gorusmeHesapla() {
+                                var el = $("#gorusme-grid")[0];
+                                var ke = document.getElementById("sponEkle");
+                                //var kd = document.getElementById("kontenjanDuzenle");
+                                $.ajax({
+                                    cache: false,
+                                    type: "GET",
+                                    url: "@Html.Raw(Url.Action("CrmFirmaGorusmeListele", "Crm"))",
+                                    data: { "FirmaId": @Model.Id },
+                                    success: function (data) {
+                                        if (data.length > 0) {
+                                            var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                                            text = text + '<tr><th>Tarih</th><th>Görüşme Şekli</th><th>Kişi</th><th>Görüşen</th><th>Görüntüle</th><th>Düzenle</th>';
+                                            $.each(data, function (id, option) {
+                                                if (id != "Id" && id != "CustomProperties") {
+                                                    var date = new Date(parseInt(data[id].GorusmeTarihi.substr(6))).toLocaleDateString();
+                                                    var gs = data[id].GorusmeSekli;
+                                                    var gorusmeseki = gs == 1 ? "Telefon" : (gs == 2 ? "Email" : "Yüz Yüze");
+                                                    text = text + '<tr><td>' + date + '</td><td>' + gorusmeseki + '</td><td>' + data[id].GorusulenAdı + '</td><td>' + data[id].GorusenAdı + '</td><td><a href="#" class="modalShow" id="modalShow_' + data[id].Id + '" data-toggle="modal" data-target="#görüsmeModal"  data-gorusme-id="' + data[id].Id + '">Görüntüle</a></td><td><a href="../CrmFirmaGorusmeDüzenle?kayıtId=' + data[id].Id + '&&firmaId=@Model.Id">Düzenle</a></td></tr>'
+                                                }
+                                            });
+                                            text = text + "</tbody></table>";
+                                            el.innerHTML = text;
+                                            el.style.display = "block";
+                                        }
+                                        else {
+                                            el.style.display = "none";
+                                        }
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                        alert('Görüşmeler alınırken hata oluştu.');
+                                    }
+                                });
+                            }
+                            </script>
+                        </div>
+                        <div class="panel-footer">
+                            <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#tümGörüsmeler">Tüm Görüşmeler</a>
+                            <button id="kursEkle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("CrmFirmaGorusmeEkle", new { firmaId = Model.Id })'">
+                                Görüşme Ekle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @Html.Partial("TumGorusmelerModal", Model)
+                @Html.Partial("GorusmeModal", Model)
+            }
+            @helper TabYetkili()
+            {
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div id="yetkili-grid"></div>
+                            <script>
+                            $(document).ready(function () {
+                               yetkiliHesapla();
+                            });
+                                function yetkiliHesapla() {
+                                var el = $("#yetkili-grid")[0];
+                                $.ajax({
+                                    cache: false,
+                                    type: "GET",
+                                    url: "@Html.Raw(Url.Action("CrmYetkiliListeleFirma", "Crm"))",
+                                    data: { "firmaId": @Model.Id },
+                                    success: function (data) {
+                                        if (data.length > 0) {
+                                            var text = '';
+                                            text = text + '<div class="box box-info">';
+                                            text = text + '<div class="box-body">';
+                                            $.each(data, function (id, option) {
+                                                if (id != "Id" && id != "CustomProperties") {
+                                                    text = text + '<div class="form-group">';
+                                                    text = text + '<div class="col-md-2">Yetkili:</div>';
+                                                    text = text + '<div class="col-md-10">' + data[id].Adı + " " + data[id].Soyadı+ '</div>';
+                                                    text = text + '</div>';
+                                                }
+                                            });
+                                            text = text + '</div>';
+                                            text = text + '</div>';
+                                            el.innerHTML = text;
+                                            el.innerHTML = text;
+                                            el.style.display = "block";
+                                        }
+                                        else {
+                                            el.style.display = "none";
+                                        }
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                        alert('Görüşmeler alınırken hata oluştu.');
+                                    }
+                                });
+                            }
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

@@ -1,0 +1,320 @@
+﻿@model CrmAnasayfaModel
+@using Core
+@using Services.Genel
+
+@{
+    const string dogumpanelId = "crm-dogum-gunu-panel";
+    const string hidePanelAttributeName = "HideCommonStatisticsPanel";
+    var hidePanel = EngineContext.Current.Resolve<IWorkContext>().MevcutKullanıcı.ÖznitelikAl<bool>(hidePanelAttributeName);
+}
+<div class="content">
+    <div class="form-horizontal">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box box-info @if(hidePanel){<text>collapsed-box</text>}" id="@dogumpanelId">
+                    <div class="box-header with-border clearfix">
+                        <div class="box-title">
+                            <i class="fa ion-stats-bars"></i>
+                            İhaleler
+                        </div>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                @if (hidePanel)
+                                {
+                                    <text><i class="fa fa-plus"></i></text>
+                                }
+                                else
+                                {
+                                    <text><i class="fa fa-minus"></i></text>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+
+                        <div id="ihale-grid"></div>
+                        <script>
+                    $(document).ready(function () {
+                        ihaleHesapla();
+                    });
+                            function ihaleHesapla() {
+                                var el = $("#ihale-grid")[0];
+                        var ke = document.getElementById("sponEkle");
+                        //var kd = document.getElementById("kontenjanDuzenle");
+                        $.ajax({
+                            cache: false,
+                            type: "GET",
+                            url: "@Html.Raw(Url.Action("CrmIhaleHatırlatması", "Crm"))",
+                            success: function (data) {
+                                if (data.length > 0) {
+                                    var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                                    text = text + '<tr><th>Tarih</th><th>Kongre</th><th>Görüntüle</th><th>Düzenle</th>';
+                                    $.each(data, function (id, option) {
+                                        if (id != "Id" && id != "CustomProperties") {
+                                            var date = new Date(parseInt(data[id].IhaleTarihi.substr(6))).toLocaleDateString();
+                                            text = text + '<tr><td>' + date + '</td><td>' + data[id].Adı + '</td><td><a href="#">Görüntüle</a></td><td><a href="../CrmGorusmeDüzenle?kayıtId=' + data[id].Id + '&&kisiId=@Model.Id">Düzenle</a></td></tr>'
+                                        }
+                                    });
+                                    text = text + "</tbody></table>";
+                                    el.innerHTML = text;
+                                    el.style.display = "block";
+                                }
+                                else {
+                                    el.style.display = "none";
+                                }
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                alert('Görüşmeler alınırken hata oluştu.');
+                            }
+                        });
+                    }
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="box box-info @if(hidePanel){<text>collapsed-box</text>}" id="@dogumpanelId">
+                    <div class="box-header with-border clearfix">
+                        <div class="box-title">
+                            <i class="fa ion-stats-bars"></i>
+                            Doğum Günleri
+                        </div>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                @if (hidePanel)
+                                {
+                                    <text><i class="fa fa-plus"></i></text>
+                                }
+                                else
+                                {
+                                    <text><i class="fa fa-minus"></i></text>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box box-info @if(hidePanel){<text>collapsed-box</text>}" id="@dogumpanelId">
+                    <div class="box-header with-border clearfix">
+                        <div class="box-title">
+                            <i class="fa ion-stats-bars"></i>
+                            Firma Görüşmeleri (3 Günlük Hatırlatma)
+                        </div>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                @if (hidePanel)
+                                {
+                                    <text><i class="fa fa-plus"></i></text>
+                                }
+                                else
+                                {
+                                    <text><i class="fa fa-minus"></i></text>
+                                }
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="box-body">
+
+                        <div id="gorusme-grid"></div>
+                        <script>
+                    $(document).ready(function () {
+                        gorusmegnHesapla();
+                            });
+                            function gorusmeGuncelle(id,donem) {
+                                $.ajax({
+                                    cache: false,
+                                    type: "POST",
+                                    url: "@Html.Raw(Url.Action("CrmGorusmeGuncelle", "Crm"))",
+                                    data: { "donem": donem,"gorusmeId":id },
+                                    success: function (data) {
+                                        gorusmegnHesapla();
+                                        gorusmehfHesapla();
+                                        gorusmeayHesapla();
+                                    }
+                                });
+                            };
+                            function gorusmegnHesapla() {
+                        var el = $("#gorusme-grid")[0];
+                        var ke = document.getElementById("sponEkle");
+                        //var kd = document.getElementById("kontenjanDuzenle");
+                        $.ajax({
+                            cache: false,
+                            type: "GET",
+                            url: "@Html.Raw(Url.Action("CrmGorusmeUcGun", "Crm"))",
+                            success: function (data) {
+                                if (data.length > 0) {
+                                    var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                                    text = text + '<tr><th>Firma</th><th>Tarih</th><th>Görüntüle</th><th>Kaldır</th>';
+                                    $.each(data, function (id, option) {
+                                        if (id != "Id" && id != "CustomProperties") {
+                                            var date = new Date(parseInt(data[id].GorusmeTarihi.substr(6))).toLocaleDateString();
+                                            var gs = data[id].GorusmeSekli;
+                                            var gorusmeseki = gs == 1 ? "Telefon" : (gs == 2 ? "Email" : "Yüz Yüze");
+                                            text = text + '<tr><td>' + data[id].GorusulenAdı + '</td><td>' + date + '</td><td><a href="#" class="modalShow" id="modalShow_' + data[id].Id + '" data-toggle="modal" data-target="#görüsmeModal"  data-gorusme-id="' + data[id].Id + '">Görüntüle</a></td><td><a href="#" onclick="gorusmeGuncelle(' + data[id].Id + ',1)">Kaldır</a></td></tr>'
+                                        }
+                                    });
+                                    text = text + "</tbody></table>";
+                                    el.innerHTML = text;
+                                    el.style.display = "block";
+                                }
+                                else {
+                                    el.style.display = "none";
+                                }
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                alert('Görüşmeler alınırken hata oluştu.');
+                            }
+                        });
+                    }
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="box box-info @if(hidePanel){<text>collapsed-box</text>}" id="@dogumpanelId">
+                    <div class="box-header with-border clearfix">
+                        <div class="box-title">
+                            <i class="fa ion-stats-bars"></i>
+                            Firma Görüşmeleri (3 Haftalık Hatırlatma)
+                        </div>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                @if (hidePanel)
+                                {
+                                    <text><i class="fa fa-plus"></i></text>
+                                }
+                                else
+                                {
+                                    <text><i class="fa fa-minus"></i></text>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div id="gorusme2-grid"></div>
+                        <script>
+                    $(document).ready(function () {
+                        gorusmehfHesapla();
+                    });
+                            function gorusmehfHesapla() {
+                        var el = $("#gorusme2-grid")[0];
+                        var ke = document.getElementById("sponEkle");
+                        //var kd = document.getElementById("kontenjanDuzenle");
+                        $.ajax({
+                            cache: false,
+                            type: "GET",
+                            url: "@Html.Raw(Url.Action("CrmGorusmeUcHafta", "Crm"))",
+                            success: function (data) {
+                                if (data.length > 0) {
+                                    var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                                    text = text + '<tr><th>Firma</th><th>Tarih</th><th>Görüntüle</th><th>Kaldır</th>';
+                                    $.each(data, function (id, option) {
+                                        if (id != "Id" && id != "CustomProperties") {
+                                            var date = new Date(parseInt(data[id].GorusmeTarihi.substr(6))).toLocaleDateString();
+                                            var gs = data[id].GorusmeSekli;
+                                            var gorusmeseki = gs == 1 ? "Telefon" : (gs == 2 ? "Email" : "Yüz Yüze");
+                                            text = text + '<tr><td>' + data[id].GorusulenAdı + '</td><td>' + date + '</td><td><a href="#" class="modalShow" id="modalShow_' + data[id].Id + '" data-toggle="modal" data-target="#görüsmeModal"  data-gorusme-id="' + data[id].Id +'">Görüntüle</a></td><td><a href="#" onclick="gorusmeGuncelle(' + data[id].Id + ',2)">Kaldır</a></td></tr>'
+                                        }
+                                    });
+                                    text = text + "</tbody></table>";
+                                    el.innerHTML = text;
+                                    el.style.display = "block";
+                                }
+                                else {
+                                    el.style.display = "none";
+                                }
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                alert('Görüşmeler alınırken hata oluştu.');
+                            }
+                        });
+                    }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div class="row">
+            <div class="col-md-6">
+                <div class="box box-info @if(hidePanel){<text>collapsed-box</text>}" id="@dogumpanelId">
+                    <div class="box-header with-border clearfix">
+                        <div class="box-title">
+                            <i class="fa ion-stats-bars"></i>
+                            Firma Görüşmeleri (3 Aylık Hatırlatma)
+                        </div>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                @if (hidePanel)
+                                {
+                                    <text><i class="fa fa-plus"></i></text>
+                                }
+                                else
+                                {
+                                    <text><i class="fa fa-minus"></i></text>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div id="gorusme3-grid"></div>
+                        <script>
+                    $(document).ready(function () {
+                        gorusmeayHesapla();
+                    });
+                            function gorusmeayHesapla() {
+                        var el = $("#gorusme3-grid")[0];
+                        var ke = document.getElementById("sponEkle");
+                        //var kd = document.getElementById("kontenjanDuzenle");
+                        $.ajax({
+                            cache: false,
+                            type: "GET",
+                            url: "@Html.Raw(Url.Action("CrmGorusmeUcAy", "Crm"))",
+                            success: function (data) {
+                                if (data.length > 0) {
+                                    var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                                    text = text + '<tr><th>Firma</th><th>Tarih</th><th>Görüntüle</th><th>Düzenle</th>';
+                                    $.each(data, function (id, option) {
+                                        if (id != "Id" && id != "CustomProperties") {
+                                            var date = new Date(parseInt(data[id].GorusmeTarihi.substr(6))).toLocaleDateString();
+                                            var gs = data[id].GorusmeSekli;
+                                            var gorusmeseki = gs == 1 ? "Telefon" : (gs == 2 ? "Email" : "Yüz Yüze");
+                                            text = text + '<tr><td>' + data[id].GorusulenAdı + '</td><td>' + date + '</td><td><a href="#" class="modalShow" id="modalShow_' + data[id].Id + '" data-toggle="modal" data-target="#görüsmeModal"  data-gorusme-id="' + data[id].Id +'">Görüntüle</a></td><td><a href="#" onclick="gorusmeGuncelle(' + data[id].Id + ',3)">Kaldır</a></td></tr>'
+                                        }
+                                    });
+                                    text = text + "</tbody></table>";
+                                    el.innerHTML = text;
+                                    el.style.display = "block";
+
+                                }
+                                else {
+                                    el.style.display = "none";
+                                }
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                alert('Görüşmeler alınırken hata oluştu.');
+                            }
+                        });
+                    }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.Partial("GorusmeModal", new CrmFirmaModel())
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#@dogumpanelId').on('click', 'button[data-widget="collapse"]', function () {
+            var collapsed = !$('#@dogumpanelId').hasClass('collapsed-box');
+
+        });
+    });
+</script>

@@ -1,0 +1,51 @@
+﻿@model HariciTeklifGoruntuModel
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+
+@{Html.CssParçasıIlaveEt("~/Content/odemeFormu.css");}
+<script type="text/javascript">
+    function printDiv(divName) {
+        var printContents = document.getElementById(divName).innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+</script>
+<style type="text/css">
+    #dcmnt {
+        font-size: 12px !important;
+    }
+    table td, table tr {
+        font-size: 12px!important;
+    }
+</style>
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Teklif formu
+        <small><i class="fa fa-arrow-circle-left"></i>@Html.ActionLink("Teklif listesine geri dön", "TeklifHariciListe")</small>
+    </h1>
+    <div class="pull-right">
+        <button class="btn bg-blue" type="submit" name="kaydet" onclick="printDiv('printThis')">
+            <i class="fa fa-print"></i>
+            Yazdır
+        </button>
+    </div>
+</div>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="printThis" class="">
+                        <div style="padding:20px 30px;">
+                            <div id="dcmnt" class="">
+                               @Html.Raw(Model.Text)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

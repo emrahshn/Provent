@@ -1,0 +1,339 @@
+﻿* {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/203277/body_bg.jpg") no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+}
+
+.widget {
+    margin: 3em auto;
+    box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.25);
+}
+
+    .widget::after {
+        clear: both;
+        content: "";
+        display: table;
+    }
+
+    .widget header {
+        background: #144c88;
+        padding: 1em 1.5em;
+        border-top: 4px solid #7dd343;
+        color: #fff;
+    }
+
+        .widget header h3 {
+            margin: 0;
+            font-size: 1.35em;
+            font-weight: 400;
+        }
+        .widget .wcontent{
+            min-height:400px;
+        }
+    .widget .chart {
+        width: 100%;
+        height: auto;
+        background: #fff;
+    }
+
+@media only screen and (min-width: 600px) {
+    .widget .chart {
+        float: right;
+        width: 80%;
+        height: 350px;
+    }
+}
+
+.widget .chart .controls {
+    height: 50px;
+    border-bottom: 1px solid #ccc;
+}
+
+    .widget .chart .controls::after {
+        clear: both;
+        content: "";
+        display: table;
+    }
+
+    .widget .chart .controls nav {
+        float: left;
+        width: 75%;
+        line-height: 50px;
+        border-right: 1px solid #ccc;
+    }
+
+        .widget .chart .controls nav a {
+            display: block;
+            padding: 0 1.5em;
+            text-decoration: none;
+            color: #3c3c3c;
+        }
+
+@media only screen and (min-width: 600px) {
+    .widget .chart .controls nav a {
+        padding: 0 1em;
+    }
+}
+
+.widget .chart .controls nav span {
+    display: inline-block;
+    float: right;
+    line-height: 50px;
+    color: #3797d3;
+}
+
+.widget .chart .controls div {
+    float: left;
+    width: 25%;
+    line-height: 50px;
+    text-align: center;
+}
+
+    .widget .chart .controls div span:first-child {
+        color: #7dd343;
+    }
+
+    .widget .chart .controls div span:nth-child(2) {
+        font-weight: 600;
+        font-size: 1.35em;
+        color: #3c3c3c;
+    }
+
+.widget .chart .canvas-container {
+    width: 100%;
+}
+
+    .widget .chart .canvas-container canvas {
+        display: inline;
+        width: 370px;
+        padding: 1em;
+    }
+
+.widget .info {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background: #20649b;
+}
+
+.widget .islemler {
+    background: #20649b;
+    padding: 6px 10px;
+    border-top: 4px solid #7dd343;
+    color: #fff;
+    float: right;
+    width: 80%;
+    text-align:right;
+}
+    .widget .islemler .islem {
+        float: left;
+        display: -webkit-box;
+    }
+
+@media only screen and (min-width: 600px) {
+    .widget .info {
+        float: left;
+        width: 20%;
+    }
+}
+
+.widget .info h4 {
+    margin: 0 0 0.35em;
+    padding: 1em 1.5em;
+    font-size: 1em;
+    font-weight: 300;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.widget .info .info-module {
+    padding: 0 1.5em;
+    font-weight: 400;
+}
+
+    .widget .info .info-module .heading {
+        font-size: 0.85em;
+    }
+
+        .widget .info .info-module .heading::after {
+            clear: both;
+            content: "";
+            display: table;
+        }
+
+        .widget .info .info-module .heading span {
+            display: inline-block;
+            color: #fff;
+            
+        }
+
+            .widget .info .info-module .heading span:first-child {
+                float: left;
+            }
+
+            .widget .info .info-module .heading span:nth-child(2) {
+                float: right;
+            }
+            .widget .info .info-module .heading span.ellipsis:nth-child(2) {
+                float: right;
+                white-space: nowrap;
+                overflow-x: hidden;
+                overflow-y: hidden ;
+                text-overflow: ellipsis;
+                max-width: 90px;
+            }
+
+                .widget .info .info-module .heading span.ellipsis:nth-child(2):hover {
+                    white-space: normal;
+                    overflow-x: hidden;
+                    overflow-y: scroll;
+                    max-width: 100%;
+                    height: 100px;
+                    cursor: pointer;
+                }
+            .widget .info .info-module .heading span.ellipsis::-webkit-scrollbar-track {
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+                border-radius: 10px;
+                background-color: #144C88;
+            }
+
+            .widget .info .info-module .heading span.ellipsis::-webkit-scrollbar {
+                width: 6px;
+                background-color: #144C88;
+            }
+
+            .widget .info .info-module .heading span.ellipsis::-webkit-scrollbar-thumb {
+                border-radius: 10px;
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+                background-color: #49B4E8;
+            }
+
+    .widget .info .info-module .progress {
+        height: 5px;
+        margin: 0.35em 0 1em;
+        background: #0f3d77;
+        border-radius: 10px;
+    }
+
+        .widget .info .info-module .progress:after {
+            content: '';
+            display: block;
+            height: 100%;
+            background: #45b0e6;
+            border-radius: 5px;
+        }
+
+    .widget .info .info-module .undergraduate:after {
+        width: 65%;
+        -webkit-animation: undergraduate 2s ease-in-out forwards;
+        animation: undergraduate 2s ease-in-out forwards;
+    }
+
+    .widget .info .info-module .graduate:after {
+        width: 30%;
+        -webkit-animation: graduate 2s ease-in-out forwards;
+        animation: graduate 2s ease-in-out forwards;
+    }
+
+    .widget .info .info-module .transfer:after {
+        width: 5%;
+        -webkit-animation: transfer 2s ease-in-out forwards;
+        animation: transfer 2s ease-in-out forwards;
+    }
+
+@-webkit-keyframes undergraduate {
+    0% {
+        width: 0;
+    }
+
+    100% {
+        width: 65%;
+    }
+}
+
+@keyframes undergraduate {
+    0% {
+        width: 0;
+    }
+
+    100% {
+        width: 65%;
+    }
+}
+
+@-webkit-keyframes graduate {
+    0% {
+        width: 0;
+    }
+
+    100% {
+        width: 30%;
+    }
+}
+
+@keyframes graduate {
+    0% {
+        width: 0;
+    }
+
+    100% {
+        width: 30%;
+    }
+}
+
+@-webkit-keyframes transfer {
+    0% {
+        width: 0;
+    }
+
+    100% {
+        width: 5%;
+    }
+}
+
+@keyframes transfer {
+    0% {
+        width: 0;
+    }
+
+    100% {
+        width: 5%;
+    }
+}
+
+.widget .info nav {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+    .widget .info nav a {
+        display: block;
+        line-height: 50px;
+        text-decoration: none;
+        text-align: center;
+        color: #fff;
+    }
+
+    .widget .info nav span:first-child {
+        float: left;
+        width: 100%;
+        background: #49b4e8;
+    }
+
+    .widget .info nav span:nth-child(2) {
+        float: left;
+        width: 25%;
+        line-height: 50px;
+        background: #3099dd;
+    }

@@ -1,0 +1,27 @@
+﻿@using Core;
+@using Core.Altyapı
+@using Web.Framework.Temalar
+@using Web.Framework.UI
+@{  
+    var themeName = EngineContext.Current.Resolve<ITemaContext>().ÇalışanTemaAdı;
+
+    //tarayıcı bağımlı css dosyasını ekle
+    var browser = Request.Browser;
+    if (browser.Browser == "IE" && browser.MajorVersion == 8)
+    {
+        Html.CssParçasıIlaveEt(string.Format("~/Temalar/{0}/Content/css/ie8.css", themeName));
+    }
+    else
+    {
+        Html.CssParçasıIlaveEt(string.Format("~/Temalar/{0}/Content/css/styles.css", themeName));
+    }
+    
+    //jQuery UI css dosyasını ekle
+    Html.CssParçasıIlaveEt("~/Content/jquery-ui-themes/smoothness/jquery-ui-1.10.3.custom.min.css");
+
+    if (browser.Browser == "IE" && browser.MajorVersion == 8)
+    {
+        Html.ScriptParçasıIlaveEt("~/Scripts/selectivizr.min.js");
+        Html.ScriptParçasıIlaveEt("~/Scripts/respond.min.js");
+    }
+}

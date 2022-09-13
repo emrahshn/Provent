@@ -1,0 +1,64 @@
+﻿@model CrmKisiGorusmeModel
+@{
+    var gsekli = new List<SelectListItem>();
+    gsekli.Add(new SelectListItem() { Text = "Telefon", Value = "1" });
+    gsekli.Add(new SelectListItem() { Text = "Email", Value = "2" });
+    gsekli.Add(new SelectListItem() { Text = "Yüz Yüze", Value = "3" });
+
+    var gsebebi = new List<SelectListItem>();
+    gsebebi.Add(new SelectListItem() { Text = "Randevu İstemek", Value = "1" });
+    gsebebi.Add(new SelectListItem() { Text = "Bilgilendirmek", Value = "2" });
+    gsebebi.Add(new SelectListItem() { Text = "Bilgi Almak", Value = "3" });
+}
+@Html.ValidationSummary(true)
+
+<script>
+
+</script>
+@Html.HiddenFor(x => x.Gorusmeler.Id)
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Gorusmeler.GorusmeSebebi)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(m => m.Gorusmeler.GorusmeSebebi, gsebebi)
+                            @Html.ValidationMessageFor(m => m.Gorusmeler.GorusmeSebebi)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Gorusmeler.GorusmeSekli)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(m => m.Gorusmeler.GorusmeSekli, gsekli)
+                            @Html.ValidationMessageFor(m => m.Gorusmeler.GorusmeSekli)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Gorusmeler.GorusmeTarihi)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Gorusmeler.GorusmeTarihi)
+                            @Html.ValidationMessageFor(m => m.Gorusmeler.GorusmeTarihi)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Gorusmeler.Notlar)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Gorusmeler.Notlar)
+                            @Html.ValidationMessageFor(m => m.Gorusmeler.Notlar)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

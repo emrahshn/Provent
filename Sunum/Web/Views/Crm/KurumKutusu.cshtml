@@ -1,0 +1,195 @@
+﻿@model CrmKurumModel
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+
+    ViewBag.Title = "Ekle";
+    Html.AktifMenuÖğesiSistemAdıBelirle("KişiEkle");
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+<div class="content">
+    <div class="form-horizontal">
+        <div id="kongre-duzenle" class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                @Html.RenderBootstrapTabHeader("tab-yk", "Yönetim Kurulu", true)
+                @Html.RenderBootstrapTabHeader("tab-gorusme", "Görüşme Geçmişi")
+                @Html.RenderBootstrapTabHeader("tab-kongre", "Kongreler")
+                @Html.RenderBootstrapTabHeader("tab-ihale", "İhaleler")
+            </ul>
+            <div class="tab-content">
+                @Html.RenderBootstrapTabContent("tab-yk", @TabYK(), true)
+                @Html.RenderBootstrapTabContent("tab-gorusme", @TabGorusme())
+                @Html.RenderBootstrapTabContent("tab-kongre", @TabKongre())
+                @Html.RenderBootstrapTabContent("tab-ihale", @TabIhale())
+            </div>
+        </div>
+        @helper TabYK()
+        {
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="yk-grid"></div>
+                        <div id="yk2-grid"></div>
+                        <script>
+                    $(document).ready(function () {
+                        ykHesapla();
+                    });
+                            function ykHesapla() {
+                                var el = $("#yk-grid")[0];
+                                var el2 = $("#yk2-grid")[0];
+                        var ke = document.getElementById("sponEkle");
+                        //var kd = document.getElementById("kontenjanDuzenle");
+                        $.ajax({
+                            cache: false,
+                            type: "GET",
+                            url: "@Html.Raw(Url.Action("CrmYKListele", "Crm"))",
+                            data: { "kurumId": @Model.Id },
+                            success: function (data) {
+                                if (data.length > 0) {
+                                    var text = '<h3>Yönetimi Kurulu</h3>';
+                                    var text2 = '<h3>Geçmiş Dönem Kurulları</h3>';
+                                    //text = text + '<tr><th>Adı</th><th>Yeri</th><th>Tarih</th><th>Web Adresi</th><th>Düzenle</th>';
+                                    $.each(data, function (id, option) {
+                                        if (id != "Id" && id != "CustomProperties" && !data[id].Onceki) {
+                                            text = text + '<br><div class="col-md-3">' + data[id].GorevAdı + '</div><a href="../KişiKartı/' + data[id].KisiId + '">' + data[id].KisiAdı+'</a>';
+                                        }
+                                        else if (data[id].Onceki) {
+                                            text2 = text2 + '<br><div class="col-md-3">' + data[id].GorevAdı + '</div><a href="../KişiKartı/' + data[id].KisiId + '">' + data[id].KisiAdı + '</a>';
+                                        }
+                                    });
+                                    el.innerHTML = text;
+                                    el.style.display = "block";
+                                    el2.innerHTML = text2;
+                                    el2.style.display = "block";
+                                }
+                                else {
+                                    el.style.display = "none";
+                                    el2.style.display = "none";
+                                }
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                alert('Yönetim kurulu alınırken hata oluştu.');
+                            }
+                        });
+                    }
+                        </script>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabGorusme()
+        {
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="gorusme-grid"></div>
+                        <script>
+                    $(document).ready(function () {
+                        gorusmeHesapla();
+                    });
+                    function gorusmeHesapla() {
+                        var el = $("#gorusme-grid")[0];
+                        var ke = document.getElementById("sponEkle");
+                        //var kd = document.getElementById("kontenjanDuzenle");
+                        $.ajax({
+                            cache: false,
+                            type: "GET",
+                            url: "@Html.Raw(Url.Action("CrmGorusmeListeleKurum", "Crm"))",
+                            data: { "kurumId": @Model.Id },
+                            success: function (data) {
+                                if (data.length > 0) {
+                                    var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                                    text = text + '<tr><th>Tarih</th><th>Görüşme Şekli</th><th>Kişi</th><th>Görüşen</th><th>Görüntüle</th><th>Düzenle</th>';
+                                    $.each(data, function (id, option) {
+                                        if (id != "Id" && id != "CustomProperties") {
+                                            var date = new Date(parseInt(data[id].GorusmeTarihi.substr(6))).toLocaleDateString();
+                                            var gs = data[id].GorusmeSekli;
+                                            var gorusmeseki = gs == 1 ? "Telefon" : (gs == 2 ? "Email" : "Yüz Yüze");
+                                            text = text + '<tr><td>' + date + '</td><td>' + gorusmeseki + '</td><td>' + data[id].GorusulenAdı + '</td><td>' + data[id].GorusenAdı + '</td><td><a href="#">Görüntüle</a></td><td><a href="../CrmGorusmeDüzenle?kayıtId=' + data[id].Id + '&&kisiId=@Model.Id">Düzenle</a></td></tr>'
+                                        }
+                                    });
+                                    text = text + "</tbody></table>";
+                                    el.innerHTML = text;
+                                    el.style.display = "block";
+                                }
+                                else {
+                                    el.style.display = "none";
+                                }
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                alert('Görüşmeler alınırken hata oluştu.');
+                            }
+                        });
+                    }
+                        </script>
+                    </div>
+                    <div class="panel-footer">
+                        <button id="kursEkle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("CrmGorusmeEkle", new { kisiId = Model.Id })'">
+                            Görüşme Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabKongre()
+        {
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div id="kongre-grid"></div>
+                        <script>
+                    $(document).ready(function () {
+                        kongreHesapla();
+                    });
+                    function kongreHesapla() {
+                        var el = $("#kongre-grid")[0];
+                        var ke = document.getElementById("sponEkle");
+                        //var kd = document.getElementById("kontenjanDuzenle");
+                        $.ajax({
+                            cache: false,
+                            type: "GET",
+                            url: "@Html.Raw(Url.Action("CrmKongreListele", "Crm"))",
+                            data: { "kurumId": @Model.Id },
+                            success: function (data) {
+                                if (data.length > 0) {
+                                    var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                                    text = text + '<tr><th>Adı</th><th>Yeri</th><th>Tarih</th><th>Web Adresi</th><th>Görüntüle</th><th>Düzenle</th>';
+                                    $.each(data, function (id, option) {
+                                        if (id != "Id" && id != "CustomProperties") {
+                                            var date = new Date(parseInt(data[id].Tarih.substr(6))).toLocaleDateString();
+                                            var gs = data[id].GorusmeSekli;
+                                            var gorusmeseki = gs == 1 ? "Telefon" : (gs == 2 ? "Email" : "Yüz Yüze");
+                                            text = text + '<tr><td>' + data[id].Adı + '</td><td>' + data[id].Yer + '</td><td>' + date + '</td><td>' + data[id].Web + '</td><td><a href="#">Görüntüle</a></td><td><a href="../CrmKurumDüzenle?kurumId=@Model.Id">Düzenle</a></td></tr>';
+                                        }
+                                    });
+                                    text = text + "</tbody></table>";
+                                    el.innerHTML = text;
+                                    el.style.display = "block";
+                                }
+                                else {
+                                    el.style.display = "none";
+                                }
+                            },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                alert('Kongreler alınırken hata oluştu.');
+                            }
+                        });
+                    }
+                        </script>
+                    </div>
+                    <div class="panel-footer">
+                        <button id="kursEkle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("CrmKongreEkle", new { kurumId = Model.Id })'">
+                            Kongre Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+        @helper TabIhale()
+        {
+        }
+    </div>
+</div>
+}

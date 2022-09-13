@@ -1,0 +1,423 @@
+﻿@model KongreModel
+@{
+    ViewBag.Title = "Düzenle";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Hedefler");
+    ICollection<KullanıcıRolü> alınanRoller = EngineContext.Current.Resolve<Core.IWorkContext>().MevcutKullanıcı.KullanıcıRolleri;
+    IList<KullanıcıRolü> roller = alınanRoller.ToList();
+    bool yonetici = false;
+    foreach (var rol in roller)
+    {
+        if (roller[0].Adı.Contains("Yönetici"))
+        {
+            yonetici = true;
+            break;
+        }
+    }
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Hedefler
+        </h1>
+        <div class="pull-right">
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            gelirHesapla();
+            function categoryDropDownEditor(container, options) {
+                $('<input required name="' + options.field + '"/>')
+                    .appendTo(container)
+                    .kendoDropDownList({
+                        autoBind: false,
+                        dataTextField: "name",
+                        dataValueField: "name",
+                        dataSource: {
+                            type: "GET",
+                            transport: {
+                                read: {
+                                    url: "@Html.Raw(Url.Action("GelirKalemleriAl", "Kongre", new { gelir = true }))",
+                                    type: "GET",
+                                    dataType: "json",
+                                }
+                            }
+                        }
+                    });
+            };
+            var grid = $("#gelirGrid").kendoGrid({
+                dataSource: {
+                    autoSync: true,
+                    type: "json",
+                    transport: {
+                        read: {
+                            url: "@Html.Raw(Url.Action("HedefListeGelir", "Kongre", new { modelId = Model.Id }))",
+                            type: "POST",
+                            dataType: "json",
+
+                        },
+                        update: {
+                            url: "@Html.Raw(Url.Action("HedefDüzenleGrid", "Kongre"))",
+                            type: "POST",
+                            dataType: "json",
+                            complete: function (e) {
+                                $("#gelirGrid").data("kendoGrid").dataSource.read();
+                            }
+                        },
+                    },
+                    schema: {
+                        data: "Data",
+                        total: "Toplam",
+                        model: {
+                            id: "Id",
+                            fields: {
+                                Id: { editable: false, type: "number" },
+                                Adı: { editable: true, type: "string" },
+                                BirimFiyat: { editable: true, type: "decimal" },
+                                Adet: { editable: true, type: "number" },
+                                Gün: { editable: true, type: "number" },
+                                Tutar: { editable: false, type: "number" },
+                                GerçekleşenBirimFiyat: { editable: true, type: "number" },
+                                GerçekleşenAdet: { editable: true, type: "number" },
+                                GerçekleşenTutar: { editable: false, type: "number" },
+                                Fark: { editable: false, type: "number" },
+                                GelirYüzde: { editable: false, type: "number" },
+                                Döviz: { editable: false, type: "number" },
+                                Locked: { editable: @if (yonetici)
+                                { <text>true</text>}
+                                else
+                                {<text>false</text>}, type: "boolean" },
+                            }
+                        }
+                    },
+                    error: function (e) {
+                        display_kendoui_grid_error(e);
+                        this.cancelChanges();
+                    },
+                    page: $("#selected-page").val(),
+                    batch: true,
+                    pageSize: 15,
+                    serverPaging: true,
+                    serverFiltering: true,
+                    serverSorting: true,
+
+                },
+                editable: {
+                    confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                    mode: "incell"
+                },
+                edit: function (e) {
+                        @if (!yonetici)
+                        {<text>
+                    if (e.model.Locked) {
+                        this.closeCell();
+                    }
+                    </text>
+                        }
+                        },
+                scrollable: true,
+
+                columns: [
+                    {
+                        field: "Adı",
+                        title: "Adı",
+                        width: 120,
+                        editor: categoryDropDownEditor,
+
+                    }, {
+                        field: "Gün",
+                        title: "Gün",
+                        width: 80
+                    }, {
+                        field: "Adet",
+                        title: "Hedef Adet",
+                        width: 80
+                    }, {
+                        field: "BirimFiyat",
+                        title: "Hedef Birim Fiyat",
+                        width: 100,
+                        template: '#if(Döviz==1){##:BirimFiyat# TL#}else if(Döviz==2){##:BirimFiyat# $#}else{##:BirimFiyat# €#}#'
+                    }, {
+                        field: "Tutar",
+                        title: "Hedef Toplam",
+                        width: 100,
+                        template: '#if(Döviz==1){##:Tutar# TL#}else if(Döviz==2){##:Tutar# $#}else{##:Tutar# €#}#'
+                    }, {
+                        field: "GerçekleşenAdet",
+                        title: "Gerç. Adet",
+                        width: 80
+                    }, {
+                        field: "GerçekleşenBirimFiyat",
+                        title: "Gerç. Birim Fiyat",
+                        width: 130,
+                        template: '#if(Döviz==1){##:GerçekleşenBirimFiyat# TL#}else if(Döviz==2){##:GerçekleşenBirimFiyat# $#}else{##:GerçekleşenBirimFiyat# €#}#'
+                    }, {
+                        field: "GerçekleşenTutar",
+                        title: "Gerç. Toplam",
+                        width: 120,
+                        template: '#if(Döviz==1){##:GerçekleşenTutar# TL#}else if(Döviz==2){##:GerçekleşenTutar# $#}else{##:GerçekleşenTutar# €#}#'
+                    }, {
+                        field: "Fark",
+                        title: "Fark",
+                        width: 100,
+                        template: '#if(Döviz==1){##:Fark# TL#}else if(Döviz==2){##:Fark# $#}else{##:Fark# €#}#'
+                    }, {
+                        field: "GelirYüzde",
+                        title: "Gelir",
+                        width: 100,
+                        template: '#:GelirYüzde #%'
+                    }, {
+                        field: "Id",
+                        title: "Düzenle",
+                        headerAttributes: { style: "text-align:center" },
+                        attributes: { style: "text-align:center" },
+                        template: '<a class="btn btn-default" href="../Kongre/HedefDüzenle?hedefId=#=Id#&&kongreId=@Model.Id"><i class="fa fa-pencil"></i>Düzenle</a>',
+                        width: 110,
+                        editable: false
+                    }, {
+                        field: "Locked",
+                        title: "Kilitle",
+                        width: 60,
+                        headerAttributes: { style: "text-align:center" },
+                        attributes: { style: "text-align:center" },
+                        template: '# if(Locked) {# <i class="fa fa-lock true-icon fa-5x"></i> #} else {# <i class="fa fa-unlock false-icon fa-5x"></i> #} #',
+                    }
+                ],
+                dataBound: function (e) {
+                    var dataItems = e.sender.dataSource.view();
+                    for (var j = 0; j < dataItems.length; j++) {
+                        var onay;
+                        if (this.dataSource.group().length > 0) {
+                            onay = dataItems[j].items[0].get("Onay");
+                        }
+                        else {
+                            onay = dataItems[j].get("Onay");
+                        }
+
+                        var row = e.sender.tbody.find("[data-uid='" + dataItems[j].uid + "']");
+                        if (onay) {
+                            row.addClass("bg-lightyellow");
+                            row.removeClass("k-alt");
+                        }
+                    }
+                }
+
+            }).data('kendoGrid');
+
+        var grid2 = $("#giderGrid").kendoGrid({
+                dataSource: {
+                    autoSync: true,
+                    type: "json",
+                    transport: {
+                        read: {
+                            url: "@Html.Raw(Url.Action("HedefListeGider", "Kongre", new { modelId = Model.Id }))",
+                            type: "POST",
+                            dataType: "json",
+
+                        },
+                        update: {
+                            url: "@Html.Raw(Url.Action("HedefDüzenleGrid", "Kongre"))",
+                            type: "POST",
+                            dataType: "json",
+                            complete: function (e) {
+                                $("#giderGrid").data("kendoGrid").dataSource.read();
+                            }
+                        },
+                    },
+                    schema: {
+                        data: "Data",
+                        total: "Toplam",
+                        model: {
+                            id: "Id",
+                            fields: {
+                                Id: { editable: false, type: "number" },
+                                Adı: { editable: true, type: "string" },
+                                BirimFiyat: { editable: true, type: "decimal" },
+                                Adet: { editable: true, type: "number" },
+                                Gün: { editable: true, type: "number" },
+                                Tutar: { editable: false, type: "number" },
+                                GerçekleşenBirimFiyat: { editable: true, type: "number" },
+                                GerçekleşenAdet: { editable: true, type: "number" },
+                                GerçekleşenTutar: { editable: false, type: "number" },
+                                Fark: { editable: false, type: "number" },
+                                GelirYüzde: { editable: false, type: "number" },
+                                Döviz: { editable: false, type: "number" },
+                                Locked: { editable: @if (yonetici)
+                                { <text>true</text>}
+                                else
+                                {<text>false</text>}, type: "boolean" },
+                            }
+                        }
+                    },
+                    error: function (e) {
+                        display_kendoui_grid_error(e);
+                        this.cancelChanges();
+                    },
+                    page: $("#selected-page").val(),
+                    batch: true,
+                    pageSize: 15,
+                    serverPaging: true,
+                    serverFiltering: true,
+                    serverSorting: true,
+
+                },
+                editable: {
+                    confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                    mode: "incell"
+                },
+                scrollable: true,
+
+                columns: [
+                    {
+                        field: "Adı",
+                        title: "Adı",
+                        width: 120,
+                        editor: categoryDropDownEditor,
+
+                    }, {
+                        field: "Gün",
+                        title: "Gün",
+                        width: 80
+                    }, {
+                        field: "Adet",
+                        title: "Hedef Adet",
+                        width: 80
+                    }, {
+                        field: "BirimFiyat",
+                        title: "Hedef Birim Fiyat",
+                        width: 100,
+                        template: '#if(Döviz==1){##:BirimFiyat# TL#}else if(Döviz==2){##:BirimFiyat# $#}else{##:BirimFiyat# €#}#'
+                    }, {
+                        field: "Tutar",
+                        title: "Hedef Toplam",
+                        width: 100,
+                        template: '#if(Döviz==1){##:Tutar# TL#}else if(Döviz==2){##:Tutar# $#}else{##:Tutar# €#}#'
+                    }, {
+                        field: "GerçekleşenAdet",
+                        title: "Gerç. Adet",
+                        width: 80
+                    }, {
+                        field: "GerçekleşenBirimFiyat",
+                        title: "Gerç. Birim Fiyat",
+                        width: 130,
+                        template: '#if(Döviz==1){##:GerçekleşenBirimFiyat# TL#}else if(Döviz==2){##:GerçekleşenBirimFiyat# $#}else{##:GerçekleşenBirimFiyat# €#}#'
+                    }, {
+                        field: "GerçekleşenTutar",
+                        title: "Gerç. Toplam",
+                        width: 120,
+                        template: '#if(Döviz==1){##:GerçekleşenTutar# TL#}else if(Döviz==2){##:GerçekleşenTutar# $#}else{##:GerçekleşenTutar# €#}#'
+                    }, {
+                        field: "Fark",
+                        title: "Fark",
+                        width: 100,
+                        template: '#if(Döviz==1){##:Fark# TL#}else if(Döviz==2){##:Fark# $#}else{##:Fark# €#}#'
+                    }, {
+                        field: "GelirYüzde",
+                        title: "Gelir",
+                        width: 100,
+                        template: '#:GelirYüzde #%'
+                    }, {
+                        field: "Id",
+                        title: "Düzenle",
+                        headerAttributes: { style: "text-align:center" },
+                        attributes: { style: "text-align:center" },
+                        template: '<a class="btn btn-default" href="../Kongre/HedefDüzenle?hedefId=#=Id#&&kongreId=@Model.Id"><i class="fa fa-pencil"></i>Düzenle</a>',
+                        width: 110,
+                        editable: false
+                    }, {
+                        field: "Locked",
+                        title: "Kilitle",
+                        width: 60,
+                        headerAttributes: { style: "text-align:center" },
+                        attributes: { style: "text-align:center" },
+                        template: '# if(Locked) {# <i class="fa fa-lock true-icon fa-5x"></i> #} else {# <i class="fa fa-unlock false-icon fa-5x"></i> #} #',
+                    }
+                ],
+                dataBound: function (e) {
+                    var dataItems = e.sender.dataSource.view();
+                    for (var j = 0; j < dataItems.length; j++) {
+                        var onay;
+                        if (this.dataSource.group().length > 0) {
+                            onay = dataItems[j].items[0].get("Onay");
+                        }
+                        else {
+                            onay = dataItems[j].get("Onay");
+                        }
+
+                        var row = e.sender.tbody.find("[data-uid='" + dataItems[j].uid + "']");
+                        if (onay) {
+                            row.addClass("bg-lightyellow");
+                            row.removeClass("k-alt");
+                        }
+                    }
+                }
+
+            }).data('kendoGrid');
+
+        });
+            function gelirHesapla() {
+            var el = $("#kongre-gelir")[0];
+            var ke = document.getElementById("gelirEkle");
+            //var kd = document.getElementById("kontenjanDuzenle");
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Html.Raw(Url.Action("GelirGideriBilgileriListele", "Kongre"))",
+                data: { "kongreId": @Model.Id },
+                success: function (data) {
+                    if (data) {
+                        var text = '<table class="table table-bordered table-hover table-striped" style="font-size: 14px;"><tbody>';
+                        text = text + '<tr><th>Adı</th><th>Adet</th><th>Birim Fyat</th><th>Tutar</th><th>Düzenle</th>';
+                        $.each(data, function (id, option) {
+                            if (id != "Id" && id != "CustomProperties") {
+                                var d = data[id].Döviz == 1 ? "TL" : (data[id].Döviz == 2 ? "$" : "€");
+                                text = text + '<tr><td>' + data[id].Adı + '</td><td>' + data[id].Adet + '</td><td>' + data[id].BirimFiyat + '</td><td>' + data[id].Tutar + ' ' + d + '</td><td><a href="../HedefDüzenle?hedefId=' + data[id].Id + '&&kongreId=@Model.Id">Düzenle</a>'
+                            }
+                        });
+                        text = text + "</tbody></table>";
+                        el.innerHTML = text;
+                        //ke.style.display="none";
+                    }
+                    else {
+                       // ke.style.display="block";
+                    }
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Kontenjan bilgileri alınırken hata oluştu.');
+                }
+            });
+        }
+    </script>
+    <div class="content">
+        <div class="form-horizontal">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Gelir Hedefleri
+                    </div>
+                    <div class="panel-body">
+                        <div id="gelirGrid"></div>
+                        <div id="kongre-gelir" style="display:none;"></div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Gider Hedefleri
+                    </div>
+                    <div class="panel-body">
+                        <div id="giderGrid"></div>
+                        <div id="kongre-gelir" style="display:none;"></div>
+                    </div>
+                    <div class="panel-footer">
+                        <button id="gelirEkle" type="button" class="btn btn-primary" onclick="location.href = '@Url.Action("HedefEkle", new { kongreId = Model.Id })'">
+                            Kongre Hedefi Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

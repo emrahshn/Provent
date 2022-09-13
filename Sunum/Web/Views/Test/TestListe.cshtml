@@ -1,0 +1,201 @@
+﻿@model TestModel
+
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "Test";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Test");
+}
+
+@Html.AntiForgeryToken()
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Test
+    </h1>
+    <div class="pull-right">
+        <a href="TestEkle" class="btn bg-blue">
+            <i class="fa fa-plus-square"></i>
+            Yeni
+        </a>
+    </div>
+</div>
+
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="Test-grid"></div>
+                    <script>
+                        $(document).ready(function () {
+                            $("#Test-grid").kendoGrid({
+                                dataSource: {
+                                    type: "json",
+                                    transport: {
+                                        read: {
+                                            url: "@Html.Raw(Url.Action("TestListe", "Test"))",
+                                            type: "POST",
+                                            dataType: "json",
+                                            data: additionalData
+                                        }
+                                    },
+                                    schema: {
+                                        data: "Data",
+                                        total: "Toplam"
+                                    },
+                                    error: function (e) {
+                                        display_kendoui_grid_error(e);
+                                        this.cancelChanges();
+                                    },
+                                    pageSize: @(varsayılanGridSayfaBüyüklüğü),
+                                    serverFiltering: true,
+                                    serverSorting: true
+                                },
+                                pageable: {
+                                    refresh: true,
+                                    pageSizes: [@(gridSayfaBüyüklüğü)],
+                                    @Html.Partial("_GridMesajları")
+                                },
+                                editable: {
+                                    confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                                    mode: "inline"
+                                },
+                                scrollable: false,
+                                columns: [
+                                {
+                                    field: "Sayi",
+                                        title: "Sayi"
+                                }, {
+                                    field: "Id",
+                                    title: "Düzenle",
+                                    width: 100,
+                                    headerAttributes: { style: "text-align:center" },
+                                    attributes: { style: "text-align:center" },
+                                    template: '<a class="btn btn-default" href="TestDüzenle/#=Id#"><i class="fa fa-pencil"></i>Düzenle</a>'                                }
+                                ]
+                            });
+                        });
+                    </script>
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('#test-ara').click(function () {
+                                var grid = $('#test-grid').data('kendoGrid');
+                                grid.dataSource.read();
+                                return false;
+                            });
+                        });
+
+                        function additionalData() {
+                            var data = {
+                                SearchStoreId: $('#SiteIdAra').val()
+                            };
+                            addAntiForgeryToken(data);
+                            return data;
+                        }
+                    </script>
+
+
+                    <div id="example">
+                        <div id="grid" style="margin-bottom:20px"></div>
+                        <span id="notification"></span>
+                        <script src="@Url.Content("~/Scripts/jquery.signalR-2.2.3.min.js")"></script>
+                        <script src="@Url.Content("~/signalr/hubs")"></script>
+
+                        <script>
+                            $(function () {
+                                var hubUrl = "@Url.Content("~/Scripts/hubs")";
+                                var connection = $.hubConnection(hubUrl, { useDefaultPath: false });
+                                var hub = connection.createHubProxy("katılımcıHub");
+                                var hubStart = connection.start({ json: true });
+                                console.log(hub);
+                                console.log(hubStart);
+                                $("#notification").kendoNotification({
+                                    width: "100%",
+                                    position: {
+                                        top: 0,
+                                        left: 0
+                                    }
+                                });
+                                $("#grid").kendoGrid({
+                                    height: 550,
+                                    editable: true,
+                                    sortable: true,
+                                    columns: [
+                                        {
+                                            field: "KongreAdı",
+                                            title: "Kongre Adı"
+                                        },
+                                        {
+                                            field: "Adı",
+                                            title: "Katılımcı Adı"
+                                        },
+                                        {
+                                            field: "KatılımcıUcreti",
+                                            title: "Katılımcı Ücreti",
+                                            width: 100
+                                        },
+                                        {
+                                            field: "KatılımcıBaslamaTarihi",
+                                            title: "Katılımcı Tarihi",
+                                        },
+                                        {
+                                            field: "KatılımcıNotu",
+                                            title: "Katılımcı Notu"
+                                        },
+                                        {
+                                            field: "Id",
+                                            title: "Düzenle",
+                                            headerAttributes: { style: "text-align:center" },
+                                            attributes: { style: "text-align:center" },
+                                            template: '<a class="btn btn-default" href="KatılımcıDüzenle/#=Id#"><i class="fa fa-pencil"></i>Düzenle</a>'
+                                        }
+
+                                    ],
+                                    toolbar: ["create"],
+                                    dataSource: {
+                                        type: "signalr",
+                                        autoSync: true,
+                                        push: function (e) {
+                                            var notification = $("#notification").data("kendoNotification");
+                                            notification.success(e.type);
+                                        },
+                                        schema: {
+                                            model: {
+                                                id: "ID",
+                                                fields: {
+                                                    "Id": { editable: false, nullable: true },
+                                                    "KongreAdı": { type: "string" },
+                                                    "Adı": { type: "string" }
+                                                }
+                                            }
+                                        },
+                                        sort: [{ field: "CreatedAt", dir: "desc" }],
+                                        transport: {
+                                            signalr: {
+                                                promise: hubStart,
+                                                hub: hub,
+                                                server: {
+                                                    read: "read",
+                                                    update: "update",
+                                                    destroy: "destroy",
+                                                    create: "create"
+                                                },
+                                                client: {
+                                                    read: "read",
+                                                    update: "update",
+                                                    destroy: "destroy",
+                                                    create: "create"
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        </script>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

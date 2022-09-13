@@ -1,0 +1,460 @@
+﻿@model OdemeFormuModel
+
+@{
+    var varsayılanGridSayfaBüyüklüğü = 10;
+    //var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "Liste";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Liste");
+    ICollection<KullanıcıRolü> alınanRoller = EngineContext.Current.Resolve<Core.IWorkContext>().MevcutKullanıcı.KullanıcıRolleri;
+    IList<KullanıcıRolü> roller = alınanRoller.ToList();
+    bool muhasebe = false;
+    bool munferit = false;
+    foreach (var rol in roller)
+    {
+        if (roller[0].Adı.Contains("Finans") || roller[0].Adı.Contains("Muhasebe") || roller[0].Adı.Contains("Yönetici"))
+        {
+            muhasebe = true;
+            break;
+        }
+    }
+    foreach (var rol in roller)
+    {
+        if (roller[0].Adı.Contains("Münferit Rezervasyonlar"))
+        {
+            munferit = true;
+            break;
+        }
+    }
+
+}
+<script src="~/Scripts/Notify.js"></script>
+<script>
+    window.onload = function () {
+        document.getElementById('my-button').addEventListener('click', function () {
+
+            function onShowNotification() {
+                console.log('notification is shown!');
+            }
+
+            function onCloseNotification() {
+                console.log('notification is closed!');
+            }
+
+            function onClickNotification() {
+                console.log('notification was clicked!');
+            }
+
+            function onErrorNotification() {
+                console.error('Error showing notification. You may need to request permission.');
+            }
+
+            function onPermissionGranted() {
+                console.log('Permission has been granted by the user');
+                doNotification();
+            }
+
+            function onPermissionDenied() {
+                console.warn('Permission has been denied by the user');
+            }
+
+            function doNotification() {
+                var myNotification = new Notify('Yo dawg!', {
+                    body: 'This is an awesome notification',
+                    tag: 'My unique id',
+                    notifyShow: onShowNotification,
+                    notifyClose: onCloseNotification,
+                    notifyClick: onClickNotification,
+                    notifyError: onErrorNotification,
+                    timeout: 4
+                });
+
+                myNotification.show();
+            }
+
+            if (!Notify.needsPermission) {
+                doNotification();
+            } else if (Notify.isSupported()) {
+                Notify.requestPermission(onPermissionGranted, onPermissionDenied);
+            }
+
+        }, false);
+    }
+</script>
+<style type="text/css">
+    .k-grid table tr:hover > td {
+        background: none;
+    }
+
+    .k-grid table tr:hover {
+        background: none;
+    }
+
+    .bg-lightyellow {
+        background-color: #ffff8e !important;
+    }
+</style>
+@Html.AntiForgeryToken()
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Ödeme talep formları
+    </h1>
+    <div class="pull-right">
+        <a href="OdemeFormuEkle" class="btn bg-blue">
+            <i class="fa fa-plus-square"></i>
+            Yeni
+        </a>
+    </div>
+</div>
+<input type="hidden" id="selected-page" name="selected-page" value="@(Html.GetSelectedPage())">
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default panel-search">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.FirmaAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.FirmaAra)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.AciklamaAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.AciklamaAra)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.KongreGünüAra)
+                        </div>
+                        @{
+                            var ay = new List<SelectListItem>();
+                            ay.Add(new SelectListItem { Text = "Ay", Value = "0" });
+                            for (int i = 1; i <= 12; i++)
+                            {
+                                ay.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                            }
+                            var gün = new List<SelectListItem>();
+                            gün.Add(new SelectListItem { Text = "Gün", Value = "0" });
+                            for (int i = 1; i <= 31; i++)
+                            {
+                                gün.Add(new SelectListItem { Text = i.ToString(), Value = i.ToString() });
+                            }
+                        }
+                        <div class="col-md-2">
+                            @Html.DropDownListFor_(model => model.KongreAyıAra, ay)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DropDownListFor_(model => model.KongreGünüAra, gün)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.OdemeGünüAra)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DropDownListFor_(model => model.OdemeAyıAra, ay)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DropDownListFor_(model => model.OdemeGünüAra, gün)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.AlisFaturaAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.AlisFaturaAra)
+                        </div>
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.SatisFaturaAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.SatisFaturaAra)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor(model => model.IdAra)
+                        </div>
+                        <div class="col-md-4">
+                            @Html.EditorFor_(model => model.IdAra)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12 col-md-offset-4">
+                                <button type="button" id="odemeFormuAra" class="btn btn-primary btn-search">
+                                    <i class="fa fa-search"></i>
+                                    Ara
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style type="text/css">
+                .k-grid td {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+            </style>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <script type="text/x-kendo-template" id="notTemplate">
+                        #if(Notlar.length>0){#
+                        <span id="notlink" class="grid-report-item green">
+                            <i class="fa fa-sticky-note"></i>Not
+                        </span>
+                        <div id="not" class="not">
+                            <div class="desc"> Bu öğe için alınmış #=Notlar.length# adet notunuz bulunmaktadır.</div>
+                            # for (var i = 0; i < Notlar.length; i++) { #
+                            <div class="items">
+                                #= Notlar[i].Icerik #
+                            </div>
+
+                            <a class="btn bg-blue" href="../Notlar/NotDüzenle/#=Notlar[i].Id#?returnUrl=..%2FFinans%2FOdemeFormuListe"><i class="fa fa-pencil-square"></i>Düzenle</a>
+                            <a class="btn bg-red" href="../Notlar/NotSil/#=Notlar[i].Id#?returnUrl=..%2FFinans%2FOdemeFormuListe"><i class="fa fa-trash-o"></i>Sil</a>
+                            # } #
+                            <div class="buttons">
+                                <a class="btn bg-blue" href="../Notlar/NotEkle?grup=OdemeFormu&grupId=#=Id#&returnUrl=..%2FFinans%2FOdemeFormuListe"><i class="fa fa-plus-square"></i>Yeni</a>
+                            </div>
+                        </div>
+                        #}#
+                        #if(Notlar.length<=0){#
+                        <span id="notlink">
+                            <a class="btn bg-blue" href="../Notlar/NotEkle?grup=OdemeFormu&grupId=#=Id#&returnUrl=..%2FFinans%2FOdemeFormuListe"><i class="fa fa-plus-square"></i>Not</a>
+                        </span>
+                        #}#
+                    </script>
+                    <div id="odeme-grid"></div>
+                    <button id="my-button" hidden="hidden">Notify Me!</button>
+                    <script>
+                        function onPaging(arg) {
+                            //bindGridPageSelectEvent('odeme-grid', arg.page);
+                            $("#selected-page").val(arg.page);
+                        }
+                        $(document).ready(function () {
+
+                            var grid = $("#odeme-grid").kendoGrid({
+                                dataSource: {
+                                    autoSync: true,
+                                    type: "json",
+                                    transport: {
+                                        read: {
+                                            url: "@Html.Raw(Url.Action("Liste", "Finans"))",
+                                            type: "POST",
+                                            dataType: "json",
+                                            data: additionalData
+                                        },
+                                        update: {
+                                            url: "@Html.Raw(Url.Action("OdemeDuzenle", "Finans"))",
+                                            type: "POST",
+                                            dataType: "json"
+                                        },
+                                    },
+                                    schema: {
+                                        data: "Data",
+                                        total: "Toplam",
+                                        model: {
+                                            id: "Id",
+                                            fields: {
+                                                Id: { editable: false, type: "number" },
+                                                Firma: { editable: false, type: "string" },
+                                                Aciklama: { editable: false, type: "string" },
+                                                OdemeTarihi: { editable: false, type: "date" },
+                                                TalepNo: { editable: false, type: "string" },
+                                                Onay: { editable: true, type: "boolean" },
+                                                FaturaNo: { editable: @if(muhasebe){ <text>true</text>} else{<text>false</text>}, type: "string" },
+                                                SatisFaturaNo: { editable: @if(munferit){ <text>true</text>} else{<text>false</text>}, type: "string" }
+
+                                            }
+                                        }
+                                    },
+                                    error: function (e) {
+                                        display_kendoui_grid_error(e);
+                                        this.cancelChanges();
+                                    },
+                                    page: $("#selected-page").val(),
+                                    batch: true,
+                                    pageSize: @(varsayılanGridSayfaBüyüklüğü),
+                                    serverPaging: true,
+                                    serverFiltering: true,
+                                    serverSorting: true,
+
+                                },
+                                pageable: {
+                                    refresh: true,
+                                    pageSizes: [@(gridSayfaBüyüklüğü)],
+                                    @Html.Partial("_GridMesajları")
+                                },
+                                editable: {
+                                    confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                                    mode: "incell"
+                                },
+                                scrollable: true,
+
+                                columns: [
+                                    {
+                                        field: "Id",
+                                        title: "Id",
+                                        width: 50
+                                    },
+                                    {
+                                        field: "Firma",
+                                        title: "Firma",
+                                        width: 120
+                                    }, {
+                                        field: "Aciklama",
+                                        title: "Aciklama",
+                                        width: 200
+                                    }, {
+                                        field: "OdemeTarihi",
+                                        title: "Ödeme Tarihi",
+                                        attributes: { style: "text-align:center" },
+                                        template: '#= kendo.toString(kendo.parseDate(OdemeTarihi), "MM/dd/yyyy")#',
+                                        width: 100
+                                    },
+                                    {
+                                        field: "FaturaNo",
+                                        title: "Satış Fatura",
+                                        width: 80,
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        hidden:@if(muhasebe||munferit){ <text>false</text>} else{<text>true</text>},
+                                    },{
+                                        field: "SatisFaturaNo",
+                                        title: "Alış Fatura",
+                                        width: 90,
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        hidden:@if(muhasebe || munferit){ <text>false</text>} else{<text>true</text>},
+                                    },{
+                                        field: "Onay",
+                                        title: "İşlendi",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: '# if(Onay) {# <i class="fa fa-check true-icon"></i> #} else {# <i class="fa fa-close false-icon"></i> #} #',
+                                        width: 60,
+                                        hidden: @if(muhasebe){ <text>false</text>} else{<text>true</text>},
+                                    },{
+                                        field: "Notlar",
+                                        title: "Not",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: kendo.template($("#notTemplate").html()),
+                                        width: 90,
+                                        editable:false
+                                    },
+                                    {
+                                        field: "Id",
+                                        title: "Görüntüle",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: '<a class="btn btn-default" href="OdemeFormuGoruntule/#=Id#"><i class="fa fa-eye"></i>Görüntüle</a>',
+                                        width: 120,
+                                        editable: false
+                                    },
+                                    {
+                                        field: "Id",
+                                        title: "Düzenle",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: '<a class="btn btn-default" href="OdemeFormuDüzenle/#=Id#"><i class="fa fa-pencil"></i>Düzenle</a>',
+                                        width: 120,
+                                        editable: false
+                                    }
+                                ],
+                                dataBound: function (e) {
+                                    var dataItems = e.sender.dataSource.view();
+                                    for (var j = 0; j < dataItems.length; j++) {
+                                        var onay;
+                                        if (this.dataSource.group().length > 0) {
+                                            onay = dataItems[j].items[0].get("Onay");
+                                        }
+                                        else {
+                                            onay = dataItems[j].get("Onay");
+                                        }
+
+                                        var row = e.sender.tbody.find("[data-uid='" + dataItems[j].uid + "']");
+                                        if (onay) {
+                                            row.addClass("bg-lightyellow");
+                                            row.removeClass("k-alt");
+                                        }
+                                    }
+                                }
+                            }).data('kendoGrid');
+
+                        });
+                    </script>
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            var grid = $('#odeme-grid').data('kendoGrid');
+                            grid.dataSource.read();
+                            $('#odemeFormuAra').click(function () {
+                                var grid = $('#odeme-grid').data('kendoGrid');
+                                grid.dataSource.read();
+                                return false;
+                            });
+
+                            $("".concat("#@Html.FieldIdFor(model => model.FirmaAra),",
+                                "#@Html.FieldIdFor(model => model.IdAra),",
+                                "#@Html.FieldIdFor(model => model.KongreGünüAra),",
+                                "#@Html.FieldIdFor(model => model.KongreAyıAra),",
+                                "#@Html.FieldIdFor(model => model.OdemeGünüAra),",
+                                "#@Html.FieldIdFor(model => model.OdemeAyıAra),",
+                                "#@Html.FieldIdFor(model => model.AlisFaturaAra),",
+                                "#@Html.FieldIdFor(model => model.SatisFaturaAra),",
+                                "#@Html.FieldIdFor(model => model.AciklamaAra)")).keydown(function (event) {
+                                    if (event.keyCode === 13) {
+                                        $("#odemeFormuAra").click();
+                                        return false;
+                                    }
+                                });
+
+                            $('div.k-grid').on('mouseenter', '#notlink', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.not")[0];
+                                $(parent).addClass('active');
+                            });
+                            $('div.k-grid').on('mouseleave', '#notlink', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.not")[0];
+                                $(parent).removeClass('active');
+                            });
+                            $('div.k-grid').on('mouseenter', 'div.not', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.not")[0];
+                                $(parent).addClass('active');
+                            });
+                            $('div.k-grid').on('mouseleave', 'div.not', function () {
+                                var element = $(this);
+                                var parent = element.closest("tr").find("div.not")[0];
+                                $(parent).removeClass('active');
+                            });
+                        });
+
+                        function additionalData() {
+                            var data = {
+                                IdAra: $('#@Html.FieldIdFor(model => model.IdAra)').val(),
+                                FirmaAra: $('#@Html.FieldIdFor(model => model.FirmaAra)').val(),
+                                KongreAyıAra: $('#@Html.FieldIdFor(model => model.KongreAyıAra)').val(),
+                                KongreGünüAra: $('#@Html.FieldIdFor(model => model.KongreGünüAra)').val(),
+                                OdemeAyıAra: $('#@Html.FieldIdFor(model => model.OdemeAyıAra)').val(),
+                                OdemeGünüAra: $('#@Html.FieldIdFor(model => model.OdemeGünüAra)').val(),
+                                AlisFaturaAra: $('#@Html.FieldIdFor(model => model.AlisFaturaAra)').val(),
+                                SatisFaturaAra: $('#@Html.FieldIdFor(model => model.SatisFaturaAra)').val(),
+                                AciklamaAra: $('#@Html.FieldIdFor(model => model.AciklamaAra)').val()
+                                };
+                            addAntiForgeryToken(data);
+                            return data;
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

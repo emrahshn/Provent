@@ -1,0 +1,5 @@
+﻿@media print {
+    body {
+        font-size: 8px !important;
+    }
+}

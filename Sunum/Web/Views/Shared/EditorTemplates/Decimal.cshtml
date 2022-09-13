@@ -1,0 +1,19 @@
+@model Decimal
+
+@Html.TextBoxFor(model => model)
+@{
+    var postfix = "";
+    if (ViewData.ContainsKey("postfix") && ViewData["postfix"] != null)
+    {
+        postfix = ViewData["postfix"].ToString();
+    }
+}
+<script>
+    $(document).ready(function () {
+
+        $("#@ViewData.TemplateInfo.GetFullHtmlFieldId(string.Empty)").kendoNumericTextBox({
+            
+        decimals: 3,
+        }).data("kendoNumericTextBox");
+    });
+</script>

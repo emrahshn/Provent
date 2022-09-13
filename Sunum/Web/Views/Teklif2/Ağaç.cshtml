@@ -1,0 +1,42 @@
+﻿@model Teklif2Model
+@{
+
+}
+<script type="text/javascript">
+ //tree
+    var Ana = new kendo.data.HierarchicalDataSource({
+        transport: {
+            read: {
+                url: "@Html.Raw(Url.Action("TeklifTree", "Teklif"))",
+                dataType: "json"
+            }
+        },
+        schema: {
+            model: {
+                children: "items"
+            }
+        }
+    });
+    treeitemid = 0;
+    $("#teklif-tree").kendoTreeView({
+        dragAndDrop: true,
+        dataSource: Ana,
+        moveSourceNode: false,
+        includeChildren: false,
+        dataTextField: ["adi", "adi"],
+        dataValueField: ["Id", "Id"],
+        dragstart: function (e) {
+            if ($(e.sourceNode).parentsUntil(".k-treeview", ".k-item").length == 0) {
+                e.preventDefault();
+            }
+            var tree = e.sender;
+            var movingItem = tree.dataItem(e.sourceNode);
+            treeitemid = movingItem.id;
+        },
+        drop: function (e, args) {
+            if ($(e.sourceNode).parentsUntil(".k-treeview", ".k-item").length == 1) {
+                e.preventDefault();
+            }
+        },
+    });
+</script>

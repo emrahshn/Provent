@@ -1,0 +1,135 @@
+﻿@model CrmFirmaModel
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+<script type="text/javascript">
+    $(function () {
+        $("#SehirId").change(function () {
+            var selectedItem = $(this).val();
+            var ddlIlce = $('#IlceId');
+            var ilceProgress = $("#ilce-loading-progress");
+            ilceProgress.show();
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Html.Raw(Url.Action("IlceAlSehirId", "Tanımlamalar"))",
+                data: { "sehirId": selectedItem },
+                success: function (data) {
+                    ddlIlce.html('');
+                    $.each(data, function (id, option) {
+                        ddlIlce.append($('<option></option>').val(option.id).html(option.name));
+                    });
+                    ilceProgress.hide();
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('İlçeler alınırken hata oluştu.');
+                    ilceProgress.hide();
+                }
+            });
+        });
+    });
+</script>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.YetkiliIdleri)
+                        </div>
+                        <div class="col-md-8">
+                            @*@Html.DropDownListFor_(m => m.Yetkililer, new SelectList(Model.KullanılabilirYetkililer, "Id", "Adı", selectedValue: Model.Yetkililer))*@
+                            @Html.EditorFor(m => m.YetkiliIdleri, new { SelectList = Model.Yetkili })
+                            @Html.ValidationMessageFor(m => m.YetkiliIdleri)
+                        </div>
+                        <div class="col-md-2">
+                            <a href="#" class="btn btn-default" data-toggle="modal" data-target="#myModal">Yeni Yetkili</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Adı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Adı)
+                            @Html.ValidationMessageFor(m => m.Adı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.TicariUnvan)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.TicariUnvan)
+                            @Html.ValidationMessageFor(m => m.TicariUnvan)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Tel)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(model => model.Tel)
+                            @Html.ValidationMessageFor(m => m.Tel)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Adres)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(model => model.Adres)
+                            @Html.ValidationMessageFor(m => m.Adres)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.SehirId)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(model => model.SehirId, new SelectList(Model.Sehirler, "Id", "Adı"))
+                            @Html.ValidationMessageFor(m => m.SehirId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.IlceId)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(model => model.IlceId, new SelectList(Model.Ilceler, "Id", "Adı"))
+                            <span id="ilce-loading-progress" style="display: none;">Lütfen bekleyiniz..</span>
+                            @Html.ValidationMessageFor(m => m.IlceId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Web)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(model => model.Web)
+                            @Html.ValidationMessageFor(m => m.Web)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.VergiDairesi)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(model => model.VergiDairesi)
+                            @Html.ValidationMessageFor(m => m.VergiDairesi)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.VergiNo)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(model => model.VergiNo)
+                            @Html.ValidationMessageFor(m => m.VergiNo)
+                        </div>
+                    </div>
+                </div>
+                </div>
+        </div>
+    </div>
+</div>

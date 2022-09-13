@@ -1,0 +1,377 @@
+﻿@model KayıtModel
+@using Web.Models.Kullanıcılar;
+@{
+    Layout = "~/Views/Shared/ColumnsOne.cshtml";
+
+    //başlık
+    Html.BaşlıkParçasıEkle("Kayıt olun");
+    //sayfa sınıfı
+    Html.SayfaCssSınıfıParçasıIlaveEt("html-registration-page");
+}
+@if (Model.ÜlkeEtkin)
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#@Html.FieldIdFor(model => model.ÜlkeId)").change(function () {
+                var selectedItem = $(this).val();
+                var statesProgress = $("#states-loading-progress");
+                statesProgress.show();
+                $.ajax({
+                    cache: false,
+                    type: "GET",
+                    url: "@(Url.RouteUrl("GetStatesByCountryId"))",
+                    data: { "ülkeId": selectedItem, "addSelectStateItem": "true" },
+                    success: function (data) {
+                        ddlStates.html('');
+                        $.each(data, function (id, option) {
+                            ddlStates.append($('<option></option>').val(option.id).html(option.name));
+                        });
+                        statesProgress.hide();
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert('Failed to retrieve states.');
+                        statesProgress.hide();
+                    }
+                });
+            });
+        });
+    </script>
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="page registration-page">
+        <div class="page-title">
+            <h1>Kayıt</h1>
+        </div>
+        <div class="page-body">
+            @{
+                var validationSummary = Html.ValidationSummary(true);
+            }
+            @if (!MvcHtmlString.IsNullOrEmpty(validationSummary))
+            {
+                <div class="message-error">@validationSummary</div>
+            }
+            @*@Html.Partial("_ExternalAuthentication.AssociateMessage")*@
+            <div class="fieldset">
+                <div class="title">
+                    <strong>Kişisel Bilgileriniz</strong>
+                </div>
+                <div class="form-fields">
+                    @if (Model.CinsiyetEtkin)
+                    {
+                        <div class="inputs">
+                            <label>Cinsiyet:</label>
+                            <div class="gender">
+                                <span class="male">
+                                    @Html.RadioButton("Cinsiyet", "E", (Model.Cinsiyet == "E"), new { id = "cinsiyet-erkek" })
+                                    <label class="forcheckbox" for="gender-male">Erkek</label>
+                                </span>
+                                <span class="female">
+                                    @Html.RadioButton("Cinsiyet", "K", (Model.Cinsiyet == "K"), new { id = "cinsiyet-kadın" })
+                                    <label class="forcheckbox" for="gender-female">Kadın</label>
+                                </span>
+                            </div>
+                        </div>
+                    }
+                    <div class="inputs">
+                        @Html.LabelFor(model => model.Adı, new { }, ":")
+                        @Html.EditorFor(model => model.Adı)
+                        @Html.RequiredHint()
+                        @Html.ValidationMessageFor(model => model.Adı)
+                    </div>
+                    <div class="inputs">
+                        @Html.LabelFor(model => model.Soyadı, new { }, ":")
+                        @Html.EditorFor(model => model.Soyadı)
+                        @Html.RequiredHint()
+                        @Html.ValidationMessageFor(model => model.Soyadı)
+                    </div>
+                    @if (Model.DoğumTarihiEtkin)
+                    {
+                        <div class="inputs date-of-birth">
+                            <label>Doğum Tarihi:</label>
+                            @Html.DatePickerDropDowns(Html.FieldNameFor(x => x.DoğumGünü),
+                                Html.FieldNameFor(x => x.DoğumAyı),
+                                Html.FieldNameFor(x => x.DoğumYılı),
+                                DateTime.Now.Year - 110,
+                                DateTime.Now.Year,
+                                Model.DoğumGünü,
+                                Model.DoğumAyı,
+                                Model.DoğumYılı)
+                            @if (Model.DoğumTarihiGerekli)
+                            {
+                                @Html.RequiredHint()
+                            }
+                            @Html.ValidationMessageFor(model => model.DoğumGünü)
+                            @Html.ValidationMessageFor(model => model.DoğumAyı)
+                            @Html.ValidationMessageFor(model => model.DoğumYılı)
+                        </div>
+                    }
+                    <div class="inputs">
+                        @Html.LabelFor(model => model.Email, new { }, ":")
+                        @Html.EditorFor(model => model.Email)
+                        @Html.RequiredHint()
+                        @Html.ValidationMessageFor(model => model.Email)
+                    </div>
+                    @if (Model.EmailİkiDefa)
+                    {
+                        <div class="inputs">
+                            @Html.LabelFor(model => model.EmailOnayla, new { }, ":")
+                            @Html.EditorFor(model => model.EmailOnayla)
+                            @Html.RequiredHint()
+                            @Html.ValidationMessageFor(model => model.EmailOnayla)
+                        </div>
+                    }
+                    @if (Model.KullanıcıAdlarıEtkin)
+                    {
+                        <div class="inputs">
+                            @Html.LabelFor(model => model.KullanıcıAdı, new { }, ":")
+                            @Html.EditorFor(model => model.KullanıcıAdı)
+                            @Html.RequiredHint()
+                            @Html.ValidationMessageFor(model => model.KullanıcıAdı)
+                            @if (Model.KullanıcıAdıUygunluğu)
+                            {
+                                @Html.Partial("_KullanıcıAdıUygunluğu")
+                            }
+                        </div>
+
+                    }
+                </div>
+            </div>
+            @if (Model.ŞirketEtkin)
+            {
+                <div class="fieldset">
+                    <div class="title">
+                        <strong>Şirket Bilgileri</strong>
+                    </div>
+                    <div class="form-fields">
+                        @if (Model.ŞirketEtkin)
+                        {
+                            <div class="inputs">
+                                @Html.LabelFor(model => model.Şirket, new { }, ":")
+                                @Html.EditorFor(model => model.Şirket)
+                                @if (Model.ŞirketGerekli)
+                                {
+                                    @Html.RequiredHint()
+                                }
+                                @Html.ValidationMessageFor(model => model.Şirket)
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.SokakAdresiEtkin || Model.SokakAdresiEtkin2 || Model.PostaKoduEtkin
+                || Model.ŞehirEtkin || Model.ÜlkeEtkin)
+            {
+                <div class="fieldset">
+                    <div class="title">
+                        <strong>Adres Bilgileriniz</strong>
+                    </div>
+                    <div class="form-fields">
+                        @if (Model.SokakAdresiEtkin)
+                        {
+                            <div class="inputs">
+                                @Html.LabelFor(model => model.SokakAdresi, new { }, ":")
+                                @Html.EditorFor(model => model.SokakAdresi)
+                                @if (Model.SokakAdresiGerekli)
+                                {
+                                    @Html.RequiredHint()
+                                }
+                                @Html.ValidationMessageFor(model => model.SokakAdresi)
+                            </div>
+                        }
+                        @if (Model.SokakAdresiEtkin2)
+                        {
+                            <div class="inputs">
+                                @Html.LabelFor(model => model.SokakAdresi2, new { }, ":")
+                                @Html.EditorFor(model => model.SokakAdresi2)
+                                @if (Model.SokakAdresiGerekli2)
+                                {
+                                    @Html.RequiredHint()
+                                }
+                                @Html.ValidationMessageFor(model => model.SokakAdresi2)
+                            </div>
+                        }
+                        @if (Model.PostaKoduEtkin)
+                        {
+                            <div class="inputs">
+                                @Html.LabelFor(model => model.PostaKodu, new { }, ":")
+                                @Html.EditorFor(model => model.PostaKodu)
+                                @if (Model.PostaKoduGerekli)
+                                {
+                                    @Html.RequiredHint()
+                                }
+                                @Html.ValidationMessageFor(model => model.PostaKodu)
+                            </div>
+                        }
+                        @if (Model.ŞehirEtkin)
+                        {
+                            <div class="inputs">
+                                @Html.LabelFor(model => model.Şehir, new { }, ":")
+                                @Html.EditorFor(model => model.Şehir)
+                                @if (Model.ŞehirGerekli)
+                                {
+                                    @Html.RequiredHint()
+                                }
+                                @Html.ValidationMessageFor(model => model.Şehir)
+                            </div>
+                        }
+                        @if (Model.ÜlkeEtkin)
+                        {
+                            <div class="inputs">
+                                @Html.LabelFor(model => model.ÜlkeId, new { }, ":")
+                                @Html.DropDownList("ÜlkeId", Model.KullanılabilirÜlkeler)
+                                @if (Model.ÜlkeGerekli)
+                                {
+                                    @Html.RequiredHint()
+                                }
+                                @Html.ValidationMessageFor(model => model.ÜlkeId)
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.TelEtkin || Model.FaksEtkin)
+            {
+                <div class="fieldset">
+                    <div class="title">
+                        <strong>İletişim Bilgileriniz</strong>
+                    </div>
+                    <div class="form-fields">
+                        @if (Model.TelEtkin)
+                        {
+                            <div class="inputs">
+                                @Html.LabelFor(model => model.Tel, new { }, ":")
+                                @Html.EditorFor(model => model.Tel)
+                                @if (Model.TelGerekli)
+                                {
+                                    @Html.RequiredHint()
+                                }
+                                @Html.ValidationMessageFor(model => model.Tel)
+                            </div>
+                        }
+                        @if (Model.FaksEtkin)
+                        {
+                            <div class="inputs">
+                                @Html.LabelFor(model => model.Faks, new { }, ":")
+                                @Html.EditorFor(model => model.Faks)
+                                @if (Model.FaksGerekli)
+                                {
+                                    @Html.RequiredHint()
+                                }
+                                @Html.ValidationMessageFor(model => model.Faks)
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            @*
+    @if (Model.NewsletterEnabled || Model.CustomerAttributes.Count > 0)
+    {
+        <div class="fieldset">
+            <div class="title">
+                <strong>Seçenekler</strong>
+            </div>
+            <div class="form-fields">
+                @if (Model.NewsletterEnabled)
+                {
+                    <div class="inputs">
+                        @Html.LabelFor(model => model.Newsletter, new { }, ":")
+                        @Html.EditorFor(model => model.Newsletter)
+                        @Html.ValidationMessageFor(model => model.Newsletter)
+                    </div>
+                }
+                @if (Model.CustomerAttributes.Count > 0)
+                {
+                    @Html.Partial("_CustomerAttributes", Model.CustomerAttributes)
+                }
+            </div>
+        </div>
+    }
+            @if (Model.AllowCustomersToSetTimeZone)
+            {
+                <div class="fieldset">
+                    <div class="title">
+                        <strong>Tercihler</strong>
+                    </div>
+                    <div class="form-fields">
+                        @if (Model.AllowCustomersToSetTimeZone)
+                        {
+                            <div class="inputs">
+                                @Html.LabelFor(model => model.TimeZoneId, new { }, ":")
+                                @Html.DropDownList("TimeZoneId", Model.AvailableTimeZones)
+                                @Html.ValidationMessageFor(model => model.TimeZoneId)
+                            </div>
+                        }
+                    </div>
+                </div>
+            }*@
+            <div class="fieldset">
+                <div class="title">
+                    <strong>Parolanız</strong>
+                </div>
+                <div class="form-fields">
+                    <div class="inputs">
+                        @Html.LabelFor(model => model.Şifre, new { }, ":")
+                        @Html.EditorFor(model => model.Şifre)
+                        @Html.RequiredHint()
+                        @Html.ValidationMessageFor(model => model.Şifre)
+                    </div>
+                    <div class="inputs">
+                        @Html.LabelFor(model => model.ŞifreOnayla, new { }, ":")
+                        @Html.EditorFor(model => model.ŞifreOnayla)
+                        @Html.RequiredHint()
+                        @Html.ValidationMessageFor(model => model.ŞifreOnayla)
+                    </div>
+                    @*
+    @if (Model.DisplayCaptcha)
+    {
+        <div class="captcha-box">
+            @Html.Raw(Html.GenerateCaptcha())
+        </div>
+    }
+    @if (Model.HoneypotEnabled)
+    {
+        @Html.Raw(Html.GenerateHoneypotInput())
+    }*@
+                </div>
+            </div>
+            @if (Model.GizlilikSözleşmesiEtkin)
+            {
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $('#register-button').click(function () {
+                            if ($('#accept-privacy-policy').is(':checked')) {
+                                //do some stuff
+                                return true;
+                            }
+                            else {
+                                //just show validation errors, dont post
+                                alert('@Html.Raw(HttpUtility.JavaScriptStringEncode("Lütfen gizlilik politikasını kabul edin"))');
+                                return false;
+                            }
+                        });
+                    });
+                </script>
+                <div class="accept-privacy-policy">
+                    <input id="accept-privacy-policy" type="checkbox" name="accept-privacy-policy" />
+                    <label for="accept-privacy-policy">Gizlilik politikasını kabul ediyorum</label>
+                    <span class="read" id="read-privacyinfo">(oku)</span>
+                    <script>
+                        $(document).ready(function() {
+                            $('#read-privacyinfo').on('click', function (e) {
+                                displayPopupContentFromUrl('@Url.RouteUrl("TopicPopup", new { SystemName = "privacyinfo" })', '"Gizlilik politikasını kabul ediyorum"');
+                            });
+                        });
+                    </script>
+                </div>
+            }
+            <div class="buttons">
+                <input type="submit" id="register-button" class="button-1 register-next-step-button" value="Kaydet" name="register-button" />
+            </div>
+            <div class="external-authentication">
+                @*@Html.Action("ExternalMethods", "ExternalAuthentication")*@
+            </div>
+        </div>
+    </div>
+                }

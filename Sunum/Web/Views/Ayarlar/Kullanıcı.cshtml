@@ -1,0 +1,891 @@
+﻿@model KullanıcıAyarlarModel
+
+@{
+    ViewBag.Title = "Kullanıcı Ayarları";
+    Html.AktifMenuÖğesiSistemAdıBelirle("KullanıcıAyarları");
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Kullanıcı Ayarları
+        </h1>
+        <div class="pull-right">
+            <button type="submit" name="kaydet" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet
+            </button>
+        </div>
+    </div>
+    @Html.ValidationSummary(false)
+
+    <script>
+        $(document).ready(function () {
+            bindBootstrapTabSelectEvent('kulanıcıayarları-edit');
+        });
+    </script>
+
+    <div class="content">
+        <div class="form-horizontal">
+            @Html.Action("Mod", "Ayarlar")
+            <div id="kulanıcıayarları-düzenle" class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    @Html.RenderBootstrapTabHeader("tab-kullanıcı", "Kullanıcı Ayarları", true)
+                    @Html.RenderBootstrapTabHeader("tab-kullanıcıformalanları", "Kullanıcı form alanları")
+                    @Html.RenderBootstrapTabHeader("tab-adresformalanları", "Adres alanları")
+                </ul>
+                <div class="tab-content">
+                    @Html.RenderBootstrapTabContent("tab-kullanıcı", @TabKullanıcıAyarları(), true)
+                    @Html.RenderBootstrapTabContent("tab-kullanıcıformalanları", @TabKullanıcıFormAlanları())
+                    @Html.RenderBootstrapTabContent("tab-adresformalanları", @TabAdresFormAlanları())
+                </div>
+            </div>
+            </div>
+        </div>
+    {
+        //custom tabs
+        var olayMesajı = new YöneticiTabOluşturuldu(this.Html, "kulanıcıayarları-düzenle");
+        EngineContext.Current.Resolve<IOlayYayınlayıcı>().Yayınla(olayMesajı);
+        foreach (var olayBloğu in olayMesajı.BlocksToRender)
+        {
+            @olayBloğu
+        }
+    }
+    <input type="hidden" id="selected-tab-name" name="selected-tab-name" value="@(Html.GetSelectedTabName())">
+}
+@helper TabKullanıcıAyarları()
+{
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Kullanıcı ayarları
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.KullanıcıKayıtTipi)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor_(model => model.KullanıcıAyarları.KullanıcıKayıtTipi, ((KullanıcıKayıtTipi)Model.KullanıcıAyarları.KullanıcıKayıtTipi).ToSelectList())
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.KullanıcıKayıtTipi)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.YeniKullanıcıKaydınıBildir)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.YeniKullanıcıKaydınıBildir)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.YeniKullanıcıKaydınıBildir)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default advanced-setting">
+            <div class="panel-heading">
+                Şifre
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.ŞifreUzunluğu)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.ŞifreUzunluğu)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.ŞifreUzunluğu)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.KopyalanmayanŞifreSayıları)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.KopyalanmayanŞifreSayıları)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.KopyalanmayanŞifreSayıları)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.VarsayılanŞifreFormatı)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor_(model => model.KullanıcıAyarları.VarsayılanŞifreFormatı, ((ŞifreFormatı)Model.KullanıcıAyarları.VarsayılanŞifreFormatı).ToSelectList())
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.VarsayılanŞifreFormatı)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.ŞifreÖmrü)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.ŞifreÖmrü)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.ŞifreÖmrü)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.ŞifreKurtarmaLinkiGünüUygunluğu)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.ŞifreKurtarmaLinkiGünüUygunluğu)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.ŞifreKurtarmaLinkiGünüUygunluğu)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.HatalıŞifreDenemeSayısı)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.HatalıŞifreDenemeSayısı)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.HatalıŞifreDenemeSayısı)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlHataliSifreDakika">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.HatalıŞifreKilitDakikası)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.HatalıŞifreKilitDakikası)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.HatalıŞifreKilitDakikası)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.EmailİkiDefaGir)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.EmailİkiDefaGir)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.EmailİkiDefaGir)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default advanced-setting">
+            <div class="panel-heading">
+                Hesap
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.KullanıcıAdlarıEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.KullanıcıAdlarıEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.KullanıcıAdlarıEtkin)
+                    </div>
+                </div>
+                <div class="form-group advanced-setting" id="pnlKullaniciAdiDegistir">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.KullanıcıKullanıcıAdıDeğiştirebilir)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.KullanıcıKullanıcıAdıDeğiştirebilir)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.KullanıcıKullanıcıAdıDeğiştirebilir)
+                    </div>
+                </div>
+                <div class="form-group advanced-setting" id="pnlKullaniciAdiUygunlugu">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.KullanıcıUgunluğuKontrolüEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.KullanıcıUgunluğuKontrolüEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.KullanıcıUgunluğuKontrolüEtkin)
+                    </div>
+                </div>
+                <div class="form-group advanced-setting">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.KullanıcıAdıFormatı)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor_(model => model.KullanıcıAyarları.KullanıcıAdıFormatı, ((KullanıcıAdıFormatı)Model.KullanıcıAyarları.KullanıcıAdıFormatı).ToSelectList())
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.KullanıcıAdıFormatı)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.KullanıcıAvatarYüklemesiEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.KullanıcıAvatarYüklemesiEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.KullanıcıAvatarYüklemesiEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlVarsayilanAvatarEtkin">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.VarsayılanAvatarEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.VarsayılanAvatarEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.VarsayılanAvatarEtkin)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.BültenBloğunuGizle)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.BültenBloğunuGizle)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.BültenBloğunuGizle)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlBultenBloguTakipBirakmayaIzinVerir">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.BültenBloğuTakipBırakmayaİzinVerir)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.BültenBloğuTakipBırakmayaİzinVerir)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.BültenBloğuTakipBırakmayaİzinVerir)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.SiteSonZiyaretEdilenSayfa)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.SiteSonZiyaretEdilenSayfa)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.SiteSonZiyaretEdilenSayfa)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default advanced-setting">
+            <div class="panel-heading">
+                Profil
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.ProfilGörüntülemeEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.ProfilGörüntülemeEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.ProfilGörüntülemeEtkin)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.KulllanıcıKonumuGöster)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.KulllanıcıKonumuGöster)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.KulllanıcıKonumuGöster)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.KullanıcıKayıtTarihiGöster)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.KullanıcıKayıtTarihiGöster)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.KullanıcıKayıtTarihiGöster)
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.KullanıcıAvatarYüklemesiEtkin)").click(toggleAvatar);
+                    $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.KullanıcıAdlarıEtkin)").click(toggleUsername);
+
+                    toggleAvatar();
+                    toggleUsername();
+                });
+
+                function toggleAvatar() {
+                    if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.KullanıcıAvatarYüklemesiEtkin)').is(':checked')) {
+                        $('#pnlVarsayilanAvatarEtkin').show();
+                    } else {
+                        $('#pnlVarsayilanAvatarEtkin').hide();
+                    }
+                }
+
+                function toggleUsername() {
+                    if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.KullanıcıAdlarıEtkin)').is(':checked')) {
+                        $('#pnlKullaniciAdiDegistir').show();
+                        $('#pnlKullaniciAdiUygunlugu').show();
+                    } else {
+                        $('#pnlKullaniciAdiDegistir').hide();
+                        $('#pnlKullaniciAdiUygunlugu').hide();
+                    }
+                }
+            </script>
+        </div>
+        <div class="panel panel-default advanced-setting">
+            <div class="panel-heading">
+                Zaman dilimi
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.TarihAyarları.KullanıcılarZamanDilimiAyarlayabilir)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.TarihAyarları.KullanıcılarZamanDilimiAyarlayabilir)
+                        @Html.ValidationMessageFor(model => model.TarihAyarları.KullanıcılarZamanDilimiAyarlayabilir)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.TarihAyarları.VarsayılanSiteZamanDilimiId)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.DropDownListFor_(model => model.TarihAyarları.VarsayılanSiteZamanDilimiId, Model.TarihAyarları.MevcutZamanDilimleri)
+                        @Html.ValidationMessageFor(model => model.TarihAyarları.VarsayılanSiteZamanDilimiId)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default advanced-setting">
+            <div class="panel-heading">
+                Harici kimlik kaydı
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.HariciKimlikDoğrulamaAyarları.OtomatikKayıtEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.HariciKimlikDoğrulamaAyarları.OtomatikKayıtEtkin)
+                        @Html.ValidationMessageFor(model => model.HariciKimlikDoğrulamaAyarları.OtomatikKayıtEtkin)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@helper TabKullanıcıFormAlanları()
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.DoğumGünüEtkin)").click(toggleCustomerRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.DoğumGünüGerekli)").click(toggleCustomerRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.ŞirketEtkin)").click(toggleCustomerRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.SokakAdresiEtkin)").click(toggleCustomerRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.SokakAdresi2Etkin)").click(toggleCustomerRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.PostaKoduEtkin)").click(toggleCustomerRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.ŞehirEtkin)").click(toggleCustomerRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.TelEtkin)").click(toggleCustomerRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.FaksEtkin)").click(toggleCustomerRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.BültenEtkin)").click(toggleNewsletterEnabledField);
+            $("#@Html.FieldIdFor(model => model.KullanıcıAyarları.BültenBloğunuGizle)").click(toggleHideNewsletterBlock);
+
+            toggleCustomerRequiredFormField();
+            toggleNewsletterEnabledField();
+            toggleHideNewsletterBlock();
+        });
+
+        function toggleCustomerRequiredFormField() {
+            if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.DoğumGünüEtkin)').is(':checked')) {
+                $('#pnlDogumGunuGerekli').show();
+            } else {
+                $('#pnlDogumGunuGerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.DoğumGünüEtkin)').is(':checked') &&
+                $('#@Html.FieldIdFor(model => model.KullanıcıAyarları.DoğumGünüGerekli)').is(':checked')) {
+                $('#pnlDogumGunuMinimum').show();
+            } else {
+                $('#pnlDogumGunuMinimum').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.ŞirketEtkin)').is(':checked')) {
+                $('#pnlSirketGerekli').show();
+            } else {
+                $('#pnlSirketGerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.SokakAdresiEtkin)').is(':checked')) {
+                $('#pnlSokakAdresiGerekli').show();
+            } else {
+                $('#pnlSokakAdresiGerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.SokakAdresi2Etkin)').is(':checked')) {
+                $('#pnlSokakAdresi2Gerekli').show();
+            } else {
+                $('#pnlSokakAdresi2Gerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.PostaKoduEtkin)').is(':checked')) {
+                $('#pnlPostaKoduGerekli').show();
+            } else {
+                $('#pnlPostaKoduGerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.ŞehirEtkin)').is(':checked')) {
+                $('#pnlSehirGerekli').show();
+            } else {
+                $('#pnlSehirGerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.TelEtkin)').is(':checked')) {
+                $('#pnlTelGerekli').show();
+            } else {
+                $('#pnlTelGerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.FaksEtkin)').is(':checked')) {
+                $('#pnlFaksGerekli').show();
+            } else {
+                $('#pnlFaksGerekli').hide();
+            }
+        }
+
+        function toggleNewsletterEnabledField() {
+            if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.BültenEtkin)').is(':checked')) {
+                $('#pnlBultenTikli').show();
+            } else {
+                $('#pnlBultenTikli').hide();
+            }
+        }
+
+        function toggleHideNewsletterBlock() {
+            if ($('#@Html.FieldIdFor(model => model.KullanıcıAyarları.BültenBloğunuGizle)').is(':checked')) {
+                $('#pnlBultenBloguTakipBirakmayaIzinVerir').hide();
+            }
+            else {
+                $('#pnlBultenBloguTakipBirakmayaIzinVerir').show();
+            }
+        }
+    </script>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Varsayılan alanlar
+            </div>
+            <div class="panel-body">
+                <p>
+                    <em>Açıklama</em>
+                </p>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.CinsiyetEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.CinsiyetEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.CinsiyetEtkin)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.DoğumGünüEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.DoğumGünüEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.DoğumGünüEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlDogumGunuGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.DoğumGünüGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.DoğumGünüGerekli)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.DoğumGünüGerekli)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlDogumGunuMinimum">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.DoğumGünüMinimumYaş)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.DoğumGünüMinimumYaş)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.DoğumGünüMinimumYaş)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.ŞirketEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.ŞirketEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.ŞirketEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlSirketGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.ŞirketGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.ŞirketGerekli)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.ŞirketGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.SokakAdresiEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.SokakAdresiEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.SokakAdresiEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlSokakAdresiGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.SokakAdresiGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.SokakAdresiGerekli)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.SokakAdresiGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.SokakAdresi2Etkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.SokakAdresi2Etkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.SokakAdresi2Etkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlSokakAdresi2Gerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.SokakAdresi2Gerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.SokakAdresi2Gerekli)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.SokakAdresi2Gerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.PostaKoduEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.PostaKoduEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.PostaKoduEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlPostaKoduGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.PostaKoduGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.PostaKoduGerekli)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.PostaKoduGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.ŞehirEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.ŞehirEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.ŞehirEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlSehirGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.ŞehirGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.ŞehirGerekli)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.ŞehirGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.ÜlkeEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.ÜlkeEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.ÜlkeEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlUlkeGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.ÜlkeGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.ÜlkeGerekli)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.ÜlkeGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.TelEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.TelEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.TelEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlTelGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.TelGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.TelGerekli)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.TelGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.FaksEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.FaksEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.FaksEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlFaksGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.FaksGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.FaksGerekli)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.FaksGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.GizlilikSözleşmesiOnayıEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.GizlilikSözleşmesiOnayıEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.GizlilikSözleşmesiOnayıEtkin)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.BültenEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.BültenEtkin)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.BültenEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlBultenTikli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.KullanıcıAyarları.BültenVarsayılanOlarakTikli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.KullanıcıAyarları.BültenVarsayılanOlarakTikli)
+                        @Html.ValidationMessageFor(model => model.KullanıcıAyarları.BültenVarsayılanOlarakTikli)
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*render custom customer attributes
+    @Html.Action("ListBlock", "CustomerAttribute")*@
+    </div>
+}
+@helper TabAdresFormAlanları()
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#@Html.FieldIdFor(model => model.AdresAyarlari.ŞirketEtkin)").click(toggleAddressRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.AdresAyarlari.SokakAdresiEtkin)").click(toggleAddressRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.AdresAyarlari.SokakAdresi2Etkin)").click(toggleAddressRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.AdresAyarlari.PostaKoduEtkin)").click(toggleAddressRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.AdresAyarlari.ŞehirEtkin)").click(toggleAddressRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.AdresAyarlari.TelEtkin)").click(toggleAddressRequiredFormField);
+            $("#@Html.FieldIdFor(model => model.AdresAyarlari.FaksEtkin)").click(toggleAddressRequiredFormField);
+
+            toggleAddressRequiredFormField();
+        });
+
+        function toggleAddressRequiredFormField() {
+            if ($('#@Html.FieldIdFor(model => model.AdresAyarlari.ŞirketEtkin)').is(':checked')) {
+                $('#pnlAdresSirketGerekli').show();
+            }
+            else {
+                $('#pnlAdresSirketGerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.AdresAyarlari.SokakAdresiEtkin)').is(':checked')) {
+                $('#pnlAdresSokakAdresiGerekli').show();
+            }
+            else {
+                $('#pnlAdresSokakAdresiGerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.AdresAyarlari.SokakAdresi2Etkin)').is(':checked')) {
+                $('#pnlAdresSokakAdresi2Gerekli').show();
+            }
+            else {
+                $('#pnlAdresSokakAdresi2Gerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.AdresAyarlari.PostaKoduEtkin)').is(':checked')) {
+                $('#pnlAdresPostaKoduGerekli').show();
+            }
+            else {
+                $('#pnlAdresPostaKoduGerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.AdresAyarlari.ŞehirEtkin)').is(':checked')) {
+                $('#pnlAdresSehirGerekli').show();
+            }
+            else {
+                $('#pnlAdresSehirGerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.AdresAyarlari.TelEtkin)').is(':checked')) {
+                $('#pnlAdresTelGerekli').show();
+            }
+            else {
+                $('#pnlAdresTelGerekli').hide();
+            }
+
+            if ($('#@Html.FieldIdFor(model => model.AdresAyarlari.FaksEtkin)').is(':checked')) {
+                $('#pnlAdresFaksGerekli').show();
+            }
+            else {
+                $('#pnlAdresFaksGerekli').hide();
+            }
+        }
+    </script>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Varsayılan alanlar
+            </div>
+            <div class="panel-body">
+                <p>
+                    <em>Açıklama</em>
+                </p>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.ŞirketEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.ŞirketEtkin)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.ŞirketEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlAdresSirketGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.ŞirketGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.ŞirketGerekli)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.ŞirketGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.SokakAdresiEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.SokakAdresiEtkin)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.SokakAdresiEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlAdresSokakAdresiGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.SokakAdresiGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.SokakAdresiGerekli)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.SokakAdresiGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.SokakAdresi2Etkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.SokakAdresi2Etkin)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.SokakAdresi2Etkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlAdresSokakAdresi2Gerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.SokakAdresi2Gerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.SokakAdresi2Gerekli)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.SokakAdresi2Gerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.PostaKoduEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.PostaKoduEtkin)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.PostaKoduEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlAdresPostaKoduGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.PostaKoduGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.PostaKoduGerekli)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.PostaKoduGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.ŞehirEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.ŞehirEtkin)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.ŞehirEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlAdresSehirGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.ŞehirGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.ŞehirGerekli)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.ŞehirGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.ÜlkeEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.ÜlkeEtkin)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.ÜlkeEtkin)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.TelEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.TelEtkin)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.TelEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlAdresTelGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.TelGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.TelGerekli)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.TelGerekli)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.FaksEtkin)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.FaksEtkin)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.FaksEtkin)
+                    </div>
+                </div>
+                <div class="form-group" id="pnlAdresFaksGerekli">
+                    <div class="col-md-3">
+                        @Html.LabelFor_(model => model.AdresAyarlari.FaksGerekli)
+                    </div>
+                    <div class="col-md-9">
+                        @Html.EditorFor_(model => model.AdresAyarlari.FaksGerekli)
+                        @Html.ValidationMessageFor(model => model.AdresAyarlari.FaksGerekli)
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*render custom address attributes
+    @Html.Action("ListBlock", "AddressAttribute")*@
+    </div>
+}

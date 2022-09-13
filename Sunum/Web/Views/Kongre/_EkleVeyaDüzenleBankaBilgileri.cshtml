@@ -1,0 +1,15 @@
+﻿@model KongreBankaBilgileriModel
+
+@Html.ValidationSummary(true)
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    @Html.HiddenFor(model => model.BankaHesapBilgileri.Id)
+                    @Html.EditorFor(model => model.BankaHesapBilgileri, "BankaHesapBilgileri")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿@using Web.Framework.UI;
+@{
+    Html.CssParçasıIlaveEt("~/Content/styles.css");
+    Html.CssParçasıIlaveEt("~/Content/bootstrap/css/bootstrap.min.css");
+}
+<!DOCTYPE html>
+<html @Html.SayfaCssSınıfı()>
+<head>
+    <title>@Html.Başlık()</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <meta name="description" content="@(Html.MetaDescription())" />
+    <meta name="keywords" content="@(Html.MetaKeywords())" />
+    <meta name="generator" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    @Html.ÖzelHead()
+    @Html.Partial("Head")
+    @Html.CssFiles(this.Url, KaynakKonumu.Head)
+    @Html.Scripts(this.Url, KaynakKonumu.Head)
+    @Html.CanonicalUrls()
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="center-1">
+        <div class="wrapper">
+            @RenderBody()
+        </div>
+    </div>
+</body>
+</html>
+

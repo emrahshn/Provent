@@ -1,0 +1,63 @@
+﻿@model CrmFirmaModel
+<script>
+    $(document).ready(function () {
+        $('#görüsmeModal').on('show.bs.modal', function (e) {
+            var gorId = $(e.relatedTarget).data('gorusme-id');
+            var el = $("#modalBody")[0];
+            $.ajax({
+                cache: false,
+                type: "GET",
+                url: "@Html.Raw(Url.Action("CrmGorusmeModal", "Crm"))",
+                data: {"gorusmeId": gorId},
+                success: function (data) {
+                    var tarih = new Date(parseInt(data.GorusmeTarihi.substr(6))).toLocaleDateString();
+                    var text = '';
+                    text = text +'<div class="box box-info">';
+                    text = text + '<div class="box-body">';
+                    text = text + '<div class="form-group">';
+                    text = text + '<div class="col-md-2">Firma Adı:</div>';
+                    text = text + '<div class="col-md-10">'+data.FirmaAdı+'</div>';
+                    text = text + '</div>';
+                    text = text + '<div class="form-group">';
+                    text = text + '<div class="col-md-2">Yetkili:</div>';
+                    text = text + '<div class="col-md-10">' + data.YetkiliAdı + '</div>';
+                    text = text + '</div>';
+                    text = text + '<div class="form-group">';
+                    text = text + '<div class="col-md-2">Görüşme Tarihi:</div>';
+                    text = text + '<div class="col-md-10">' + tarih + '</div>';
+                    text = text + '</div>';
+                    text = text + '<div class="form-group">';
+                    text = text + '<div class="col-md-2">Notlar:</div>';
+                    text = text + '<div class="col-md-10">' + data.Notlar + '</div>';
+                    text = text + '</div>';
+                    text = text + '</div>';
+                    text = text + '</div>';
+                    el.innerHTML = text;
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Görüşme alınırken hata oluştu.');
+                }
+            });
+        });
+    });
+</script>
+<div class="content clearfix">
+    <div class="form-horizontal">
+        <div class="modal fade" id="görüsmeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Görüşme</h4>
+                    </div>
+                    <div class="modal-body">
+                            <div id="modalBody"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,90 @@
+﻿@model GirişModel
+@using Web.Models.Kullanıcılar;
+@using Core;
+@using Core.Altyapı;
+@{
+    Layout = "~/Views/Shared/Temiz.cshtml";
+    //title
+    Html.BaşlıkParçasıEkle("Hoş Geldiniz, Lütfen Giriş Yapın!");
+    //page class
+    Html.BaşlıkParçasıIlaveEt("html-login-page");
+
+    //register URL with return URL (if specified)
+    var registerUrl = Url.RouteUrl("Kayıt");
+    if (!String.IsNullOrEmpty(this.Context.Request.QueryString["returnUrl"]))
+    {
+        var webHelper = EngineContext.Current.Resolve<IWebYardımcısı>();
+        registerUrl = webHelper.SorguDeğiştir(registerUrl, "returnurl=" + HttpUtility.UrlEncode(this.Context.Request.QueryString["returnUrl"]), null);
+    }
+}
+<style type="text/css">
+    .login-page .returning-wrapper .inputs label {
+        width: 42px;
+    }
+    .login-page .returning-wrapper .buttons {
+         padding:0; 
+    }
+    input:-webkit-autofill {
+        -webkit-box-shadow: inset 0 0 0 1000px #faffbd;
+    }
+</style>
+<div class="page login-page">
+    <div class="page-title">
+        <h1>Hoş Geldiniz, Lütfen Oturum Açınız!</h1>
+    </div>
+    @*@Html.Partial("_ExternalAuthentication.AssociateMessage")
+        @Html.Partial("_ExternalAuthentication.Errors")*@
+    <div class="page-body" style="text-align:center;">
+            @using (Html.BeginForm())
+            {
+                var validationSummary = Html.ValidationSummary(true, "Giriş başarısız");
+                <div class="title">
+                    <strong>Giriş</strong>
+                </div>
+                if (!MvcHtmlString.IsNullOrEmpty(validationSummary))
+                {
+                    <div class="message-error">@validationSummary</div>
+                }
+                <div class="returning-wrapper fieldset" style="display:inline-block;">
+                    <div class="form-fields" style="padding:30px 15px 0;">
+                        @if (Model.KullanıcıAdlarıEtkin)
+                        {
+                            <div class="inputs" style="text-align:center;">
+                                @Html.LabelFor(m => m.KullanıcıAdı, new { }, ":")
+                                @Html.TextBoxFor(m => m.KullanıcıAdı, new { @class = "username", autofocus = "autofocus" })
+                                @Html.ValidationMessageFor(m => m.KullanıcıAdı)
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="inputs" style="text-align:center;">
+                                @Html.LabelFor(m => m.Email, new { }, ":")
+                                @Html.TextBoxFor(m => m.Email, new { @class = "email", autofocus = "autofocus" })
+                                @Html.ValidationMessageFor(m => m.Email)
+                            </div>
+                        }
+                        <div class="inputs" style="text-align:center;">
+                            @Html.LabelFor(m => m.Şifre, new { }, ":")
+                            @Html.PasswordFor(m => m.Şifre, new { @class = "password" })
+                            @Html.ValidationMessageFor(m => m.Şifre)
+                        </div>
+                        <div class="inputs reversed">
+                            @Html.CheckBoxFor(m => m.BeniHatırla)
+                            @Html.LabelFor(m => m.BeniHatırla)
+
+                            <span class="forgot-password">
+                                @Html.RouteLink("Parolanızı unuttunuz mu?", "ParolaKurtarma")
+                            </span>
+                        </div>
+                        <div class="buttons">
+                            <input class="button-1 login-button" type="submit" value="Oturum Aç" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="external-authentication">
+        @*@Html.Action("ExternalMethods", "ExternalAuthentication")*@
+    </div>
+    @*@Html.Action("TopicBlock", "Topic", new { systemName = "LoginRegistrationInfo" })*@

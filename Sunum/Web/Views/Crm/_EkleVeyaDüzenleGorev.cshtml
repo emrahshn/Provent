@@ -1,0 +1,64 @@
+﻿@model CrmYonetimKuruluModel
+@{
+}
+@Html.ValidationSummary(true)
+
+<script>
+
+</script>
+@Html.HiddenFor(x => x.Id)
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.KurumId)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(m => m.KurumId, new SelectList(Model.Kurumlar, "Id", "Adı"))
+                            @Html.ValidationMessageFor(m => m.KurumId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Gorevi)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(m => m.Gorevi, new SelectList(Model.Gorevler, "Id", "Adı"))
+                            @Html.ValidationMessageFor(m => m.Gorevi)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.BaslamaTarihi)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.BaslamaTarihi)
+                            @Html.ValidationMessageFor(m => m.BaslamaTarihi)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.BitisTarihi)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.BitisTarihi)
+                            @Html.ValidationMessageFor(m => m.BitisTarihi)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Onceki)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Onceki)
+                            @Html.ValidationMessageFor(m => m.Onceki)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

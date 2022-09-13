@@ -1,0 +1,118 @@
+﻿@model CrmKurumKongreModel
+@{
+}
+@Html.ValidationSummary(true)
+
+<script>
+
+</script>
+@Html.HiddenFor(x => x.KurumId)
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Kongreler.Adı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Kongreler.Adı)
+                            @Html.ValidationMessageFor(m => m.Kongreler.Adı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Kongreler.Tarih)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Kongreler.Tarih)
+                            @Html.ValidationMessageFor(m => m.Kongreler.Tarih)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Kongreler.Yer)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Kongreler.Yer)
+                            @Html.ValidationMessageFor(m => m.Kongreler.Yer)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Kongreler.Acenta)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Kongreler.Acenta)
+                            @Html.ValidationMessageFor(m => m.Kongreler.Acenta)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Kongreler.KatılımcıSayısı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Kongreler.KatılımcıSayısı)
+                            @Html.ValidationMessageFor(m => m.Kongreler.KatılımcıSayısı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Kongreler.StandSayısı)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Kongreler.StandSayısı)
+                            @Html.ValidationMessageFor(m => m.Kongreler.StandSayısı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Kongreler.KatılımUcreti)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Kongreler.KatılımUcreti)
+                            @Html.ValidationMessageFor(m => m.Kongreler.KatılımUcreti)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Kongreler.IhaleYeri)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Kongreler.IhaleYeri)
+                            @Html.ValidationMessageFor(m => m.Kongreler.IhaleYeri)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Kongreler.IhaleTarihi)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Kongreler.IhaleTarihi)
+                            @Html.ValidationMessageFor(m => m.Kongreler.IhaleTarihi)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Kongreler.Ilgili)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.DropDownListFor_(m => m.Kongreler.Ilgili, new SelectList(Model.Kongreler.Kisiler, "Id", "KisiTamAd"))
+                            @Html.ValidationMessageFor(m => m.Kongreler.Ilgili)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            @Html.LabelFor_(m => m.Kongreler.Notlar)
+                        </div>
+                        <div class="col-md-10">
+                            @Html.EditorFor_(m => m.Kongreler.Notlar)
+                            @Html.ValidationMessageFor(m => m.Kongreler.Notlar)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

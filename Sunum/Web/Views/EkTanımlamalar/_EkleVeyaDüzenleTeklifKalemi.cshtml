@@ -1,0 +1,73 @@
+﻿@model TeklifKalemiModel
+@Html.ValidationSummary(true)
+@Html.HiddenFor(m => m.Id)
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(m => m.AnaTeklifKalemicb)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(model => model.AnaTeklifKalemicb)
+                            @Html.ValidationMessageFor(m => m.AnaTeklifKalemicb)
+                        </div>
+                    </div>
+                    <div class="form-group" id="anaTeklifKalemi">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(m => m.NodeId)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.DropDownListFor_(model => model.NodeId, new SelectList(Model.AnaTeklifKalemi, "Id", "Adı"))
+                            @Html.ValidationMessageFor(m => m.NodeId)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(m => m.Adı)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(m => m.Adı)
+                            @Html.ValidationMessageFor(m => m.Adı)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(m => m.Kdv)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(m => m.Kdv)
+                            @Html.ValidationMessageFor(m => m.Kdv)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                            @Html.LabelFor_(m => m.SıraNo)
+                        </div>
+                        <div class="col-md-9">
+                            @Html.EditorFor_(m => m.SıraNo)
+                            @Html.ValidationMessageFor(m => m.SıraNo)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#@Html.FieldIdFor(model => model.AnaTeklifKalemicb)").click(toggle);
+            $("#@Html.FieldIdFor(model=>model.NodeId)").has()
+            toggle();
+        });
+
+        function toggle() {
+            if ($('#@Html.FieldIdFor(model => model.AnaTeklifKalemicb)').is(':checked')) {
+                $('#anaTeklifKalemi').hide();
+            } else {
+                $('#anaTeklifKalemi').show();
+            }
+        }
+    </script>
+</div>

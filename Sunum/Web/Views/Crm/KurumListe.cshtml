@@ -1,0 +1,121 @@
+﻿@model CrmKurumModel
+@{
+    var varsayılanGridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().VarsayılanGridSayfaBüyüklüğü;
+    var gridSayfaBüyüklüğü = EngineContext.Current.Resolve<Core.Domain.Genel.AdminAyarları>().GridSayfaBüyüklükleri;
+    ViewBag.Title = "Kurumlar";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Kurumlar");
+}
+@Html.AntiForgeryToken()
+<div class="content-header clearfix">
+    <h1 class="pull-left">
+        Kurumlar
+    </h1>
+    <div class="pull-right">
+        <a href="KurumEkle" class="btn bg-blue">
+            <i class="fa fa-plus-square"></i>
+            Yeni
+        </a>
+    </div>
+</div>
+<div class="content">
+    <div class="form-horizontal">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div id="kurum-grid"></div>
+                    <div id="grid"></div>
+                    <script>
+                        $(document).ready(function () {
+                            $("#kurum-grid").kendoGrid({
+                                dataSource: {
+                                    type: "json",
+                                    transport: {
+                                        read: {
+                                            url: "@Html.Raw(Url.Action("KurumListe", "Crm"))",
+                                            type: "POST",
+                                            dataType: "json",
+                                            data: additionalData
+                                        }
+                                    },
+                                    schema: {
+                                        data: "Data",
+                                        total: "Toplam"
+                                    },
+                                    error: function (e) {
+                                        display_kendoui_grid_error(e);
+                                        this.cancelChanges();
+                                    },
+                                    pageSize: @(varsayılanGridSayfaBüyüklüğü),
+                                    serverFiltering: true,
+                                    serverSorting: true
+                                },
+                                pageable: {
+                                    refresh: true,
+                                    pageSizes: [@(gridSayfaBüyüklüğü)],
+                                    @Html.Partial("_GridMesajları")
+                                },
+                                editable: {
+                                    confirmation: "Bu öğeyi silmek istediğinizden emin misiniz?",
+                                    mode: "inline"
+                                },
+                                scrollable: true,
+                                columns: [
+                                    {
+                                        field: "Adı",
+                                        title: "Adı"
+                                    },
+                                    {
+                                        field: "Tel",
+                                        title: "Telefon"
+                                    },
+                                    {
+                                        field: "Email",
+                                        title: "Email",
+                                        template: "<span title='${Email}'>${Email}</Email>"
+                                    },
+                                    {
+                                        field: "Adres",
+                                        title: "Adres",
+                                        template: "<span title='${Adres}'>${Adres}</span>"
+                                    },
+                                    {
+                                        field: "Id",
+                                        title: "Görüntüle",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: '<a class="btn btn-default" href="KurumKartı/#=Id#"><i class="fa fa-search"></i>Görüntüle</a>'
+                                    },
+                                    {
+                                        field: "Id",
+                                        title: "Düzenle",
+                                        headerAttributes: { style: "text-align:center" },
+                                        attributes: { style: "text-align:center" },
+                                        template: '<a class="btn btn-default" href="KurumDüzenle/#=Id#"><i class="fa fa-pencil"></i>Düzenle</a>'
+                                    }
+                                ]
+                            });
+                        });
+                    </script>
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            $('#firma-ara').click(function () {
+                                var grid = $('#kurum-grid').data('kendoGrid');
+                                grid.dataSource.read();
+                                return false;
+                            });
+                        });
+
+                        function additionalData() {
+                            var data = {
+                                SearchStoreId: $('#SiteIdAra').val()
+                            };
+                            addAntiForgeryToken(data);
+                            return data;
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

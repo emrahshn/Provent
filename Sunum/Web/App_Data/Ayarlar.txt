@@ -1,0 +1,2 @@
+DataProvider: sqlserver
+DataConnectionString:Data Source=DESKTOP-68ESMKK;Initial Catalog=Provent;Integrated Security=True;Persist Security Info=False

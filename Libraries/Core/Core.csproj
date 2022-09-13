@@ -1,0 +1,485 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1B1BB80E-8A9E-40E5-9602-3A1D098AEF2F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Core</RootNamespace>
+    <AssemblyName>Core</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=4.6.2.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.4.6.2\lib\net45\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.Mvc5.4.0.2\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Integration.SignalR, Version=4.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Autofac.SignalR2.4.0.0\lib\net45\Autofac.Integration.SignalR.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper, Version=6.2.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AutoMapper.6.2.2\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="Elders.RedLock, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\RedLock.1.0.1\lib\net45-full\Elders.RedLock.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.Core.2.2.3\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.SignalR.SystemWeb.2.2.3\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=1.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.1.1.0\lib\netstandard1.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.Logging.1.1.1\lib\netstandard1.1\Microsoft.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=1.1.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Extensions.Logging.Abstractions.1.1.1\lib\netstandard1.1\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.2.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Host.SystemWeb.2.1.0\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.Security.2.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="RedLock, Version=1.7.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\RedLock.net.1.7.4\lib\net45\RedLock.dll</HintPath>
+    </Reference>
+    <Reference Include="StackExchange.Redis, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\StackExchange.Redis.1.2.1\lib\net45\StackExchange.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Mvc.5.2.4\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.Razor.3.2.4\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Altyapı\AppDomainTypeFinder.cs" />
+    <Compile Include="Altyapı\BağımlılıkYönetimi\ContainerManager.cs" />
+    <Compile Include="Altyapı\BağımlılıkYönetimi\IDependencyRegistrar.cs" />
+    <Compile Include="Altyapı\EngineContext.cs" />
+    <Compile Include="Altyapı\IEngine.cs" />
+    <Compile Include="Altyapı\IStartupTask.cs" />
+    <Compile Include="Altyapı\ITypeFinder.cs" />
+    <Compile Include="Altyapı\Mapper\AutoMapperAyarları.cs" />
+    <Compile Include="Altyapı\Mapper\IMapperAyarları.cs" />
+    <Compile Include="Altyapı\WebAppTypeFinder.cs" />
+    <Compile Include="App_Packages\LibLog.4.2\LibLog.cs" />
+    <Compile Include="BileşenModeli\TekKullanımlıkKilit.cs" />
+    <Compile Include="Data\DataAyarları.cs" />
+    <Compile Include="Data\DataAyarlarıYardımcısı.cs" />
+    <Compile Include="Data\DataAyarlarıYönetici.cs" />
+    <Compile Include="Data\IDataSağlayıcı.cs" />
+    <Compile Include="Data\IDepo.cs" />
+    <Compile Include="Data\TemelVeriSağlayıcıYöneticisi.cs" />
+    <Compile Include="Domain\Anket\Anket.cs" />
+    <Compile Include="Domain\Anket\AnketCevabı.cs" />
+    <Compile Include="Domain\Anket\AnketOyKaydı.cs" />
+    <Compile Include="Domain\Blogs\BlogAyarları.cs" />
+    <Compile Include="Domain\Blogs\BlogPost.cs" />
+    <Compile Include="Domain\Blogs\BlogPostTag.cs" />
+    <Compile Include="Domain\Blogs\BlogYorumu.cs" />
+    <Compile Include="Domain\Blogs\Olaylar.cs" />
+    <Compile Include="Domain\Cms\WidgetAyarları.cs" />
+    <Compile Include="Domain\CRM\CrmFirmaYetkilisi.cs" />
+    <Compile Include="Domain\CRM\CrmFirmaGorusme.cs" />
+    <Compile Include="Domain\CRM\CrmYonetimKurulu.cs" />
+    <Compile Include="Domain\CRM\CrmGorev.cs" />
+    <Compile Include="Domain\CRM\CrmGorusme.cs" />
+    <Compile Include="Domain\CRM\CrmKisi.cs" />
+    <Compile Include="Domain\CRM\CrmKongre.cs" />
+    <Compile Include="Domain\CRM\CrmKurum.cs" />
+    <Compile Include="Domain\CRM\CrmUnvan.cs" />
+    <Compile Include="Domain\CRM\CrmFirma.cs" />
+    <Compile Include="Domain\Doviz\Doviz.cs" />
+    <Compile Include="Domain\EkTanımlamalar\HariciSektor.cs" />
+    <Compile Include="Domain\EkTanımlamalar\HekimBranşları.cs" />
+    <Compile Include="Domain\EkTanımlamalar\KayıtTipi.cs" />
+    <Compile Include="Domain\EkTanımlamalar\SponsorlukKalemleri.cs" />
+    <Compile Include="Domain\EkTanımlamalar\TedarikciKategorileri.cs" />
+    <Compile Include="Domain\EkTanımlamalar\Unvanlar.cs" />
+    <Compile Include="Domain\EkTanımlamalar\TeklifKalemi.cs" />
+    <Compile Include="Domain\EkTanımlamalar\TedarikciSektor.cs" />
+    <Compile Include="Domain\EkTanımlamalar\MusteriSektor.cs" />
+    <Compile Include="Domain\EkTanımlamalar\Banka.cs" />
+    <Compile Include="Domain\Finans\FinansAyarları.cs" />
+    <Compile Include="Domain\Finans\OdemeFormu.cs" />
+    <Compile Include="Domain\Forum\EditorTipi.cs" />
+    <Compile Include="Domain\Forum\Forum.cs" />
+    <Compile Include="Domain\Forum\ForumAboneliği.cs" />
+    <Compile Include="Domain\Forum\ForumAramaTipi.cs" />
+    <Compile Include="Domain\Forum\ForumAyarları.cs" />
+    <Compile Include="Domain\Forum\ForumGirdisiOyu.cs" />
+    <Compile Include="Domain\Forum\ForumGrubu.cs" />
+    <Compile Include="Domain\Forum\ForumGirdisi.cs" />
+    <Compile Include="Domain\Forum\ForumSayfası.cs" />
+    <Compile Include="Domain\Forum\ForumSayfasıTipi.cs" />
+    <Compile Include="Domain\Forum\ÖzelMesaj.cs" />
+    <Compile Include="Domain\Genel\AdminAyarları.cs" />
+    <Compile Include="Domain\Genel\Adres.cs" />
+    <Compile Include="Domain\Genel\AdresAyarları.cs" />
+    <Compile Include="Domain\Genel\GenelAyarlar.cs" />
+    <Compile Include="Domain\Genel\GenelÖznitelik.cs" />
+    <Compile Include="Domain\Genel\MenuÖğesiAyarları.cs" />
+    <Compile Include="Domain\Genel\PdfAyarları.cs" />
+    <Compile Include="Domain\Genel\TamMetinAramaModu.cs" />
+    <Compile Include="Domain\Görüşmeler\GorusmeRaporlari.cs" />
+    <Compile Include="Domain\Güvenlik\AclKaydı.cs" />
+    <Compile Include="Domain\Güvenlik\GüvenlikAyarları.cs" />
+    <Compile Include="Domain\Güvenlik\IAclDestekli.cs" />
+    <Compile Include="Domain\Güvenlik\VarsayılanİzinKaydı.cs" />
+    <Compile Include="Domain\Güvenlik\İzinKaydı.cs" />
+    <Compile Include="Domain\Haber\HaberYorumu.cs" />
+    <Compile Include="Domain\Haber\HaberÖğesi.cs" />
+    <Compile Include="Domain\Haber\Olaylar.cs" />
+    <Compile Include="Domain\Hint\Hint.cs" />
+    <Compile Include="Domain\Hint\HintAyarları.cs" />
+    <Compile Include="Domain\Katalog\KatalogAyarları.cs" />
+    <Compile Include="Domain\Katalog\Kategori.cs" />
+    <Compile Include="Domain\Katalog\ÖznitelikKontrolTipi.cs" />
+    <Compile Include="Domain\Klasör\Ülke.cs" />
+    <Compile Include="Domain\KongreTanımlama\KongreTedarikçi.cs" />
+    <Compile Include="Domain\Kongre\BankaHesapBilgileri.cs" />
+    <Compile Include="Domain\Kongre\GelirGiderHedefi.cs" />
+    <Compile Include="Domain\Kongre\GenelSponsorluk.cs" />
+    <Compile Include="Domain\Kongre\KursBilgileri.cs" />
+    <Compile Include="Domain\Kongre\KayıtBilgileri.cs" />
+    <Compile Include="Domain\Kongre\KongreGörüşmeRaporları.cs" />
+    <Compile Include="Domain\Kongre\KongreUzantıları.cs" />
+    <Compile Include="Domain\Kongre\Kontenjan.cs" />
+    <Compile Include="Domain\Kongre\KontenjanBilgileri.cs" />
+    <Compile Include="Domain\Kongre\Refakatci.cs" />
+    <Compile Include="Domain\Kongre\Katilimci.cs" />
+    <Compile Include="Domain\Kongre\Kayit.cs" />
+    <Compile Include="Domain\Kongre\Konaklama.cs" />
+    <Compile Include="Domain\Kongre\Kongre.cs" />
+    <Compile Include="Domain\Kongre\Kurs.cs" />
+    <Compile Include="Domain\Kongre\SponsorlukSatışı.cs" />
+    <Compile Include="Domain\Kongre\Takvim.cs" />
+    <Compile Include="Domain\Kongre\Transfer.cs" />
+    <Compile Include="Domain\Konum\Ilce.cs" />
+    <Compile Include="Domain\Konum\Sehir.cs" />
+    <Compile Include="Domain\Kullanıcılar\HariciKimlikDoğrulamaKaydı.cs" />
+    <Compile Include="Domain\Kullanıcılar\HariciYetkilendirmeAyarları.cs" />
+    <Compile Include="Domain\Kullanıcılar\KulanıcıAyarları.cs" />
+    <Compile Include="Domain\Kullanıcılar\Kullanıcı.cs" />
+    <Compile Include="Domain\Kullanıcılar\KullanıcıAdıFormatı.cs" />
+    <Compile Include="Domain\Kullanıcılar\KullanıcıGirişSonuçları.cs" />
+    <Compile Include="Domain\Kullanıcılar\KullanıcıKayıtTipi.cs" />
+    <Compile Include="Domain\Kullanıcılar\KullanıcıRolü.cs" />
+    <Compile Include="Domain\Kullanıcılar\KullanıcıUzantıları.cs" />
+    <Compile Include="Domain\Kullanıcılar\KullanıcıŞifre.cs" />
+    <Compile Include="Domain\Kullanıcılar\Olaylar.cs" />
+    <Compile Include="Domain\Kullanıcılar\SistemKullanıcıAdları.cs" />
+    <Compile Include="Domain\Kullanıcılar\SistemKullanıcıRolAdları.cs" />
+    <Compile Include="Domain\Kullanıcılar\SistemKullanıcıÖznitelikAdları.cs" />
+    <Compile Include="Domain\Kullanıcılar\ŞifreFormatı.cs" />
+    <Compile Include="Domain\Logging\Log.cs" />
+    <Compile Include="Domain\Logging\LogSeviyesi.cs" />
+    <Compile Include="Domain\Logging\İşlem.cs" />
+    <Compile Include="Domain\Logging\İşlemTipi.cs" />
+    <Compile Include="Domain\Medya\Download.cs" />
+    <Compile Include="Domain\Medya\MedyaAyarları.cs" />
+    <Compile Include="Domain\Medya\Xls.cs" />
+    <Compile Include="Domain\Medya\Resim.cs" />
+    <Compile Include="Domain\Medya\ResimTipi.cs" />
+    <Compile Include="Domain\Mesajlar\BekleyenMail.cs" />
+    <Compile Include="Domain\Mesajlar\BekleyenMailÖnceliği.cs" />
+    <Compile Include="Domain\Mesajlar\BültenAboneliği.cs" />
+    <Compile Include="Domain\Mesajlar\EmailHesabı.cs" />
+    <Compile Include="Domain\Mesajlar\EmailHesapAyarları.cs" />
+    <Compile Include="Domain\Mesajlar\Mesaj.cs" />
+    <Compile Include="Domain\Mesajlar\MesajGecikmePeriodu.cs" />
+    <Compile Include="Domain\Mesajlar\MesajTeması.cs" />
+    <Compile Include="Domain\Mesajlar\MesajTemasıSistemAdları.cs" />
+    <Compile Include="Domain\Mesajlar\Olaylar.cs" />
+    <Compile Include="Domain\Notlar\Not.cs" />
+    <Compile Include="Domain\Rehber\YuvarlamaTipi.cs" />
+    <Compile Include="Domain\Rehber\YuvarlamaYardımcısı.cs" />
+    <Compile Include="Domain\Sayfalar\Sayfa.cs" />
+    <Compile Include="Domain\Sayfalar\SayfaTema.cs" />
+    <Compile Include="Domain\Seo\ISlugDestekli.cs" />
+    <Compile Include="Domain\Seo\SayfaBaşlığıSeoAyarı.cs" />
+    <Compile Include="Domain\Seo\SeoAyarları.cs" />
+    <Compile Include="Domain\Seo\UrlKaydı.cs" />
+    <Compile Include="Domain\Seo\WwwGerekliliği.cs" />
+    <Compile Include="Domain\SiteBilgiAyarları.cs" />
+    <Compile Include="Altyapı\Singleton.cs" />
+    <Compile Include="Altyapı\TSEngine.cs" />
+    <Compile Include="Domain\Siteler\ISiteMappingDestekli.cs" />
+    <Compile Include="Domain\Siteler\Site.cs" />
+    <Compile Include="Domain\Siparişler\İadeİsteği.cs" />
+    <Compile Include="Domain\Siparişler\İadeİsteğiDurumu.cs" />
+    <Compile Include="Domain\Siteler\SiteMapping.cs" />
+    <Compile Include="Domain\Siteler\SiteUzantıları.cs" />
+    <Compile Include="Domain\Konum\Ulke.cs" />
+    <Compile Include="Domain\EkTanımlamalar\GelirGiderTanımlama.cs" />
+    <Compile Include="Domain\Tanımlamalar\FirmaKategorisi.cs" />
+    <Compile Include="Domain\Tanımlamalar\Firma.cs" />
+    <Compile Include="Domain\Tanımlamalar\Hekimler.cs" />
+    <Compile Include="Domain\Tanımlamalar\Yetkililer.cs" />
+    <Compile Include="Domain\Teklif\BagliTeklifOgesi2.cs" />
+    <Compile Include="Domain\Teklif\BagliTeklifOgesiHarici.cs" />
+    <Compile Include="Domain\Teklif\BagliTeklifOgesi.cs" />
+    <Compile Include="Domain\Teklif\Teklif2.cs" />
+    <Compile Include="Domain\Teklif\TeklifHarici.cs" />
+    <Compile Include="Domain\Teklif\Teklif.cs" />
+    <Compile Include="Domain\Test\Test.cs" />
+    <Compile Include="Domain\Yapılandırma\Ayarlar.cs" />
+    <Compile Include="Eklentiler\EklentiBulucu.cs" />
+    <Compile Include="Eklentiler\EklentiDosyasıAyrıştırıcı.cs" />
+    <Compile Include="Eklentiler\EklentiModuYükle.cs" />
+    <Compile Include="Eklentiler\EklentiTanımlayıcı.cs" />
+    <Compile Include="Eklentiler\EklentiYönetici.cs" />
+    <Compile Include="Eklentiler\IEklenti.cs" />
+    <Compile Include="Eklentiler\IEklentiBulucu.cs" />
+    <Compile Include="Eklentiler\TemelEklenti.cs" />
+    <Compile Include="Fakes\FakeHttpContext.cs" />
+    <Compile Include="Fakes\FakeHttpRequest.cs" />
+    <Compile Include="Fakes\FakeHttpResponse.cs" />
+    <Compile Include="Fakes\FakeHttpSessionState.cs" />
+    <Compile Include="GenelYardımcı.cs" />
+    <Compile Include="Html\BBCodeHelper.cs" />
+    <Compile Include="Html\CodeFormatter\CLikeFormat.cs" />
+    <Compile Include="Html\CodeFormatter\CodeFormat.cs" />
+    <Compile Include="Html\CodeFormatter\CodeFormatHelper.cs" />
+    <Compile Include="Html\CodeFormatter\CSharpFormat.cs" />
+    <Compile Include="Html\CodeFormatter\HighlightOptions.cs" />
+    <Compile Include="Html\CodeFormatter\HtmlFormat.cs" />
+    <Compile Include="Html\CodeFormatter\JavaScriptFormat.cs" />
+    <Compile Include="Html\CodeFormatter\MshFormat.cs" />
+    <Compile Include="Html\CodeFormatter\SourceFormat.cs" />
+    <Compile Include="Html\CodeFormatter\TsqlFormat.cs" />
+    <Compile Include="Html\CodeFormatter\VisualBasicFormat.cs" />
+    <Compile Include="Html\HtmlHelper.cs" />
+    <Compile Include="Html\ResolveLinksHelper.cs" />
+    <Compile Include="ISayfalıListe.cs" />
+    <Compile Include="ISiteContext.cs" />
+    <Compile Include="IWebYardımcısı.cs" />
+    <Compile Include="IWorkContext.cs" />
+    <Compile Include="MimeTipleri.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
+    <Compile Include="obj\Release\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
+    <Compile Include="Olaylar\OlayEklendi.cs" />
+    <Compile Include="Olaylar\OlayGüncellendi.cs" />
+    <Compile Include="Olaylar\OlaySilindi.cs" />
+    <Compile Include="SayfalıListe.cs" />
+    <Compile Include="TemelVarlık.cs" />
+    <Compile Include="TSHata.cs" />
+    <Compile Include="Uzantılar.cs" />
+    <Compile Include="WebYardımcısı.cs" />
+    <Compile Include="Yapılandırma\IAyarlar.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TSSürüm.cs" />
+    <Compile Include="Yapılandırma\TSConfig.cs" />
+    <Compile Include="Önbellek\BellekÖnbellekYönetici.cs" />
+    <Compile Include="Önbellek\IRedisConnectionWrapper.cs" />
+    <Compile Include="Önbellek\IÖnbellekYönetici.cs" />
+    <Compile Include="Önbellek\RedisConnectionWrapper.cs" />
+    <Compile Include="Önbellek\RedisÖnebllekYönetici.cs" />
+    <Compile Include="Önbellek\ÖnbellekUzantıları.cs" />
+    <Compile Include="Önbellek\İstekBaşınaÖnbellekYöneticisi.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\Autofac.dll" />
+    <Content Include="bin\Debug\Autofac.Integration.Mvc.dll" />
+    <Content Include="bin\Debug\Autofac.Integration.Mvc.xml" />
+    <Content Include="bin\Debug\Autofac.Integration.SignalR.dll" />
+    <Content Include="bin\Debug\Autofac.Integration.SignalR.xml" />
+    <Content Include="bin\Debug\Autofac.xml" />
+    <Content Include="bin\Debug\AutoMapper.dll" />
+    <Content Include="bin\Debug\AutoMapper.xml" />
+    <Content Include="bin\Debug\Core.dll" />
+    <Content Include="bin\Debug\Core.pdb" />
+    <Content Include="bin\Debug\Elders.RedLock.dll" />
+    <Content Include="bin\Debug\Microsoft.AspNet.SignalR.Core.dll" />
+    <Content Include="bin\Debug\Microsoft.AspNet.SignalR.Core.xml" />
+    <Content Include="bin\Debug\Microsoft.AspNet.SignalR.SystemWeb.dll" />
+    <Content Include="bin\Debug\Microsoft.AspNet.SignalR.SystemWeb.xml" />
+    <Content Include="bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+    <Content Include="bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.xml" />
+    <Content Include="bin\Debug\Microsoft.Extensions.Logging.Abstractions.dll" />
+    <Content Include="bin\Debug\Microsoft.Extensions.Logging.Abstractions.xml" />
+    <Content Include="bin\Debug\Microsoft.Extensions.Logging.dll" />
+    <Content Include="bin\Debug\Microsoft.Extensions.Logging.xml" />
+    <Content Include="bin\Debug\Microsoft.Owin.dll" />
+    <Content Include="bin\Debug\Microsoft.Owin.Host.SystemWeb.dll" />
+    <Content Include="bin\Debug\Microsoft.Owin.Host.SystemWeb.xml" />
+    <Content Include="bin\Debug\Microsoft.Owin.Security.dll" />
+    <Content Include="bin\Debug\Microsoft.Owin.Security.xml" />
+    <Content Include="bin\Debug\Microsoft.Owin.xml" />
+    <Content Include="bin\Debug\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="bin\Debug\Newtonsoft.Json.dll" />
+    <Content Include="bin\Debug\Newtonsoft.Json.xml" />
+    <Content Include="bin\Debug\Owin.dll" />
+    <Content Include="bin\Debug\RedLock.dll" />
+    <Content Include="bin\Debug\StackExchange.Redis.dll" />
+    <Content Include="bin\Debug\StackExchange.Redis.xml" />
+    <Content Include="bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll" />
+    <Content Include="bin\Debug\System.Web.Helpers.dll" />
+    <Content Include="bin\Debug\System.Web.Helpers.xml" />
+    <Content Include="bin\Debug\System.Web.Mvc.dll" />
+    <Content Include="bin\Debug\System.Web.Mvc.xml" />
+    <Content Include="bin\Debug\System.Web.Razor.dll" />
+    <Content Include="bin\Debug\System.Web.Razor.xml" />
+    <Content Include="bin\Debug\System.Web.WebPages.Deployment.dll" />
+    <Content Include="bin\Debug\System.Web.WebPages.Deployment.xml" />
+    <Content Include="bin\Debug\System.Web.WebPages.dll" />
+    <Content Include="bin\Debug\System.Web.WebPages.Razor.dll" />
+    <Content Include="bin\Debug\System.Web.WebPages.Razor.xml" />
+    <Content Include="bin\Debug\System.Web.WebPages.xml" />
+    <Content Include="bin\Release\Autofac.dll" />
+    <Content Include="bin\Release\Autofac.Integration.Mvc.dll" />
+    <Content Include="bin\Release\Autofac.Integration.Mvc.xml" />
+    <Content Include="bin\Release\Autofac.Integration.SignalR.dll" />
+    <Content Include="bin\Release\Autofac.Integration.SignalR.xml" />
+    <Content Include="bin\Release\Autofac.xml" />
+    <Content Include="bin\Release\AutoMapper.dll" />
+    <Content Include="bin\Release\AutoMapper.xml" />
+    <Content Include="bin\Release\Core.dll" />
+    <Content Include="bin\Release\Core.pdb" />
+    <Content Include="bin\Release\Elders.RedLock.dll" />
+    <Content Include="bin\Release\Microsoft.AspNet.SignalR.Core.dll" />
+    <Content Include="bin\Release\Microsoft.AspNet.SignalR.Core.xml" />
+    <Content Include="bin\Release\Microsoft.AspNet.SignalR.SystemWeb.dll" />
+    <Content Include="bin\Release\Microsoft.AspNet.SignalR.SystemWeb.xml" />
+    <Content Include="bin\Release\Microsoft.Extensions.DependencyInjection.Abstractions.dll" />
+    <Content Include="bin\Release\Microsoft.Extensions.DependencyInjection.Abstractions.xml" />
+    <Content Include="bin\Release\Microsoft.Extensions.Logging.Abstractions.dll" />
+    <Content Include="bin\Release\Microsoft.Extensions.Logging.Abstractions.xml" />
+    <Content Include="bin\Release\Microsoft.Extensions.Logging.dll" />
+    <Content Include="bin\Release\Microsoft.Extensions.Logging.xml" />
+    <Content Include="bin\Release\Microsoft.Owin.dll" />
+    <Content Include="bin\Release\Microsoft.Owin.Host.SystemWeb.dll" />
+    <Content Include="bin\Release\Microsoft.Owin.Host.SystemWeb.xml" />
+    <Content Include="bin\Release\Microsoft.Owin.Security.dll" />
+    <Content Include="bin\Release\Microsoft.Owin.Security.xml" />
+    <Content Include="bin\Release\Microsoft.Owin.xml" />
+    <Content Include="bin\Release\Microsoft.Web.Infrastructure.dll" />
+    <Content Include="bin\Release\Newtonsoft.Json.dll" />
+    <Content Include="bin\Release\Newtonsoft.Json.xml" />
+    <Content Include="bin\Release\Owin.dll" />
+    <Content Include="bin\Release\RedLock.dll" />
+    <Content Include="bin\Release\StackExchange.Redis.dll" />
+    <Content Include="bin\Release\StackExchange.Redis.xml" />
+    <Content Include="bin\Release\System.Runtime.InteropServices.RuntimeInformation.dll" />
+    <Content Include="bin\Release\System.Web.Helpers.dll" />
+    <Content Include="bin\Release\System.Web.Helpers.xml" />
+    <Content Include="bin\Release\System.Web.Mvc.dll" />
+    <Content Include="bin\Release\System.Web.Mvc.xml" />
+    <Content Include="bin\Release\System.Web.Razor.dll" />
+    <Content Include="bin\Release\System.Web.Razor.xml" />
+    <Content Include="bin\Release\System.Web.WebPages.Deployment.dll" />
+    <Content Include="bin\Release\System.Web.WebPages.Deployment.xml" />
+    <Content Include="bin\Release\System.Web.WebPages.dll" />
+    <Content Include="bin\Release\System.Web.WebPages.Razor.dll" />
+    <Content Include="bin\Release\System.Web.WebPages.Razor.xml" />
+    <Content Include="bin\Release\System.Web.WebPages.xml" />
+    <Content Include="obj\Debug\Core.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\Core.dll" />
+    <Content Include="obj\Debug\Core.pdb" />
+    <Content Include="obj\Release\Core.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Release\Core.dll" />
+    <Content Include="obj\Release\Core.pdb" />
+    <Content Include="Scripts\jquery-1.6.4-vsdoc.js" />
+    <Content Include="Scripts\jquery-1.6.4.js" />
+    <Content Include="Scripts\jquery-1.6.4.min.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.3.js" />
+    <Content Include="Scripts\jquery.signalR-2.2.3.min.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="bin\Debug\Core.dll.config" />
+    <None Include="bin\Release\Core.dll.config" />
+    <None Include="obj\Debug\Core.csproj.CopyComplete" />
+    <None Include="obj\Debug\Core.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\Core.csprojAssemblyReference.cache" />
+    <None Include="obj\Debug\CoreCompileInputs.cache" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+    <None Include="obj\Release\Core.csproj.CopyComplete" />
+    <None Include="obj\Release\Core.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Release\Core.csprojAssemblyReference.cache" />
+    <None Include="obj\Release\CoreCompileInputs.cache" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\Debug\TempPE\" />
+    <Folder Include="obj\Release\TempPE\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

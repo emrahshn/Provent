@@ -1,0 +1,76 @@
+﻿@model CrmFirmaModel
+@{
+    ViewBag.Title = "kart";
+    Html.AktifMenuÖğesiSistemAdıBelirle("Firmalar");
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Firma kartı - @Model.Adı 
+            <small><i class="fa fa-arrow-circle-left"></i>@Html.ActionLink("Firma listesine geri dön", "FirmaListe")</small>
+        </h1>
+
+        <div class="pull-right">
+            <span id="Firma-sil" class="btn bg-red">
+                <i class="fa fa-trash-o"></i>
+                Sil
+            </span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="form-horizontal">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.Adı)
+                            </div>
+                            <div class="col-md-10" style="padding-top: 7px;margin-bottom: 0;">
+                                    @Model.Adı
+                            </div>
+                            </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.Tel)
+                            </div>
+                            <div class="col-md-10" style="padding-top: 7px;margin-bottom: 0;">
+                                @Model.Tel
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.Web)
+                            </div>
+                            <div class="col-md-10" style="padding-top: 7px;margin-bottom: 0;">
+                                @Model.Web
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.Adres)
+                            </div>
+                            <div class="col-md-10" style="padding-top: 7px;margin-bottom: 0;">
+                                @Model.Adres
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.SehirId)
+                            </div>
+                            <div class="col-md-10" style="padding-top: 7px;margin-bottom: 0;">
+                                @Model.SehirAdı / @Model.IlceAdı
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("FirmaKutusu", Model)
+}
+@Html.DeleteConfirmation("FirmaSil", "Firma-sil")

@@ -1,0 +1,95 @@
+﻿@model TeklifHariciRaporModel
+
+@{
+    Html.EnableClientValidation(false);
+
+    var yurtici = new List<SelectListItem>();
+    yurtici.Add(new SelectListItem() { Text = "Tümü", Value = "1" });
+    yurtici.Add(new SelectListItem() { Text = "Yutiçi", Value = "2" });
+    yurtici.Add(new SelectListItem() { Text = "Yurtdışı", Value = "3" });
+    
+}
+@*
+    @using (Html.BeginForm(null, null, new RouteValueDictionary(new { productId = Model.ProductId, btnId = ViewBag.btnId, formId = ViewBag.formId }),
+                                                                                FormMethod.Post, new Dictionary<string, Object> { { "enctype", "multipart/form-data" } }))
+*@
+@using (Html.BeginForm("TeklifHariciRapor", "Teklif", FormMethod.Post, new Dictionary<string, Object> { { "enctype", "multipart/form-data" } }))
+{
+<div class="content-header clearfix">
+    <div class="form-horizontal">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"
+                                aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Rapor oluştur</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.Tarih1)
+                            </div>
+                            <div class="col-md-10">
+                                @Html.EditorFor_(m => m.Tarih1)
+                                @Html.ValidationMessageFor(m => m.Tarih1)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.Tarih2)
+                            </div>
+                            <div class="col-md-10">
+                                @Html.EditorFor_(m => m.Tarih2)
+                                @Html.ValidationMessageFor(m => m.Tarih2)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2">
+                                @Html.LabelFor_(m => m.Yurtici)
+                            </div>
+                            <div class="col-md-10">
+                                @Html.DropDownListFor_(m => m.Yurtici, yurtici)
+                                @Html.ValidationMessageFor(m => m.Yurtici)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" value="Gönder" class="btn btn-primary">
+                            <i class="fa fa-file-archive-o"></i>
+                           Gönder
+                        </button>
+                        <script>
+                            $('document').ready(function () {
+                            });
+                           // var idler = {1,2,3};
+                            //$("Idler").val(grid.selectedKeyNames());
+                            /*
+                            function raporGonder() {
+                                var grid = $('#teklif-grid').data('kendoGrid');
+                                data = grid.selectedKeyNames();
+                                var idler = grid.selectedKeyNames();
+                                var viewModel = { Idler: idler, Tarih1: "", Tarih2: "", Yurtici: 2, Text:"deneme" };
+                                var jsonOfLog = JSON.stringify(viewModel);
+                                $.ajax({
+                                    type: 'POST',
+                                    contentType: "application/json; charset=utf-8",
+                                    dataType: "json",
+                                    url: "TeklifHariciRapor",
+                                    data: jsonOfLog,
+                                });
+                            };
+                            */
+                        </script>
+                        
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+}
+

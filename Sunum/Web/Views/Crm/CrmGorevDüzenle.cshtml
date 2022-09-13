@@ -1,0 +1,32 @@
+﻿@model CrmYonetimKuruluModel
+@{
+    ViewBag.Title = "Düzenle";
+    Html.AktifMenuÖğesiSistemAdıBelirle("CrmGörevDüzenle");
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="content-header clearfix">
+        <h1 class="pull-left">
+            Kurum Görevleri Düzenle
+            <small><i class="fa fa-arrow-circle-left"></i>@Html.ActionLink("Kişi sayfasına geri dön", "KişiDüzenle", new { id = Model.KisiId })</small>
+        </h1>
+        <div class="pull-right">
+            <button type="submit" name="kaydet" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet
+            </button>
+            <button type="submit" name="kaydet-devam" class="btn bg-blue">
+                <i class="fa fa-floppy-o"></i>
+                Kaydet ve Devam
+            </button>
+            <span id="banka-sil" class="btn bg-red">
+                <i class="fa fa-trash-o"></i>
+                Sil
+            </span>
+        </div>
+    </div>
+    @Html.Partial("_EkleVeyaDüzenleGorev", Model)
+}
+

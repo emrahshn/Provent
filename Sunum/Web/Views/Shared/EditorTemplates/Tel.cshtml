@@ -1,0 +1,25 @@
+@model string
+
+@Html.TextBoxFor(model => model)
+@{
+    var postfix = "";
+    if (ViewData.ContainsKey("postfix") && ViewData["postfix"] != null)
+    {
+        postfix = ViewData["postfix"].ToString();
+    }
+}
+<style>
+    .k-maskedtextbox {
+         display: block;
+    }
+    .k-textbox {
+        min-width: 100% !important;
+    }
+</style>
+<script>
+    $(document).ready(function () {
+        $("#@ViewData.TemplateInfo.GetFullHtmlFieldId(string.Empty)").kendoMaskedTextBox({
+            mask: "(999) 000-0000"
+        });
+    });
+</script>

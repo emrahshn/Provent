@@ -1,0 +1,46 @@
+﻿@model KisilerModel
+@{
+    ViewBag.Title = "Rehber";
+    Html.AktifMenuÖğesiSistemAdıBelirle("RehberEkle");
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="product-grid home-page-product-grid">
+        <div class="title">
+            <strong>Kişiler</strong>
+        </div>
+        <div class="item-grid">
+            @foreach (var item in Model.Kisiler)
+            {
+                <div class="item-box">
+                    <div class="col-lg-12 col-xs-12">
+                        <div class="small-box bg-blue">
+                            <div class="inner">
+                                <h4>@item.Adı @item.Soyadı</h4>
+                                <p><i class="fa fa-envelope-o"></i>@item.Email1</p>
+                                <p><i class="fa fa-phone"></i>@item.CepTel1</p>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-bag"></i>
+                            </div>
+                            <a href="@Url.Action("RehberDüzenle", "Rehber", new { Id = Model.Id })" class="small-box-footer">
+                                Düzenle
+                                <i class="fa fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+    var pager = Html.Pager(Model.PagerModel);
+    if (!MvcHtmlString.IsNullOrEmpty(pager))
+    {
+        <div class="pager">
+            @pager
+        </div>
+    }
+}
+
